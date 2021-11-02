@@ -1,0 +1,13 @@
+<resources>
+    <string name="app_name">OTAUpgrade</string>
+
+    <string name="app_bar">System update</string>
+    <string name="app_view_log">View full log</string>
+    <string name="app_network">The network is not connected </string>
+    <string name="app_no_read_write">No read / write permission</string>
+    <string name="app_download_updates">Download updates</string>
+    <string name="app_restart_update_now">Restart update now</string>
+    <string name="app_updating_xia">Updating Xia</string>
+    <string name="app_no_data">No data</string>
+    <string name="The_network_is_not_connected">The_network_is_not_connected</string>
+</resources>
