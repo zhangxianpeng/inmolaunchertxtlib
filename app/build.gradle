@@ -37,4 +37,6 @@ dependencies {
 
     // kotlin
     implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+    // util 很好用的一个工具类 使用： 屏幕适配等 教程：https://blankj.com/2016/07/31/android-utils-code/
+    implementation 'com.blankj:utilcodex:1.30.6'
 }
