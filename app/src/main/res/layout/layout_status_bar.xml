@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="40pt"
+    android:background="@color/black">
+
+    <com.inmoglass.launcher.view.StatusBarBlueToothView
+        android:layout_width="17pt"
+        android:layout_height="21pt"
+        android:layout_centerVertical="true"
+        android:layout_marginEnd="15pt"
+        android:layout_toStartOf="@+id/sbb_wifi" />
+
+    <com.inmoglass.launcher.view.StatusBarWifiStateView
+        android:id="@+id/sbb_wifi"
+        android:layout_width="22pt"
+        android:layout_height="17pt"
+        android:layout_centerVertical="true"
+        android:layout_marginEnd="15pt"
+        android:layout_toStartOf="@+id/sbb_battery" />
+
+    <com.inmoglass.launcher.view.BatteryView
+        android:id="@+id/sbb_battery"
+        android:layout_width="14pt"
+        android:layout_height="18pt"
+        android:layout_centerVertical="true"
+        android:layout_toStartOf="@+id/iv_isCharging" />
+
+    <ImageView
+        android:id="@+id/iv_isCharging"
+        android:layout_width="10pt"
+        android:layout_height="24pt"
+        android:layout_alignParentEnd="true"
+        android:layout_centerVertical="true"
+        android:layout_marginEnd="21pt"
+        android:src="@drawable/ic_icon_statusbar_battery_charging"
+        android:visibility="invisible"/>
+</RelativeLayout>

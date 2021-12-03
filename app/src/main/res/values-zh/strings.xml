@@ -1,3 +1,10 @@
 <resources>
-    <string name="app_name">模板</string>
+    <string name="app_name">LAUNCHER</string>
+
+    <string name="string_home_wechat">微信</string>
+    <string name="string_home_tencent">腾讯视频</string>
+    <string name="string_home_qq_music">QQ音乐</string>
+    <string name="string_home_kugou">酷狗音乐</string>
+    <string name="string_home_gaode">高德地图</string>
+
 </resources>
