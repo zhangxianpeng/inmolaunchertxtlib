@@ -31,7 +31,6 @@ public class CoverFlowAdapter implements ICoverFlowAdapter {
         this.mArray = mArray;
     }
 
-
     @Override
     public int getCount() {
         return mArray == null ? 0 : mArray.size();

@@ -54,7 +54,7 @@ dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
     // kotlin 扩展库
     implementation 'androidx.core:core-ktx:1.0.0-alpha1'
-    // util 很好用的一个工具类 使用： 屏幕适配等 教程：https://blankj.com/2016/07/31/android-utils-code/
+    // util 工具类 使用： 屏幕适配等 教程：https://blankj.com/2016/07/31/android-utils-code/
     implementation 'com.blankj:utilcodex:1.30.6'
     // air系列common
     implementation 'com.github.zhangxianpeng:InmoAirComponent:1.0.1'

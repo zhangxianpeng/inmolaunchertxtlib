@@ -6,5 +6,8 @@
     <string name="string_home_qq_music">QQ音乐</string>
     <string name="string_home_kugou">酷狗音乐</string>
     <string name="string_home_gaode">高德地图</string>
-
+    <string name="string_home_beiwanglu">备忘录</string>
+    <string name="string_home_camera">相机</string>
+    <string name="string_home_media">媒体文件</string>
+    <string name="string_home_setting">设置</string>
 </resources>

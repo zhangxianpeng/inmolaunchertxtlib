@@ -4,23 +4,23 @@
     android:layout_height="match_parent">
 
     <LinearLayout
-        android:layout_width="180pt"
+        android:layout_width="200pt"
         android:layout_height="278pt"
         android:orientation="vertical"
         android:background="@mipmap/bg_home_card">
 
         <ImageView
             android:id="@+id/iv_channelImg"
-            android:layout_width="160pt"
-            android:layout_height="186pt"
+            android:layout_width="180pt"
+            android:layout_height="190pt"
             android:layout_gravity="center"
             android:layout_marginTop="10pt"
             android:src="@drawable/img_home_kuaizhao_qqmusic" />
 
         <ImageView
             android:id="@+id/iv_icon"
-            android:layout_width="36pt"
-            android:layout_height="36pt"
+            android:layout_width="30pt"
+            android:layout_height="30pt"
             android:layout_gravity="center"
             android:layout_marginTop="10pt"
             android:src="@drawable/ic_icon_home_qqmusic" />
@@ -29,7 +29,8 @@
             android:id="@+id/tv_appName"
             style="@style/text_style"
             android:layout_gravity="center"
-            android:layout_marginTop="6pt"
+            android:gravity="center"
+            android:layout_marginTop="3pt"
             android:text="@string/string_home_qq_music"
             android:textSize="20pt" />
     </LinearLayout>

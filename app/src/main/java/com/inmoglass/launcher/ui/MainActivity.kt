@@ -7,10 +7,9 @@ import android.content.Intent
 import android.content.IntentFilter
 import android.content.pm.PackageInfo
 import android.os.*
-import android.view.View
+import android.view.KeyEvent
 import android.view.View.INVISIBLE
 import android.view.View.VISIBLE
-import android.widget.Toast
 import androidx.core.widget.toast
 import com.baidu.location.BDAbstractLocationListener
 import com.baidu.location.BDLocation
@@ -42,6 +41,13 @@ import org.json.JSONObject
 class MainActivity : BaseActivity() {
     private val TAG = "MainActivity"
     private var channelBeanList: MutableList<Channel>? = null
+    private val selfStudyApps = arrayOf(
+        "com.inmolens.inmomemo",
+        "com.yulong.coolcamera",
+        "com.yulong.coolgallery",
+        "com.inmo.settings",
+        "com.tentencent.qqlive"
+    )
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -56,6 +62,7 @@ class MainActivity : BaseActivity() {
                     override fun onGranted() {
                         startLocation()
                     }
+
                     override fun onDenied() {
                         toast("请授予权限，才能定位")
                     }
@@ -69,10 +76,9 @@ class MainActivity : BaseActivity() {
         // 获取设备已安装应用信息，写入json文件
         // 使用本地json文件的方案的原因： 后续版本会在设置中修改launcher显示应用的排列顺序，顺序更新后重新update json即可
         // 三方APP
-
         // 正式代码
-//        val thirdPartyAppList = APPUtil.getPackageInfos(this, 2)
-//        initCoverFlowData(thirdPartyAppList)
+        val allAppList = APPUtil.getPackageInfos(this, 0)
+//        initCoverFlowData(allAppList)
 
         // 写死用来测试
         initCoverFlowTestData()
@@ -105,11 +111,25 @@ class MainActivity : BaseActivity() {
     }
 
     override fun onDestroy() {
+        LogUtils.e(TAG, "onDestroy")
         super.onDestroy()
         unregisterReceiver(batteryReceiver)
     }
 
-    private fun initCoverFlowData(thirdPartyAppList: List<PackageInfo>) {
+    private fun initCoverFlowData(appList: List<PackageInfo>) {
+        var resultApps = ArrayList<PackageInfo>()
+        for (i in 0..appList.size) {
+            for (j in 0..selfStudyApps.size) {
+                if (appList[i].packageName.equals(selfStudyApps[j])) {
+                    continue
+                } else {
+                    resultApps.add(appList[i])
+                }
+            }
+        }
+    }
+
+
 //        val pm = packageManager
 //        channelBeanList = ArrayList()
 //        val memoChannel = Channel(R.mipmap.ic_launcher, getString(R.string.string_home_memo), getDrawable(R.mipmap.ic_launcher)!!, "com.inmolens.inmomemo")
@@ -125,36 +145,38 @@ class MainActivity : BaseActivity() {
 //        val coverFlowAdapter = CoverFlowAdapter(this, channelBeanList)
 //        coverflow.setAdapter(coverFlowAdapter)
 
-        // 给coverFlowView的TOPView 添加点击事件监听
+    // 给coverFlowView的TOPView 添加点击事件监听
 
-        // 给coverFlowView的TOPView 添加点击事件监听
+    // 给coverFlowView的TOPView 添加点击事件监听
 //        coverflow.setOnTopViewClickListener(mOnTopViewClickListener)
-    }
 
     private fun initCoverFlowTestData() {
         channelBeanList = ArrayList()
-        val wechatChannel = Channel(R.drawable.img_home_kuaizhao_weixin, getString(R.string.string_home_wechat), R.drawable.ic_icon_home_weixin, "com.tencent.mm")
+        val wechatChannel = Channel(R.drawable.img_home_beiwanglu, getString(R.string.string_home_beiwanglu), R.drawable.icon_home_beiwanglu, selfStudyApps[0])
         channelBeanList!!.add(wechatChannel)
-        val tencentChannel = Channel(R.drawable.img_home_kuaizhao_tengxun, getString(R.string.string_home_tencent), R.drawable.icon_home_tengxun, "com.tencent.qqlive")
+        val tencentChannel = Channel(R.drawable.img_home_camera, getString(R.string.string_home_camera), R.drawable.icon_home_camera, selfStudyApps[1])
         channelBeanList!!.add(tencentChannel)
-        val qqMusicChannel = Channel(R.drawable.img_home_kuaizhao_qqmusic, getString(R.string.string_home_qq_music), R.drawable.ic_icon_home_qqmusic, "com.tencent.qqmusic")
+        val qqMusicChannel = Channel(R.drawable.img_home_meitiwenjian, getString(R.string.string_home_media), R.drawable.icon_home_meiti, selfStudyApps[2])
         channelBeanList!!.add(qqMusicChannel)
-        val kugouChannel = Channel(R.drawable.img_home__kuaizhao_kugou, getString(R.string.string_home_kugou), R.drawable.ic_icon_home_kugou, "com.kugou.android")
+        val kugouChannel = Channel(R.drawable.img_home_setting, getString(R.string.string_home_setting), R.drawable.icon_home_setting, selfStudyApps[3])
         channelBeanList!!.add(kugouChannel)
-        val aMapChannel = Channel(R.drawable.img_home_kuaizhao_gaode, getString(R.string.string_home_gaode), R.drawable.ic_icon_home_gaode, "com.autonavi.minimap")
+        val aMapChannel = Channel(R.drawable.img_home_tengxun, getString(R.string.string_home_tencent), R.drawable.icon_home_tengxun, selfStudyApps[4])
         channelBeanList!!.add(aMapChannel)
         val coverFlowAdapter = CoverFlowAdapter(this, channelBeanList)
         coverflow.adapter = coverFlowAdapter
-        coverflow.setOnTopViewClickListener(mOnTopViewClickListener)
+        coverflow.onTopViewClickListener = mOnTopViewClickListener
     }
 
-    private val mOnTopViewClickListener: CoverFlowView.OnTopViewClickListener = object : CoverFlowView.OnTopViewClickListener {
-        override fun onClick(position: Int, itemView: View?) {
-            val channelBean: Channel = channelBeanList!![position]
-            APPUtil.getInstance().openApplication(channelBean.packageName)
-        }
-
+    private val mOnTopViewClickListener: CoverFlowView.OnTopViewClickListener = CoverFlowView.OnTopViewClickListener { position, itemView ->
+        val channelBean: Channel = channelBeanList!![position]
+        APPUtil.getInstance().openApplication(channelBean.packageName)
     }
+
+    override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
+        return super.onKeyDown(keyCode, event)
+        LogUtils.i(TAG, "KEYcODE = " + keyCode)
+    }
+
     private fun setConfigJsonFile(thirdPartyAppList: List<PackageInfo>) {
 //        val pm = packageManager
 //        val jsonObject = JSONObject()

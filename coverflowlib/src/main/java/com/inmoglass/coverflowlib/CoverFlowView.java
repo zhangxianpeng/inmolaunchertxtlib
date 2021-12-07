@@ -113,7 +113,6 @@ public class CoverFlowView extends RelativeLayout {
     private void initAttributes(Context context, AttributeSet attrs) {
         TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.ImageCoverFlowView);
         int totalVisibleChildren = a.getInt(R.styleable.ImageCoverFlowView_visibleImage, 3);
-        Log.i(TAG, "屏幕默认显示的个数  = " + totalVisibleChildren);
         if (totalVisibleChildren % 2 == 0) {
             // 一屏幕必须是奇数显示
             throw new IllegalArgumentException("visible image must be an odd number");
@@ -121,23 +120,16 @@ public class CoverFlowView extends RelativeLayout {
 
         // 计算出左右两两边的显示个数
         VISIBLE_VIEWS = totalVisibleChildren >> 1;
-        Log.i(TAG, "左右两边显示的个数  = " + VISIBLE_VIEWS);
-
         reflectHeightFraction = a.getFraction(R.styleable.ImageCoverFlowView_reflectionHeight, 100, 0, 0.0f);
-        Log.i(TAG, "reflectHeightFraction  = " + reflectHeightFraction);
 
         if (reflectHeightFraction > 100) {
             reflectHeightFraction = 100;
         }
 
         reflectHeightFraction /= 100;
-        Log.i(TAG, "reflectHeightFraction2  = " + reflectHeightFraction);
         reflectGap = a.getDimensionPixelSize(R.styleable.ImageCoverFlowView_reflectionGap, 0);
-        Log.i(TAG, "reflectGap  = " + reflectGap);
         mGravity = CoverFlowGravity.values()[a.getInt(R.styleable.ImageCoverFlowView_coverflowGravity, CoverFlowGravity.CENTER_VERTICAL.ordinal())];
-        Log.i(TAG, "mGravity  = " + mGravity);
         mLayoutMode = CoverFlowLayoutMode.values()[a.getInt(R.styleable.ImageCoverFlowView_coverflowLayoutMode, CoverFlowLayoutMode.WRAP_CONTENT.ordinal())];
-        Log.i(TAG, "mLayoutMode  = " + mLayoutMode);
         a.recycle();
     }
 
@@ -171,7 +163,6 @@ public class CoverFlowView extends RelativeLayout {
 
         // 计算透明度
         STANDARD_ALPHA = (255 - ALPHA_DATUM) / VISIBLE_VIEWS;
-        Log.i(TAG, "init,,,,,,,,,透明度 = " + STANDARD_ALPHA);
 
         if (mGravity == null) {
             mGravity = CoverFlowGravity.CENTER_VERTICAL;
@@ -183,7 +174,6 @@ public class CoverFlowView extends RelativeLayout {
 
         // 一屏 显示的图片数量
         int visibleCount = (VISIBLE_VIEWS << 1) + 1;
-        Log.i(TAG, "init,,,,,,,,,一屏显示的图片数量 = " + visibleCount);
 
         for (int i = 0; i < visibleCount && mAdapter != null && i < mAdapter.getCount(); ++i) {
             View convertView = null;
@@ -204,28 +194,20 @@ public class CoverFlowView extends RelativeLayout {
         if (mAdapter == null || showViewArray.size() <= 0) {
             return;
         }
-        Log.i(TAG, "onMeasure,,,,,,,,,,," + "size = " + showViewArray.size());
 
         paddingLeft = getPaddingLeft();
         paddingRight = getPaddingRight();
         paddingTop = getPaddingTop();
         paddingBottom = getPaddingBottom();
 
-        Log.i(TAG, "onMeasure,,,,,,,,,,," + "paddingLeft = " + paddingLeft + ",paddingRight" + paddingRight + ",paddingTop" + paddingTop + ",paddingBottom" + paddingBottom);
-
         int heightMode = MeasureSpec.getMode(heightMeasureSpec);
-        Log.i(TAG, "onMeasure,,,,,,,,,,," + "heightMode = " + heightMode);
         int widthSize = MeasureSpec.getSize(widthMeasureSpec);
-        Log.i(TAG, "onMeasure,,,,,,,,,,," + "widthSize = " + widthSize);
         int heightSize = MeasureSpec.getSize(heightMeasureSpec);
-        Log.i(TAG, "onMeasure,,,,,,,,,,," + "heightSize = " + heightSize);
 
         // 一屏显示的图片数量
         int visibleCount = (VISIBLE_VIEWS << 1) + 1;
-        Log.i(TAG, "onMeasure,,,,,,,,,,,一屏显示的图片数量 = " + visibleCount);
         // 控件高度
         int availableHeight = heightSize - paddingTop - paddingBottom;
-        Log.i(TAG, "onMeasure,,,,,,,,,,,控件高度 = " + availableHeight);
 
         int maxChildTotalHeight = 0;
         for (int i = 0; i < getChildCount() && i < visibleCount && i < showViewArray.size(); ++i) {
@@ -316,10 +298,9 @@ public class CoverFlowView extends RelativeLayout {
 
         // 右边孩子的数量
         int rightChild = (mVisibleChildCount % 2 == 0) ? (mVisibleChildCount >> 1) - 1 : mVisibleChildCount >> 1;
-        Log.i(TAG, "onLayout,,,,,,,,,,,右边孩子的数量 = " + rightChild);
+
         // 左边孩子的数量
         int leftChild = mVisibleChildCount >> 1;
-        Log.i(TAG, "onLayout,,,,,,,,,,,左边孩子的数量 = " + leftChild);
 
         if (!isFirstIn) {
             if (lastMid + 1 == mid) {
@@ -460,8 +441,9 @@ public class CoverFlowView extends RelativeLayout {
 
         // 210
         int leftSpace = ((mWidth >> 1) - paddingLeft) - (centerChildWidth >> 1);
+        Log.i(TAG, "leftSpace = " + leftSpace);
         int rightSpace = (((mWidth >> 1) - paddingRight) - (centerChildWidth >> 1));
-
+        Log.i(TAG, "rightSpace = " + rightSpace);
 //        paddingLeft = 105;
         // 计算出水平方向的x坐标
 //        if (offset == -2.0) { // 左1
