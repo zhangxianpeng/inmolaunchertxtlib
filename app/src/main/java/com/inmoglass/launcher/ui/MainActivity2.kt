@@ -21,29 +21,34 @@ import com.blankj.utilcode.util.PermissionUtils
 import com.inmo.network.AndroidNetworking
 import com.inmo.network.error.ANError
 import com.inmo.network.interfaces.JSONObjectRequestListener
-import com.inmoglass.coverflowlib.CoverFlowView
 import com.inmoglass.launcher.R
-import com.inmoglass.launcher.adapter.CoverFlowAdapter
 import com.inmoglass.launcher.base.BaseActivity
 import com.inmoglass.launcher.base.BaseApplication
 import com.inmoglass.launcher.bean.Channel
+import com.inmoglass.launcher.bean.MsgBean
+import com.inmoglass.launcher.recyclerCoverFlow.Adapter
 import com.inmoglass.launcher.service.SocketService
 import com.inmoglass.launcher.util.AppUtil
 import com.inmoglass.launcher.util.WeatherResUtil
-import kotlinx.android.synthetic.main.activity_main.*
+import com.qweather.sdk.view.HeContext.context
+import kotlinx.android.synthetic.main.activity_main.iv_temperature
+import kotlinx.android.synthetic.main.activity_main.tv_temperature
+import kotlinx.android.synthetic.main.activity_main.tv_weather
+import kotlinx.android.synthetic.main.activity_main2.*
 import kotlinx.android.synthetic.main.layout_status_bar.*
+import org.greenrobot.eventbus.EventBus
+import org.greenrobot.eventbus.Subscribe
+import org.greenrobot.eventbus.ThreadMode
 import org.json.JSONObject
 
+
 /**
- * 桌面
+ * 桌面 ---- 使用RecyclerCoverFlow测试
  * @author Administrator
  * @date 2021-12-01
  */
-class MainActivity : BaseActivity() {
-    private val TAG = "MainActivity"
-
-    private val shutdownAction = "com.android.systemui.ready.poweraction"
-
+class MainActivity2 : BaseActivity() {
+    private val tag = "MainActivity"
     private var channelBeanList: MutableList<Channel>? = null
     private val selfStudyApps = arrayOf(
         "com.inmolens.inmomemo",
@@ -53,9 +58,13 @@ class MainActivity : BaseActivity() {
         "com.tentencent.qqlive"
     )
 
+    private val shutdownAction = "com.android.systemui.ready.poweraction"
+    /** 是否想关机 true为是  */
+    var isShutDown = false
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+        setContentView(R.layout.activity_main2)
         initViews()
         // 定位天气
         val strings = arrayOf(Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION)
@@ -75,6 +84,7 @@ class MainActivity : BaseActivity() {
             startLocation()
         }
 
+        EventBus.getDefault().register(this)
         // 蓝牙服务
         startSocketService()
         // 获取设备已安装应用信息，写入json文件
@@ -110,7 +120,7 @@ class MainActivity : BaseActivity() {
                 Intent.ACTION_BATTERY_CHANGED-> {
                     val level = p1.getIntExtra(BatteryManager.EXTRA_LEVEL, 0)
                     val isCharging = p1.getIntExtra(BatteryManager.EXTRA_PLUGGED, -1) !== 0
-                    LogUtils.i(TAG, "currentBattery$level")
+                    LogUtils.i(tag, "currentBattery$level")
                     sbb_battery.setBattaryPercent(level)
                     if (level in 0..5) {
                         sbb_battery.setFrontColor(getColor(R.color.color_battery_red))
@@ -125,20 +135,10 @@ class MainActivity : BaseActivity() {
         }
     }
 
-    override fun onTouchEvent(event: MotionEvent?): Boolean {
-
-            coverflow.onTouchEvent(event)
-        return false
-    }
-
-    override fun onBackPressed() {
-        LogUtils.e(TAG, "onBackPressed")
-        return
-    }
-
     override fun onDestroy() {
-        LogUtils.e(TAG, "onDestroy")
+        LogUtils.e(tag, "onDestroy")
         super.onDestroy()
+        EventBus.getDefault().unregister(this)
         unregisterReceiver(batteryReceiver)
     }
 
@@ -188,26 +188,47 @@ class MainActivity : BaseActivity() {
         channelBeanList!!.add(kugouChannel)
         val aMapChannel = Channel(R.drawable.img_home_tengxun, getString(R.string.string_home_tencent), R.drawable.icon_home_tengxun, selfStudyApps[4])
         channelBeanList!!.add(aMapChannel)
-        val coverFlowAdapter = CoverFlowAdapter(this, channelBeanList)
-        coverflow.adapter = coverFlowAdapter
-        coverflow.onTopViewClickListener = mOnTopViewClickListener
+        val moreAppChannel = Channel(R.drawable.img_home_more, getString(R.string.string_home_more_apps), R.drawable.icon_home_more, selfStudyApps[4])
+        channelBeanList!!.add(moreAppChannel)
+        list.adapter = Adapter(this, channelBeanList)
+//        list.setOnItemSelectedListener(object : CoverFlowLayoutManger.OnSelected {
+//            override fun onItemSelected(position: Int) {
+//                selectPos = position
+//            }
+//        })
+
+//        list.setOnTouchListener(object : View.OnTouchListener {
+//            override fun onTouch(p0: View?, p1: MotionEvent?): Boolean {
+//                if (p1!!.action == MotionEvent.ACTION_DOWN) {
+//                    val channelBean: Channel = channelBeanList!![selectPos]
+//                    APPUtil.getInstance().openApplication(channelBean.packageName)
+//                }
+//                return false
+//            }
+//
+//        })
+//        val coverFlowAdapter = CoverFlowAdapter(this, channelBeanList)
+//        coverflow.adapter = coverFlowAdapter
+//        coverflow.onTopViewClickListener = mOnTopViewClickListener
     }
 
-    private val mOnTopViewClickListener: CoverFlowView.OnTopViewClickListener = CoverFlowView.OnTopViewClickListener { position, itemView ->
-        LogUtils.i(TAG, "onTopViewClickListener=" + position)
-        val channelBean: Channel = channelBeanList!![position]
-        LogUtils.i(TAG, "onTopViewClickListener=" + channelBean.packageName)
-        AppUtil.getInstance().openApplication(channelBean.packageName)
-
-//        startActivity(Intent(this, HorizonRecyclerviewActivity::class.java))
-    }
-
-    override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
-        if(keyCode == KeyEvent.KEYCODE_BACK) {
-            return true
+    override fun onTouchEvent(event: MotionEvent?): Boolean {
+        if(list != null) {
+            list.onTouchEvent(event)
         }
-        return super.onKeyDown(keyCode, event)
-        LogUtils.i(TAG, "keyCode$keyCode")
+        return true
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    fun onCoverFlowClickEvent(event: MsgBean) {
+        if (event == null) return
+        val selectPos = event.position
+        if (selectPos == 5) {
+            startActivity(Intent(this, AppManagerActivity::class.java))
+        } else {
+            val channelBean: Channel = channelBeanList!![selectPos]
+            AppUtil.getInstance().openApplication(channelBean.packageName)
+        }
     }
 
     private fun setConfigJsonFile(thirdPartyAppList: List<PackageInfo>) {
@@ -226,13 +247,14 @@ class MainActivity : BaseActivity() {
 //        }
 //        jsonObject.put("launcherConfig", jsonArray)
 //        var configData = jsonObject.toString()
-//        LogUtils.i(TAG, "all APPS = $configData")
+//        LogUtils.i(tag, "all APPS = $configData")
 //        if (ConfigJsonUtil.get().createFile()) {
 //            ConfigJsonUtil.get().writeJSONArrayData2File(configData)
 //        }
     }
 
     private fun initViews() {
+//        list.adapter = Adapter(this)
     }
 
     /**
@@ -277,7 +299,7 @@ class MainActivity : BaseActivity() {
             .build()
             .getAsJSONObject(object : JSONObjectRequestListener {
                 override fun onResponse(response: JSONObject) {
-                    LogUtils.i(TAG, "onResponse = $response")
+                    LogUtils.i(tag, "onResponse = $response")
                     val code = response.get("code")
                     if (!code.equals("200")) {
                         return
@@ -289,7 +311,7 @@ class MainActivity : BaseActivity() {
                 }
 
                 override fun onError(error: ANError) {
-                    LogUtils.e(TAG, "onError = " + error.message)
+                    LogUtils.e(tag, "onError = " + error.message)
                 }
             })
     }
@@ -309,6 +331,27 @@ class MainActivity : BaseActivity() {
                     iv_temperature.setImageResource(WeatherResUtil.getEqualRes(icon))
                 }
             }
+        }
+    }
+
+    private var keyDownTime = 0L
+    private var runnable = Runnable {
+        val intent = Intent("com.android.systemui.keyguard.shutdown")
+        context.sendBroadcast(intent)
+    }
+
+    override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
+        return super.onKeyDown(keyCode, event)
+        keyDownTime = System.currentTimeMillis()
+        // 5S后发送关机广播
+        myHandler.postDelayed(runnable, 5000)
+    }
+
+    override fun onKeyUp(keyCode: Int, event: KeyEvent?): Boolean {
+        return super.onKeyUp(keyCode, event)
+        var currentTime = System.currentTimeMillis()
+        if (currentTime - keyDownTime < 5000) {
+            myHandler.removeCallbacks(runnable)
         }
     }
 }

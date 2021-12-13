@@ -10,4 +10,8 @@
     <string name="string_home_camera">相机</string>
     <string name="string_home_media">媒体文件</string>
     <string name="string_home_setting">设置</string>
+    <string name="string_home_more_apps">更多应用</string>
+
+    <string name="string_app_not_installed">该应用未安装</string>
+    <string name="string_app_list">应用列表</string>
 </resources>

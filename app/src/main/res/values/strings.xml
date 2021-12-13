@@ -9,4 +9,7 @@
     <string name="string_home_camera">相机</string>
     <string name="string_home_media">媒体文件</string>
     <string name="string_home_setting">设置</string>
+    <string name="string_home_more_apps">MORE APPS</string>
+    <string name="string_app_not_installed">The APP IS NOT INSTALLED</string>
+    <string name="string_app_list">APP LIST</string>
 </resources>

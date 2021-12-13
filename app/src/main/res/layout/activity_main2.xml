@@ -76,14 +76,13 @@
 
         </RelativeLayout>
 
-        <com.inmoglass.coverflowlib.CoverFlowView
-            android:id="@+id/coverflow"
+        <com.inmoglass.launcher.recyclerCoverFlow.RecyclerCoverFlow
+            android:id="@+id/list"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_marginStart="20pt"
             android:layout_marginEnd="20pt"
-            imageCoverFlow:coverflowGravity="center_vertical"
-            imageCoverFlow:coverflowLayoutMode="wrap_content"
-            imageCoverFlow:visibleImage="5"/>
+            android:layout_marginBottom="10pt">
+        </com.inmoglass.launcher.recyclerCoverFlow.RecyclerCoverFlow>
     </LinearLayout>
 </LinearLayout>

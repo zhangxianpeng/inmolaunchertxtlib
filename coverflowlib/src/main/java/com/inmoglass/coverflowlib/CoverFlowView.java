@@ -4,7 +4,6 @@ import android.animation.Animator;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.animation.ValueAnimator;
-import android.animation.ValueAnimator.AnimatorUpdateListener;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Rect;
@@ -211,10 +210,8 @@ public class CoverFlowView extends RelativeLayout {
 
         int maxChildTotalHeight = 0;
         for (int i = 0; i < getChildCount() && i < visibleCount && i < showViewArray.size(); ++i) {
-            //View view = showViewArray.get(i+firstIndex);
             View view = getChildAt(i);
             measureChild(view, widthMeasureSpec, heightMeasureSpec);
-            //final int childHeight = ScreenUtil.dp2px(getContext(), 110);
             final int childHeight = view.getMeasuredHeight();
             final int childTotalHeight = (int) (childHeight + childHeight * reflectHeightFraction + reflectGap);
             // 孩子的最大高度
@@ -223,24 +220,16 @@ public class CoverFlowView extends RelativeLayout {
 
         // 如果控件模式为确切值 或者 最大时
         if (heightMode == MeasureSpec.EXACTLY || heightMode == MeasureSpec.AT_MOST) {
-            // if height which parent provided is less than child need, scale
-            // child height to parent provide
             // 如果控件高度小于孩子控件高度，则缩放孩子高度为控件高度
             if (availableHeight < maxChildTotalHeight) {
                 mChildHeight = availableHeight;
             } else {
-                // if larger than, depends on layout mode
-                // if layout mode is match_parent, scale child height to parent
-                // provide
                 // 如果是填充父窗体模式 则将孩子的高度 设为控件高度
                 if (mLayoutMode == CoverFlowLayoutMode.MATCH_PARENT) {
                     mChildHeight = availableHeight;
-                    // if layout mode is wrap_content, keep child's original
-                    // height
                     // 如果是包裹内容 则将孩子的高度设为孩子允许的最大高度
                 } else if (mLayoutMode == CoverFlowLayoutMode.WRAP_CONTENT) {
                     mChildHeight = maxChildTotalHeight;
-                    // adjust parent's height
                     // 计算出控件的高度
                     if (heightMode == MeasureSpec.AT_MOST) {
                         heightSize = mChildHeight + paddingTop + paddingBottom;
@@ -265,23 +254,19 @@ public class CoverFlowView extends RelativeLayout {
 
         // Adjust movement in y-axis according to gravity
         // 计算出孩子的原点 Y坐标
-        if (mGravity == CoverFlowGravity.CENTER_VERTICAL) {// 竖直居中
+        if (mGravity == CoverFlowGravity.CENTER_VERTICAL) { // 竖直居中
             mChildTranslateY = (heightSize >> 1) - (mChildHeight >> 1);
-        } else if (mGravity == CoverFlowGravity.TOP) {// 顶部对齐
+        } else if (mGravity == CoverFlowGravity.TOP) { // 顶部对齐
             mChildTranslateY = paddingTop;
-        } else if (mGravity == CoverFlowGravity.BOTTOM) {// 底部对齐
+        } else if (mGravity == CoverFlowGravity.BOTTOM) { // 底部对齐
             mChildTranslateY = heightSize - paddingBottom - mChildHeight;
         }
-
-        //mReflectionTranslateY = (int) (mChildTranslateY + mChildHeight - mChildHeight
-        //        * reflectHeightFraction);
 
         setMeasuredDimension(widthSize, heightSize);
         mVisibleChildCount = visibleCount;
         mWidth = widthSize;
     }
 
-    // 第一次初始化该控件
     boolean isFirstIn = true;
     int lastMid = 1;
     boolean isChange = true;
@@ -317,14 +302,12 @@ public class CoverFlowView extends RelativeLayout {
                 }
                 int actuallyPositionEnd = getActuallyPosition(mid + rightChild);
 
-                //TODO
                 View viewItem = mAdapter.getView(actuallyPositionEnd, convertView, this);
 
                 showViewArray.put(actuallyPositionEnd, viewItem);
                 addView(viewItem);
 
                 isChange = true;
-
             } else if (lastMid - 1 == mid) {
                 int actuallyPositionEnd = getActuallyPosition(lastMid + rightChild);
                 View view = showViewArray.get(actuallyPositionEnd);
@@ -338,7 +321,6 @@ public class CoverFlowView extends RelativeLayout {
                 }
                 int actuallyPositionStart = getActuallyPosition(mid - leftChild);
 
-                //TODO
                 View viewItem = mAdapter.getView(actuallyPositionStart, convertView, this);
 
                 showViewArray.put(actuallyPositionStart, viewItem);
@@ -357,7 +339,6 @@ public class CoverFlowView extends RelativeLayout {
         // 计算左边孩子的位置
         int startPos = mid - leftChild;
         for (i = startPos; i < mid; ++i) {
-            //TODO  计算左边孩子的位置
             View child = layoutLeftChild(i, i - offset);
             if (isChange) {
                 int actuallyPosition = getActuallyPosition(i);
@@ -370,7 +351,6 @@ public class CoverFlowView extends RelativeLayout {
 
         int j = -VISIBLE_VIEWS;
         for (i = endPos; i >= mid; --i, j = j + 2) {
-            // TODO 计算右边和中间孩子的位置
             View child = layoutRightChild(i + j, i - offset);
             if (isChange) {
                 int actuallyPosition = getActuallyPosition(i);
@@ -386,7 +366,7 @@ public class CoverFlowView extends RelativeLayout {
         int actuallyPosition = getActuallyPosition(position);
         View child = showViewArray.get(actuallyPosition);
         if (child != null) {
-            makeChildTransfromer(child, actuallyPosition, offset);
+            makeChildTransformer(child, actuallyPosition, offset);
         }
         return child;
     }
@@ -396,7 +376,7 @@ public class CoverFlowView extends RelativeLayout {
         int actuallyPosition = getActuallyPosition(position);
         View child = showViewArray.get(actuallyPosition);
         if (child != null) {
-            makeChildTransfromer(child, actuallyPosition, offset);
+            makeChildTransformer(child, actuallyPosition, offset);
         }
 
         return child;
@@ -409,8 +389,7 @@ public class CoverFlowView extends RelativeLayout {
      * @param position
      * @param offset
      */
-    private void makeChildTransfromer(View child, int position, float offset) {
-        // child.layout(0, 0, ScreenUtil.dp2px(getContext(), 200),ScreenUtil.dp2px(getContext(), 110));
+    private void makeChildTransformer(View child, int position, float offset) {
         child.layout(0, 0, child.getMeasuredWidth(), child.getMeasuredHeight());
 
         float scale = 0;
@@ -421,9 +400,6 @@ public class CoverFlowView extends RelativeLayout {
 
         // 278
         final int originalChildHeight = (int) (mChildHeight - mChildHeight * reflectHeightFraction - reflectGap);
-
-        //final int childTotalHeight = (int) (child.getHeight()
-        //        + child.getHeight() * reflectHeightFraction + reflectGap);
 
         // 1.0
         final float originalChildHeightScale = (float) originalChildHeight / child.getHeight();
@@ -437,13 +413,12 @@ public class CoverFlowView extends RelativeLayout {
         // 180
         final int centerChildWidth = (int) (child.getWidth() * originalChildHeightScale);
 
-        //final int centerChildWidth = (int) (child.getWidth() * childHeightScale);
-
         // 210
         int leftSpace = ((mWidth >> 1) - paddingLeft) - (centerChildWidth >> 1);
         Log.i(TAG, "leftSpace = " + leftSpace);
         int rightSpace = (((mWidth >> 1) - paddingRight) - (centerChildWidth >> 1));
         Log.i(TAG, "rightSpace = " + rightSpace);
+
 //        paddingLeft = 105;
         // 计算出水平方向的x坐标
 //        if (offset == -2.0) { // 左1
@@ -528,7 +503,7 @@ public class CoverFlowView extends RelativeLayout {
         while (position < 0 || position >= max) {
             if (position < 0) {
                 position += max;
-            } else if (position >= max) {
+            } else {
                 position -= max;
             }
         }
@@ -548,18 +523,21 @@ public class CoverFlowView extends RelativeLayout {
 
     private View touchViewItem = null;
     private boolean isOnTopView = false;
-
+    private float down_x;
     @Override
     public boolean onTouchEvent(MotionEvent event) {
+        Log.e(TAG, "action = " + event.getAction());
+//        Log.e(TAG, "topViewPosition = " + getTopViewPosition());
         if (getParent() != null) {
             getParent().requestDisallowInterceptTouchEvent(true);
         }
 
-        if (isOnAnimator) {
-            return false;
-        }
-        int action = event.getAction();
+//        if (isOnAnimator) {
+//            return false;
+//        }
 
+        int action = event.getAction();
+        Log.e(TAG, "action = " + action);
         switch (action) {
             case MotionEvent.ACTION_DOWN:
                 onTouchMove = true;
@@ -574,28 +552,30 @@ public class CoverFlowView extends RelativeLayout {
                 if (isOnTopView) {
                     sendLongClickAction();
                 }
+
+                down_x = event.getRawX();
                 return true;
             case MotionEvent.ACTION_MOVE:
+                Log.i(TAG, "ACTION_MOVE: " + isOnTopView);
                 touchMoved(event);
                 removeLongClickAction();
-                touchViewItem = null;
+//                touchViewItem = null;
                 isOnTopView = false;
                 return true;
             case MotionEvent.ACTION_UP:
-                removeLongClickAction();
-                if (isOnTopView && touchViewItem == getTopView()
-                        && inRangeOfView(touchViewItem, event)) {
 
+                removeLongClickAction();
+                if (Math.abs(event.getRawX() - down_x) < 30 && touchViewItem == getTopView()) {
                     if (mTopViewClickListener != null) {
+                        Log.i(TAG, "mTopViewClickListener: ");
                         mTopViewClickListener.onClick(getTopViewPosition(), getTopView());
                     }
                 }
-                touchViewItem = null;
+//                touchViewItem = null;
                 isOnTopView = false;
                 touchEnded(event);
                 return true;
         }
-
         return false;
     }
 
@@ -606,14 +586,11 @@ public class CoverFlowView extends RelativeLayout {
      */
     private void sendLongClickAction() {
         removeLongClickAction();
-        longClickRunnable = new Runnable() {
-            @Override
-            public void run() {
-                touchViewItem = null;
-                isOnTopView = false;
-                if (mTopViewLongClickListener != null) {
-                    mTopViewLongClickListener.onLongClick(getTopViewPosition(), getTopView());
-                }
+        longClickRunnable = () -> {
+            touchViewItem = null;
+            isOnTopView = false;
+            if (mTopViewLongClickListener != null) {
+                mTopViewLongClickListener.onLongClick(getTopViewPosition(), getTopView());
             }
         };
         postDelayed(longClickRunnable, 600);
@@ -727,6 +704,8 @@ public class CoverFlowView extends RelativeLayout {
     }
 
     private void touchMoved(MotionEvent event) {
+        if(mVelocity == null)
+            return;
         float pos = (event.getX() / mWidth) * MOVE_POS_MULTIPLE - 5;
         pos /= 2;
 
@@ -747,6 +726,9 @@ public class CoverFlowView extends RelativeLayout {
     }
 
     private void touchEnded(MotionEvent event) {
+        if(mVelocity == null) {
+            return;
+        }
         float pos = (event.getX() / mWidth) * MOVE_POS_MULTIPLE - 5;
         pos /= 2;
 
@@ -773,7 +755,7 @@ public class CoverFlowView extends RelativeLayout {
         }
 
         mVelocity.clear();
-        mVelocity.recycle();
+//        mVelocity.recycle();
     }
 
     private float mStartSpeed;
@@ -849,7 +831,8 @@ public class CoverFlowView extends RelativeLayout {
         }
     }
 
-    private boolean isOnAnimator = false; //是否正在进行点击切换动画
+    // 是否正在进行点击切换动画
+    private boolean isOnAnimator = false;
 
     /**
      * 翻到前页
@@ -874,15 +857,11 @@ public class CoverFlowView extends RelativeLayout {
         ValueAnimator animator = ValueAnimator.ofFloat(mOffset, mOffset + target);
         animator.setDuration(300).start();
         animator.setInterpolator(new AccelerateDecelerateInterpolator());
-        animator.addUpdateListener(new AnimatorUpdateListener() {
+        animator.addUpdateListener(animation -> {
+            mOffset = (Float) animation.getAnimatedValue();
 
-            @Override
-            public void onAnimationUpdate(ValueAnimator animation) {
-                mOffset = (Float) animation.getAnimatedValue();
-
-                invalidate();
-                requestLayout();
-            }
+            invalidate();
+            requestLayout();
         });
         animator.addListener(new Animator.AnimatorListener() {
             @Override
@@ -903,12 +882,4 @@ public class CoverFlowView extends RelativeLayout {
             }
         });
     }
-
-//    @Override
-//    public boolean dispatchTouchEvent(MotionEvent ev) {
-//        if (ev.getAction() == MotionEvent.ACTION_MOVE) {
-//            return true; // 禁止滑动
-//        }
-//        return super.dispatchTouchEvent(ev);
-//    }
 }

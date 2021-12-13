@@ -4,7 +4,6 @@ import android.content.Context;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
@@ -65,6 +64,9 @@ public class CoverFlowAdapter implements ICoverFlowAdapter {
 
     @Override
     public void getData(View view, int position) {
+        if (view == null) {
+            return;
+        }
         Holder holder = (Holder) view.getTag();
 
         Channel channelBean = mArray.get(position);

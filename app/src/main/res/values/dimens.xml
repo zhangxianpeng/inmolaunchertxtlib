@@ -1,4 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <dimen name="pt_48">48pt</dimen>
+
+    <dimen name="pt_5">5pt</dimen>
+    <dimen name="pt_10">10pt</dimen>
+    <dimen name="pt_30">30pt</dimen>
 </resources>

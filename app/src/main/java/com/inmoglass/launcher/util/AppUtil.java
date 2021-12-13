@@ -7,8 +7,9 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.text.TextUtils;
 import android.util.Log;
+import android.widget.Toast;
 
-import com.blankj.utilcode.util.LogUtils;
+import com.inmoglass.launcher.R;
 import com.inmoglass.launcher.base.BaseApplication;
 
 import java.util.ArrayList;
@@ -16,22 +17,23 @@ import java.util.List;
 
 /**
  * App 工具类
+ *
  * @author Administrator
  * @date 2021-12-01
  */
-public class APPUtil {
-    private static final String TAG = APPUtil.class.getSimpleName();
-    private static APPUtil mUtil;
+public class AppUtil {
+    private static final String TAG = AppUtil.class.getSimpleName();
+    private static AppUtil mUtil;
     private Context mContext;
 
-    public static synchronized APPUtil getInstance() {
+    public static synchronized AppUtil getInstance() {
         if (mUtil == null) {
-            mUtil = new APPUtil();
+            mUtil = new AppUtil();
         }
         return mUtil;
     }
 
-    public APPUtil() {
+    public AppUtil() {
         this.mContext = BaseApplication.mContext;
     }
 
@@ -72,7 +74,7 @@ public class APPUtil {
         }
 
         if (!isInstalled(mContext, pkgName)) {
-            LogUtils.i(TAG, pkgName + " has not install");
+            Toast.makeText(mContext, R.string.string_app_not_installed, Toast.LENGTH_SHORT).show();
             return false;
         }
 
@@ -135,6 +137,7 @@ public class APPUtil {
     }
 
     private static List<String> selfStudyApps;
+
     /**
      * 过滤自研应用
      *
