@@ -9,7 +9,6 @@ import android.net.wifi.WifiManager;
 import android.os.Handler;
 import android.os.Message;
 import android.util.AttributeSet;
-import android.util.Log;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.AppCompatImageView;
@@ -81,7 +80,7 @@ public class StatusBarWifiStateView extends AppCompatImageView {
         @Override
         public void onReceive(Context context, Intent intent) {
             if (intent.getAction() != null) {
-                Log.e(TAG, "action " + intent.getAction());
+
                 switch (intent.getAction()) {
                     case WifiManager.WIFI_STATE_CHANGED_ACTION:
                         if (wifiManager.getWifiState() == WifiManager.WIFI_STATE_DISABLING) {
@@ -95,7 +94,7 @@ public class StatusBarWifiStateView extends AppCompatImageView {
                         }
                         WifiInfo wifiInfo = wifiManager.getConnectionInfo();
                         int level = WifiManager.calculateSignalLevel(wifiInfo.getRssi(), 5);
-                        Log.e(TAG, "level:" + level);
+
                         wifiHandler.sendEmptyMessage(level);
                         break;
                     default:

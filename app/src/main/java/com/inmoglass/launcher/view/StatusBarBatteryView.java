@@ -10,7 +10,6 @@ import android.os.BatteryManager;
 import android.os.Handler;
 import android.os.Message;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.View;
 
 import androidx.annotation.NonNull;
@@ -74,7 +73,7 @@ public class StatusBarBatteryView extends androidx.appcompat.widget.AppCompatIma
         public void onReceive(Context context, Intent intent) {
             int level = (intent.getIntExtra(BatteryManager.EXTRA_LEVEL, -1) * 100) / intent.getIntExtra(BatteryManager.EXTRA_SCALE, -1);
             Message.obtain(handler, MSG_BATTERY, level, 0).sendToTarget();
-            Log.i(TAG, "EXTRA_LEVEL: " + level);
+            LogUtils.i(TAG, "EXTRA_LEVEL: " + level);
             if (batteryChangedListener != null) {
                 batteryChangedListener.onBatteryChanged(level);
             }

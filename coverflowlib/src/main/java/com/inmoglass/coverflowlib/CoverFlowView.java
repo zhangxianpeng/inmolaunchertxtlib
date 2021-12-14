@@ -8,7 +8,6 @@ import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Rect;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.util.SparseArray;
 import android.view.MotionEvent;
 import android.view.VelocityTracker;
@@ -290,7 +289,6 @@ public class CoverFlowView extends RelativeLayout {
         if (!isFirstIn) {
             if (lastMid + 1 == mid) {
                 int actuallyPositionStart = getActuallyPosition(lastMid - leftChild);
-                Log.i(TAG, "onLayout,,,,,,,,,,,actuallyPositionStart = " + actuallyPositionStart);
                 View view = showViewArray.get(actuallyPositionStart);
                 showViewArray.remove(actuallyPositionStart);
                 removeViewArray.add(view);
@@ -415,9 +413,9 @@ public class CoverFlowView extends RelativeLayout {
 
         // 210
         int leftSpace = ((mWidth >> 1) - paddingLeft) - (centerChildWidth >> 1);
-        Log.i(TAG, "leftSpace = " + leftSpace);
+
         int rightSpace = (((mWidth >> 1) - paddingRight) - (centerChildWidth >> 1));
-        Log.i(TAG, "rightSpace = " + rightSpace);
+
 
 //        paddingLeft = 105;
         // 计算出水平方向的x坐标
@@ -525,9 +523,10 @@ public class CoverFlowView extends RelativeLayout {
     private View touchViewItem = null;
     private boolean isOnTopView = false;
     private float down_x;
+
     @Override
     public boolean onTouchEvent(MotionEvent event) {
-        Log.e(TAG, "action = " + event.getAction());
+
 //        Log.e(TAG, "topViewPosition = " + getTopViewPosition());
         if (getParent() != null) {
             getParent().requestDisallowInterceptTouchEvent(true);
@@ -538,7 +537,6 @@ public class CoverFlowView extends RelativeLayout {
 //        }
 
         int action = event.getAction();
-        Log.e(TAG, "action = " + action);
         switch (action) {
             case MotionEvent.ACTION_DOWN:
                 onTouchMove = true;
@@ -557,7 +555,7 @@ public class CoverFlowView extends RelativeLayout {
                 down_x = event.getRawX();
                 return true;
             case MotionEvent.ACTION_MOVE:
-                Log.i(TAG, "ACTION_MOVE: " + isOnTopView);
+
                 touchMoved(event);
                 removeLongClickAction();
 //                touchViewItem = null;
@@ -567,7 +565,7 @@ public class CoverFlowView extends RelativeLayout {
                 removeLongClickAction();
                 if (Math.abs(event.getRawX() - down_x) < 30 && touchViewItem == getTopView()) {
                     if (mTopViewClickListener != null) {
-                        Log.i(TAG, "mTopViewClickListener: ");
+
                         mTopViewClickListener.onClick(getTopViewPosition(), getTopView());
                     }
                 }
@@ -704,7 +702,7 @@ public class CoverFlowView extends RelativeLayout {
     }
 
     private void touchMoved(MotionEvent event) {
-        if(mVelocity == null)
+        if (mVelocity == null)
             return;
         float pos = (event.getX() / mWidth) * MOVE_POS_MULTIPLE - 5;
         pos /= 2;
@@ -726,7 +724,7 @@ public class CoverFlowView extends RelativeLayout {
     }
 
     private void touchEnded(MotionEvent event) {
-        if(mVelocity == null) {
+        if (mVelocity == null) {
             return;
         }
         float pos = (event.getX() / mWidth) * MOVE_POS_MULTIPLE - 5;
@@ -750,7 +748,6 @@ public class CoverFlowView extends RelativeLayout {
 
             startAnimation(-speed);
         } else {
-            Log.e(VIEW_LOG_TAG, " touch ==>" + event.getX() + " , " + event.getY());
             onTouchMove = false;
         }
 

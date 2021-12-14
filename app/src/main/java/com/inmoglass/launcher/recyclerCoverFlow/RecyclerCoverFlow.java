@@ -2,7 +2,6 @@ package com.inmoglass.launcher.recyclerCoverFlow;
 
 import android.content.Context;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.MotionEvent;
 
 import androidx.annotation.Nullable;
@@ -185,7 +184,6 @@ public class RecyclerCoverFlow extends RecyclerView {
 
     @Override
     public boolean dispatchTouchEvent(MotionEvent ev) {
-        Log.i("s", "action = " + ev.getAction());
         switch (ev.getAction()) {
             case MotionEvent.ACTION_DOWN:
                 mDownX = ev.getX();
@@ -210,9 +208,7 @@ public class RecyclerCoverFlow extends RecyclerView {
                     // 没移动，正常点击
                     sendMsg2MainActivity();
                 } else {
-                    Log.i("s", "times=" + actionUpTimes);
                     if (actionUpTimes > 1) {
-                        Log.e("s", "移动后点击onClick");
                         actionUpTimes = 1;
                         isMove = false;
                     }

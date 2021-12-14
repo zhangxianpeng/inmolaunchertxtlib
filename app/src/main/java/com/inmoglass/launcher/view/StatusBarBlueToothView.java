@@ -12,7 +12,6 @@ import android.os.Handler;
 import android.os.Message;
 import android.os.ParcelUuid;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.View;
 
 import com.inmoglass.launcher.R;
@@ -35,7 +34,7 @@ public class StatusBarBlueToothView extends androidx.appcompat.widget.AppCompatI
 
     public StatusBarBlueToothView(Context context, AttributeSet attrs) {
         super(context, attrs);
-        Log.i("ljwtest:", "StatusBarBlueToothView被新建了");
+
         bluetoothHandler = new BluetoothHandler(this);
         init();
     }
@@ -55,7 +54,7 @@ public class StatusBarBlueToothView extends androidx.appcompat.widget.AppCompatI
     }
 
     private void setImageState(int state) {
-        Log.i(TAG, "setImageState: " + state);
+
         //只管需要的状态
         if (state == BluetoothAdapter.STATE_ON) {
             setVisibility(View.VISIBLE);
@@ -96,10 +95,8 @@ public class StatusBarBlueToothView extends androidx.appcompat.widget.AppCompatI
             method.setAccessible(true);
             int state = (int) method.invoke(BluetoothAdapter.getDefaultAdapter(), (Object[]) null);
             if (state == BluetoothProfile.STATE_CONNECTED) {
-                Log.i(TAG, "Connected");
                 return true;
             } else if (state == BluetoothProfile.STATE_DISCONNECTED) {
-                Log.i(TAG, "Disconnected");
                 return false;
             }
         } catch (Exception e) {
@@ -137,7 +134,6 @@ public class StatusBarBlueToothView extends androidx.appcompat.widget.AppCompatI
         public void onReceive(Context context, Intent intent) {
             String action = intent.getAction();
             if (BluetoothAdapter.ACTION_STATE_CHANGED.equals(action)) {
-                Log.i(TAG, "BluetoothAdapter.ACTION_STATE_CHANGED");
                 int blueState = intent.getIntExtra(BluetoothAdapter.EXTRA_STATE, 0);
 //                switch (blueState) {
 //                    case BluetoothAdapter.STATE_ON:
@@ -148,7 +144,6 @@ public class StatusBarBlueToothView extends androidx.appcompat.widget.AppCompatI
 //                }
                 Message.obtain(bluetoothHandler, MSG_BLETOOTH, blueState, 0).sendToTarget();
             } else if (BluetoothDevice.ACTION_ACL_CONNECTED.equals(action)) {
-                Log.i(TAG, "蓝牙设备已连接");
                 Message.obtain(bluetoothHandler, MSG_BLETOOTH,
                         BluetoothAdapter.STATE_CONNECTED, 0).sendToTarget();
 
@@ -156,13 +151,12 @@ public class StatusBarBlueToothView extends androidx.appcompat.widget.AppCompatI
 
                 Message.obtain(bluetoothHandler, MSG_BLETOOTH,
                         BluetoothAdapter.STATE_DISCONNECTED, 0).sendToTarget();
-                Log.i(TAG, "蓝牙设备已断开");
             } else if (action.equals("android.bluetooth.device.action.SDP_RECORD")) {
-                Log.i(TAG, "SDP_RECORD");
+
                 BluetoothDevice dev = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
                 ParcelUuid uuid = intent.getParcelableExtra(BluetoothDevice.EXTRA_UUID);
                 if (uuid.equals(ParcelUuid.fromString("00001132-0000-1000-8000-00805F9B34FB"))) {
-                    Log.i(TAG, "SDP_RECORD BluetoothUuid.MAS");
+
 //                    SdpMasRecord masrec =
 //                            intent.getParcelableExtra(BluetoothDevice.EXTRA_SDP_RECORD);
 //                    BluetoothMasClient mapclient = new BluetoothMasClient(mDevice, masrec,

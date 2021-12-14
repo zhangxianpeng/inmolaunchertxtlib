@@ -2,6 +2,7 @@ package com.inmoglass.launcher.base
 
 import android.app.Application
 import android.content.Context
+import com.blankj.utilcode.util.LogUtils
 import com.inmo.network.AndroidNetworking
 import com.qweather.sdk.view.HeConfig
 import com.tencent.mmkv.MMKV
@@ -9,8 +10,8 @@ import com.tencent.mmkv.MMKV
 class BaseApplication : Application() {
 
     /**
-//     * 和风天气SDK key
-//     */
+    //     * 和风天气SDK key
+    //     */
 //    val WEATHER_KEY: String = "b9754523666e4abeabef84808c64ed2b"
 
     /**
@@ -23,7 +24,8 @@ class BaseApplication : Application() {
         mContext = this@BaseApplication
         MMKV.initialize(this)
         initWaetherSdk()
-        AndroidNetworking.enableLogging()
+//        AndroidNetworking.enableLogging()
+        LogUtils.getConfig().isLogSwitch = false
     }
 
     companion object {

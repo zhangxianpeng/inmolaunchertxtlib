@@ -48,8 +48,8 @@ class MainActivity : BaseActivity() {
     private val selfStudyApps = arrayOf(
         "com.inmolens.inmomemo",
         "com.yulong.coolcamera",
-        "com.yulong.coolgallery",
-        "com.tentencent.qqlive",
+        "com.inmoglass.album",
+        "com.ichano.athome.camera",
         "com.inmo.settings",
         "com.tentencent.qqlive"
     )
