@@ -437,6 +437,7 @@ public class CoverFlowView extends RelativeLayout {
 //            translateX = 510;
 ////            translateX = ((float) leftSpace / VISIBLE_VIEWS) * (VISIBLE_VIEWS + offset) + paddingLeft - 20;
 //        }
+
         if (offset <= 0) {
             translateX = ((float) leftSpace / VISIBLE_VIEWS) * (VISIBLE_VIEWS + offset) + paddingLeft;
         } else {
@@ -465,7 +466,7 @@ public class CoverFlowView extends RelativeLayout {
         child.setPivotX(0);
         child.setPivotY(child.getHeight() / 2);
         // 显示的调用invalidate
-        child.invalidate();
+//        child.invalidate();
         animSet.setTarget(child);
         animSet.start();
 
@@ -549,9 +550,9 @@ public class CoverFlowView extends RelativeLayout {
                 touchBegan(event);
                 touchViewItem = getTopView();
                 isOnTopView = inRangeOfView(touchViewItem, event);
-                if (isOnTopView) {
-                    sendLongClickAction();
-                }
+//                if (isOnTopView) {
+//                    sendLongClickAction();
+//                }
 
                 down_x = event.getRawX();
                 return true;
@@ -563,7 +564,6 @@ public class CoverFlowView extends RelativeLayout {
                 isOnTopView = false;
                 return true;
             case MotionEvent.ACTION_UP:
-
                 removeLongClickAction();
                 if (Math.abs(event.getRawX() - down_x) < 30 && touchViewItem == getTopView()) {
                     if (mTopViewClickListener != null) {

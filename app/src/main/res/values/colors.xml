@@ -13,4 +13,7 @@
     <color name="color_battery_orange">#FF9712</color>
     <color name="color_battery_white">#FFFFFF</color>
 
+    <color name="lowerPowerColor">#ff4d4d</color>
+    <color name="onlineColor">#00d68d</color>
+    <color name="offlineColor">#bfbfbf</color>
 </resources>

@@ -5,4 +5,29 @@
     <dimen name="pt_5">5pt</dimen>
     <dimen name="pt_10">10pt</dimen>
     <dimen name="pt_30">30pt</dimen>
+
+    <!--电池控件 高度-->
+    <dimen name="power_consumption_rankings_dimen_main_battery_view_height">18pt</dimen>
+    <!--电池控件 宽度-->
+    <dimen name="power_consumption_rankings_dimen_main_battery_view_width">14pt</dimen>
+    <!--电池外壳 厚度-->
+    <dimen name="power_consumption_rankings_dimen_main_battery_view_shell_stroke_width">2pt</dimen>
+    <!--电池外壳 宽度-->
+    <dimen name="power_consumption_rankings_dimen_main_battery_view_shell_width">14pt</dimen>
+    <!--电池外壳 高度-->
+    <dimen name="power_consumption_rankings_dimen_main_battery_view_shell_height">18pt</dimen>
+    <!--电池外壳 圆角-->
+    <dimen name="power_consumption_rankings_dimen_main_battery_view_shell_corner">0dp</dimen>
+    <!--电池头 宽度-->
+    <dimen name="power_consumption_rankings_dimen_main_battery_view_head_width">5pt</dimen>
+    <!--电池头 高度-->
+    <dimen name="power_consumption_rankings_dimen_main_battery_view_head_height">2pt</dimen>
+    <!--电池头 圆角-->
+    <dimen name="power_consumption_rankings_dimen_main_battery_view_head_corner">0dp</dimen>
+    <!--电池外壳和电池等级直接的间距-->
+    <dimen name="power_consumption_rankings_dimen_main_battery_view_gap">2dp</dimen>
+    <!--电池 宽度-->
+    <dimen name="power_consumption_rankings_dimen_main_battery_level_width">14pt</dimen>
+    <!--电池 最大高度-->
+    <dimen name="power_consumption_rankings_dimen_main_battery_level_max_height">18pt</dimen>
 </resources>

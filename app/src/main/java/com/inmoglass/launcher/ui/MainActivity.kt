@@ -49,6 +49,7 @@ class MainActivity : BaseActivity() {
         "com.inmolens.inmomemo",
         "com.yulong.coolcamera",
         "com.yulong.coolgallery",
+        "com.tentencent.qqlive",
         "com.inmo.settings",
         "com.tentencent.qqlive"
     )
@@ -107,17 +108,17 @@ class MainActivity : BaseActivity() {
                     val intent = Intent("com.android.systemui.keyguard.shutdown")
                     sendBroadcast(intent)
                 }
-                Intent.ACTION_BATTERY_CHANGED-> {
+                Intent.ACTION_BATTERY_CHANGED -> {
                     val level = p1.getIntExtra(BatteryManager.EXTRA_LEVEL, 0)
                     val isCharging = p1.getIntExtra(BatteryManager.EXTRA_PLUGGED, -1) !== 0
                     LogUtils.i(TAG, "currentBattery$level")
-                    sbb_battery.setBattaryPercent(level)
+                    sbb_battery.setLevelHeight(level)
                     if (level in 0..5) {
-                        sbb_battery.setFrontColor(getColor(R.color.color_battery_red))
+                        sbb_battery.setOnline(getColor(R.color.color_battery_red))
                     } else if (level in 6..15) {
-                        sbb_battery.setFrontColor(getColor(R.color.color_battery_orange))
+                        sbb_battery.setOnline(getColor(R.color.color_battery_orange))
                     } else if (level in 16..100) {
-                        sbb_battery.setFrontColor(getColor(R.color.color_battery_white))
+                        sbb_battery.setOnline(getColor(R.color.color_battery_white))
                     }
                     iv_isCharging.visibility = if (isCharging) VISIBLE else INVISIBLE
                 }
@@ -127,7 +128,7 @@ class MainActivity : BaseActivity() {
 
     override fun onTouchEvent(event: MotionEvent?): Boolean {
 
-            coverflow.onTouchEvent(event)
+        coverflow.onTouchEvent(event)
         return false
     }
 
@@ -184,9 +185,11 @@ class MainActivity : BaseActivity() {
         channelBeanList!!.add(tencentChannel)
         val qqMusicChannel = Channel(R.drawable.img_home_meitiwenjian, getString(R.string.string_home_media), R.drawable.icon_home_meiti, selfStudyApps[2])
         channelBeanList!!.add(qqMusicChannel)
-        val kugouChannel = Channel(R.drawable.img_home_setting, getString(R.string.string_home_setting), R.drawable.icon_home_setting, selfStudyApps[3])
+        val kanjiaChannel = Channel(R.drawable.img_home_kanjia, getString(R.string.string_home_kanjia), R.drawable.icon_home_kanjia, selfStudyApps[3])
+        channelBeanList!!.add(kanjiaChannel)
+        val kugouChannel = Channel(R.drawable.img_home_setting, getString(R.string.string_home_setting), R.drawable.icon_home_setting, selfStudyApps[4])
         channelBeanList!!.add(kugouChannel)
-        val aMapChannel = Channel(R.drawable.img_home_tengxun, getString(R.string.string_home_tencent), R.drawable.icon_home_tengxun, selfStudyApps[4])
+        val aMapChannel = Channel(R.drawable.img_home_tengxun, getString(R.string.string_home_tencent), R.drawable.icon_home_tengxun, selfStudyApps[5])
         channelBeanList!!.add(aMapChannel)
         val coverFlowAdapter = CoverFlowAdapter(this, channelBeanList)
         coverflow.adapter = coverFlowAdapter
@@ -203,7 +206,7 @@ class MainActivity : BaseActivity() {
     }
 
     override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
-        if(keyCode == KeyEvent.KEYCODE_BACK) {
+        if (keyCode == KeyEvent.KEYCODE_BACK) {
             return true
         }
         return super.onKeyDown(keyCode, event)

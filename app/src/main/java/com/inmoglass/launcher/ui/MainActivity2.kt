@@ -121,13 +121,13 @@ class MainActivity2 : BaseActivity() {
                     val level = p1.getIntExtra(BatteryManager.EXTRA_LEVEL, 0)
                     val isCharging = p1.getIntExtra(BatteryManager.EXTRA_PLUGGED, -1) !== 0
                     LogUtils.i(tag, "currentBattery$level")
-                    sbb_battery.setBattaryPercent(level)
+                    sbb_battery.setLevelHeight(level)
                     if (level in 0..5) {
-                        sbb_battery.setFrontColor(getColor(R.color.color_battery_red))
+                        sbb_battery.setOnline(getColor(R.color.color_battery_red))
                     } else if (level in 6..15) {
-                        sbb_battery.setFrontColor(getColor(R.color.color_battery_orange))
+                        sbb_battery.setOnline(getColor(R.color.color_battery_orange))
                     } else if (level in 16..100) {
-                        sbb_battery.setFrontColor(getColor(R.color.color_battery_white))
+                        sbb_battery.setOnline(getColor(R.color.color_battery_white))
                     }
                     iv_isCharging.visibility = if (isCharging) VISIBLE else INVISIBLE
                 }
