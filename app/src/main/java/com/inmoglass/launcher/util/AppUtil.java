@@ -1,5 +1,6 @@
 package com.inmoglass.launcher.util;
 
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ApplicationInfo;
@@ -9,6 +10,7 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.blankj.utilcode.util.LogUtils;
 import com.inmoglass.launcher.R;
 import com.inmoglass.launcher.base.BaseApplication;
 
@@ -66,26 +68,30 @@ public class AppUtil {
     }
 
     /**
-     * 通过包名打开应用 返回true:成功 返回false:失败
+     * 用包名和类名启动
+     *
+     * @param pkgName
+     * @param activityName
      */
-    public boolean openApplication(String pkgName) {
+    public void openApplication(String pkgName, String activityName) {
         if (TextUtils.isEmpty(pkgName)) {
-            return false;
+            return;
         }
 
         if (!isInstalled(mContext, pkgName)) {
             Toast.makeText(mContext, R.string.string_app_not_installed, Toast.LENGTH_SHORT).show();
-            return false;
+            return;
         }
-
-        Log.i(TAG, "The package will be open : " + pkgName);
-        Intent intent = mContext.getPackageManager().getLaunchIntentForPackage(pkgName);
-        if (intent == null) {
-            return false;
+        Intent intent1 = mContext.getPackageManager().getLaunchIntentForPackage(pkgName);
+        if (intent1 == null) {
+            return;
         }
+        Intent intent = new Intent();
+        ComponentName componentName = new ComponentName(pkgName, activityName);
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        intent.setComponent(componentName);
+        LogUtils.d("packageName = " + pkgName + " activityName = " + activityName);
         mContext.startActivity(intent);
-        return true;
     }
 
     /**

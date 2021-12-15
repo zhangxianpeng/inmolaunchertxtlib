@@ -21,7 +21,6 @@ import androidx.viewpager.widget.ViewPager;
 
 import com.inmoglass.launcher.R;
 import com.inmoglass.launcher.adapter.ApplistAdapter;
-
 import com.inmoglass.launcher.adapter.ViewPagerAdapter;
 import com.inmoglass.launcher.bean.AppInfo;
 import com.inmoglass.launcher.util.AppUtil;
@@ -129,7 +128,7 @@ public class AppManagerActivity extends AppCompatActivity {
                     // 选中效果
                     adapter.setSelecteded((int) adapter.getItemId(position));
                     adapter.notifyDataSetChanged();
-                    AppUtil.getInstance().openApplication(appList.get((int) adapter.getItemId(position)).pkgName);
+//                    AppUtil.getInstance().openApplication(appList.get((int) adapter.getItemId(position)).pkgName);
                 }
             });
             recyclerView.setAdapter(adapter);
