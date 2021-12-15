@@ -1,16 +1,21 @@
 <resources>
     <string name="app_name">LAUNCHER</string>
-    <string name="string_home_wechat">微信</string>
-    <string name="string_home_tencent">腾讯视频</string>
-    <string name="string_home_qq_music">QQ音乐</string>
-    <string name="string_home_kugou">酷狗音乐</string>
-    <string name="string_home_gaode">高德地图</string>
     <string name="string_home_beiwanglu">备忘录</string>
-    <string name="string_home_camera">相机</string>
+    <string name="string_home_wendang">文档</string>
     <string name="string_home_media">媒体文件</string>
-    <string name="string_home_kanjia">掌上看家</string>
+    <string name="string_home_camera">相机</string>
     <string name="string_home_setting">设置</string>
+    <string name="string_home_kanjia">掌上看家</string>
+    <string name="string_home_wechat">微信</string>
+    <string name="string_home_qq_music">QQ音乐</string>
+    <string name="string_home_gaode">高德地图</string>
+    <string name="string_home_wps">WPS</string>
+    <string name="string_home_ximalaya">喜马拉雅</string>
+
+    <string name="string_home_tencent">腾讯视频</string>
+    <string name="string_home_kugou">酷狗音乐</string>
     <string name="string_home_more_apps">MORE APPS</string>
+
     <string name="string_app_not_installed">The APP IS NOT INSTALLED</string>
     <string name="string_app_list">APP LIST</string>
 </resources>

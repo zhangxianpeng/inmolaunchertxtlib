@@ -57,20 +57,24 @@ public class MainActivity extends BaseActivity {
 
     private final String[] packageNames = new String[]{
             "com.inmolens.inmomemo",
-            "com.yulong.coolcamera",
+            "com.inmoglass.documents",
             "com.inmoglass.album",
-            "com.ichano.athome.camera",
+            "com.yulong.coolcamera",
             "com.inmo.settings",
-            "com.tentencent.qqlive"
+            "com.ichano.athome.camera",
+            "com.tencent.qqmusicpad",
+            "com.autonavi.amapauto"
     };
 
     private final String[] packageActivities = new String[]{
             "com.inmolens.inmomemo.MainActivity",
-            "com.yulong.arcamera.MainActivity",
+            "com.inmoglass.documents.ui.MainActivity",
             "com.inmoglass.album.ui.MainActivity",
-            "com.ichano.athome.camera",
-            "com.inmo.settings",
-            "com.tentencent.qqlive"
+            "com.yulong.arcamera.MainActivity",
+            "com.inmo.settings.MainActivity",
+            "com.ichano.athome.camera.LoadingActivity",
+            "com.tencent.qqmusicpad.activity.AppStarterActivity",
+            "com.autonavi.amapauto.MainMapActivity"
     };
 
     private PowerConsumptionRankingsBatteryView batteryView;
@@ -163,11 +167,13 @@ public class MainActivity extends BaseActivity {
     private void initAdapter() {
         channelList = new ArrayList<>();
         channelList.add(new Channel(R.drawable.img_home_beiwanglu, getString(R.string.string_home_beiwanglu), R.drawable.icon_home_beiwanglu));
-        channelList.add(new Channel(R.drawable.img_home_camera, getString(R.string.string_home_camera), R.drawable.icon_home_camera));
+        channelList.add(new Channel(R.drawable.img_home_wendang, getString(R.string.string_home_wendang), R.drawable.icon_file_word));
         channelList.add(new Channel(R.drawable.img_home_meitiwenjian, getString(R.string.string_home_media), R.drawable.icon_home_meiti));
-        channelList.add(new Channel(R.drawable.img_home_kanjia, getString(R.string.string_home_kanjia), R.drawable.icon_home_kanjia));
+        channelList.add(new Channel(R.drawable.img_home_camera, getString(R.string.string_home_camera), R.drawable.icon_home_camera));
         channelList.add(new Channel(R.drawable.img_home_setting, getString(R.string.string_home_setting), R.drawable.icon_home_setting));
-        channelList.add(new Channel(R.drawable.img_home_tengxun, getString(R.string.string_home_tencent), R.drawable.icon_home_tengxun));
+        channelList.add(new Channel(R.drawable.img_home_kanjia, getString(R.string.string_home_kanjia), R.drawable.icon_home_kanjia));
+        channelList.add(new Channel(R.drawable.img_home_qqmusic, getString(R.string.string_home_qq_music), R.drawable.icon_home_qqmusic));
+        channelList.add(new Channel(R.drawable.img_home_gaode, getString(R.string.string_home_gaode), R.drawable.icon_home_gaode));
         launcherAdapter = new LauncherAdapter(this, channelList);
         carouselLayoutManager = new CarouselLayoutManager(CarouselLayoutManager.HORIZONTAL, false);
         setLayoutManager(carouselLayoutManager, launcherAdapter);
