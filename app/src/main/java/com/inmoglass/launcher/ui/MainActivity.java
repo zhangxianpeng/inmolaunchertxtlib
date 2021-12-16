@@ -11,6 +11,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.view.GestureDetector;
+import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ImageView;
@@ -152,6 +153,16 @@ public class MainActivity extends BaseActivity {
         launcherRecyclerView.dispatchTouchEvent(ev);
         mGestureDetector.onTouchEvent(ev);
         return true;
+    }
+
+    @Override
+    public boolean dispatchKeyEvent(KeyEvent event) {
+        // 屏蔽返回键，fix bug：下拉返回闪屏原生界面
+        if (event.getKeyCode() == KeyEvent.KEYCODE_BACK) {
+            return true;
+        } else {
+            return super.dispatchKeyEvent(event);
+        }
     }
 
     private void initViews() {
