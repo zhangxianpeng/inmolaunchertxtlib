@@ -39,7 +39,6 @@ import com.inmoglass.launcher.carousellayoutmanager.CenterScrollListener;
 import com.inmoglass.launcher.service.SocketService;
 import com.inmoglass.launcher.util.AppUtil;
 import com.inmoglass.launcher.util.WeatherResUtil;
-import com.inmoglass.launcher.util.WriteLogFileUtil;
 import com.inmoglass.launcher.view.PowerConsumptionRankingsBatteryView;
 import com.permissionx.guolindev.PermissionX;
 
@@ -50,25 +49,34 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
+ * 此类为动态配置排列顺序使用
  * @author Administrator
  */
-public class MainActivity extends BaseActivity {
+public class MainActivity2 extends BaseActivity {
 
-    private static final String TAG = MainActivity.class.getSimpleName();
+    private static final String TAG = MainActivity2.class.getSimpleName();
     private static final String SHUT_DOWN_ACTION = "com.android.systemui.ready.poweraction";
-    //    首页应用顺序依次为：备忘录、文档、相册、相机、微信、QQ音乐、喜马拉雅、高德地图、WPS、掌上看家、应用商城、设置
+
     private final String[] packageNames = new String[]{
             "com.inmolens.inmomemo",
             "com.inmoglass.documents",
             "com.inmoglass.album",
             "com.yulong.coolcamera",
-            "com.tencent.mm",
-            "com.tencent.qqmusiccar",
-            "com.ximalaya.ting.android.car",
-            "com.autonavi.amapauto",
-            "cn.wps.moffice_eng",
-            "com.ichano.athome.avs",
             "com.inmo.settings",
+            "com.ichano.athome.camera",
+            "com.tencent.qqmusicpad",
+            "com.autonavi.amapauto"
+    };
+
+    private final String[] packageActivities = new String[]{
+            "com.inmolens.inmomemo.MainActivity",
+            "com.inmoglass.documents.ui.MainActivity",
+            "com.inmoglass.album.ui.MainActivity",
+            "com.yulong.arcamera.MainActivity",
+            "com.inmo.settings.MainActivity",
+            "com.ichano.athome.camera.LoadingActivity",
+            "com.tencent.qqmusicpad.activity.AppStarterActivity",
+            "com.autonavi.amapauto.MainMapActivity"
     };
 
     private PowerConsumptionRankingsBatteryView batteryView;
@@ -97,8 +105,8 @@ public class MainActivity extends BaseActivity {
         initViews();
 
         PermissionX.init(this)
-                .permissions(Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION,
-                        Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                .permissions(Manifest.permission.ACCESS_COARSE_LOCATION,
+                        Manifest.permission.ACCESS_FINE_LOCATION)
                 .request((allGranted, grantedList, deniedList) -> {
                     if (allGranted) {
                         startLocation();
@@ -110,11 +118,7 @@ public class MainActivity extends BaseActivity {
         mGestureDetector = new GestureDetector(this, new GestureDetector.SimpleOnGestureListener() {
             @Override
             public boolean onSingleTapUp(MotionEvent e) {
-                if (selectPosition == 3) { // camera
-                    AppUtil.getInstance().openApplication("com.yulong.coolcamera", "com.yulong.arcamera.MainActivity");
-                } else {
-                    AppUtil.getInstance().openApplicationByPkgName(packageNames[selectPosition]);
-                }
+                AppUtil.getInstance().openApplication(packageNames[selectPosition], packageActivities[selectPosition]);
                 return true;
             }
         });
@@ -172,22 +176,16 @@ public class MainActivity extends BaseActivity {
         initAdapter();
     }
 
-    //    备忘录、文档、相册、相机、微信、QQ音乐、喜马拉雅、高德地图、WPS、掌上看家、应用商城、设置
     private void initAdapter() {
         channelList = new ArrayList<>();
         channelList.add(new Channel(R.drawable.img_home_beiwanglu, getString(R.string.string_home_beiwanglu), R.drawable.icon_home_beiwanglu));
         channelList.add(new Channel(R.drawable.img_home_wendang, getString(R.string.string_home_wendang), R.drawable.icon_file_word));
         channelList.add(new Channel(R.drawable.img_home_meitiwenjian, getString(R.string.string_home_media), R.drawable.icon_home_meiti));
         channelList.add(new Channel(R.drawable.img_home_camera, getString(R.string.string_home_camera), R.drawable.icon_home_camera));
-        channelList.add(new Channel(R.drawable.img_home_weixin, getString(R.string.string_home_wechat), R.drawable.icon_home_weixin));
-        channelList.add(new Channel(R.drawable.img_home_qqmusic, getString(R.string.string_home_qq_music), R.drawable.icon_home_qqmusic));
-        channelList.add(new Channel(R.drawable.img_home_ximalaya, getString(R.string.string_home_ximalaya), R.drawable.icon_home_ximalaya));
-        channelList.add(new Channel(R.drawable.img_home_gaode, getString(R.string.string_home_gaode), R.drawable.icon_home_gaode));
-        channelList.add(new Channel(R.drawable.img_home_wps, getString(R.string.string_home_wps), R.drawable.icon_home_wps));
-        channelList.add(new Channel(R.drawable.img_home_kanjia, getString(R.string.string_home_kanjia), R.drawable.icon_home_kanjia));
-//        channelList.add(new Channel(R.drawable.img_home_store, getString(R.string.string_home_store), R.drawable.icon_home_store));
         channelList.add(new Channel(R.drawable.img_home_setting, getString(R.string.string_home_setting), R.drawable.icon_home_setting));
-
+        channelList.add(new Channel(R.drawable.img_home_kanjia, getString(R.string.string_home_kanjia), R.drawable.icon_home_kanjia));
+        channelList.add(new Channel(R.drawable.img_home_qqmusic, getString(R.string.string_home_qq_music), R.drawable.icon_home_qqmusic));
+        channelList.add(new Channel(R.drawable.img_home_gaode, getString(R.string.string_home_gaode), R.drawable.icon_home_gaode));
         launcherAdapter = new LauncherAdapter(this, channelList);
         carouselLayoutManager = new CarouselLayoutManager(CarouselLayoutManager.HORIZONTAL, false);
         setLayoutManager(carouselLayoutManager, launcherAdapter);
@@ -274,8 +272,6 @@ public class MainActivity extends BaseActivity {
             String action = intent.getAction();
             switch (action) {
                 case SHUT_DOWN_ACTION:
-                    // 写入文件测试是否收到这个广播,/sdcard/shutdownLog/data.txt
-                    WriteLogFileUtil.writeFile();
                     Intent shutdownIntent = new Intent("com.android.systemui.keyguard.shutdown");
                     sendBroadcast(shutdownIntent);
                     break;

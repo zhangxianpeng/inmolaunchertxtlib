@@ -77,7 +77,6 @@ public class AppUtil {
         if (TextUtils.isEmpty(pkgName)) {
             return;
         }
-
         if (!isInstalled(mContext, pkgName)) {
             Toast.makeText(mContext, R.string.string_app_not_installed, Toast.LENGTH_SHORT).show();
             return;
@@ -91,6 +90,28 @@ public class AppUtil {
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         intent.setComponent(componentName);
         LogUtils.d("packageName = " + pkgName + " activityName = " + activityName);
+        mContext.startActivity(intent);
+    }
+
+    /**
+     * @param pkgName
+     */
+    public void openApplicationByPkgName(String pkgName) {
+        if (TextUtils.isEmpty(pkgName)) {
+            return;
+        }
+
+        if (!isInstalled(mContext, pkgName)) {
+            Toast.makeText(mContext, R.string.string_app_not_installed, Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        Log.i(TAG, "The package will be open : " + pkgName);
+        Intent intent = mContext.getPackageManager().getLaunchIntentForPackage(pkgName);
+        if (intent == null) {
+            return;
+        }
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         mContext.startActivity(intent);
     }
 

@@ -1,5 +1,8 @@
 package com.inmoglass.launcher.bean;
 
+/**
+ * @author Administrator
+ */
 public class Channel {
     private int appImg;
     private String appName;
