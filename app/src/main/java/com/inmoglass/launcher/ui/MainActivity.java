@@ -56,19 +56,18 @@ public class MainActivity extends BaseActivity {
 
     private static final String TAG = MainActivity.class.getSimpleName();
     private static final String SHUT_DOWN_ACTION = "com.android.systemui.ready.poweraction";
-    //    首页应用顺序依次为：备忘录、文档、相册、相机、微信、QQ音乐、喜马拉雅、高德地图、WPS、掌上看家、应用商城、设置
+    //    首页应用顺序依次为: 相册、相机、备忘录、QQ音乐、喜马拉雅、高德地图、文档、WPS、设置、莲雾
     private final String[] packageNames = new String[]{
-            "com.inmolens.inmomemo",
-            "com.inmoglass.documents",
             "com.inmoglass.album",
             "com.yulong.coolcamera",
-            "com.tencent.mm",
+            "com.inmolens.inmomemo",
             "com.tencent.qqmusiccar",
             "com.ximalaya.ting.android.car",
             "com.autonavi.amapauto",
+            "com.inmoglass.documents",
             "cn.wps.moffice_eng",
-            "com.ichano.athome.avs",
             "com.inmo.settings",
+            "com.inmoglass.arglass"
     };
 
     private PowerConsumptionRankingsBatteryView batteryView;
@@ -110,7 +109,8 @@ public class MainActivity extends BaseActivity {
         mGestureDetector = new GestureDetector(this, new GestureDetector.SimpleOnGestureListener() {
             @Override
             public boolean onSingleTapUp(MotionEvent e) {
-                if (selectPosition == 3) { // camera
+                LogUtils.i(TAG, "launcher start activity," + packageNames[selectPosition]);
+                if (selectPosition == 1) { // camera
                     AppUtil.getInstance().openApplication("com.yulong.coolcamera", "com.yulong.arcamera.MainActivity");
                 } else {
                     AppUtil.getInstance().openApplicationByPkgName(packageNames[selectPosition]);
@@ -172,21 +172,22 @@ public class MainActivity extends BaseActivity {
         initAdapter();
     }
 
-    //    备忘录、文档、相册、相机、微信、QQ音乐、喜马拉雅、高德地图、WPS、掌上看家、应用商城、设置
+    //    相册、相机、备忘录、QQ音乐、喜马拉雅、高德地图、文档、WPS、设置、莲雾
     private void initAdapter() {
         channelList = new ArrayList<>();
-        channelList.add(new Channel(R.drawable.img_home_beiwanglu, getString(R.string.string_home_beiwanglu), R.drawable.icon_home_beiwanglu));
-        channelList.add(new Channel(R.drawable.img_home_wendang, getString(R.string.string_home_wendang), R.drawable.icon_file_word));
         channelList.add(new Channel(R.drawable.img_home_meitiwenjian, getString(R.string.string_home_media), R.drawable.icon_home_meiti));
         channelList.add(new Channel(R.drawable.img_home_camera, getString(R.string.string_home_camera), R.drawable.icon_home_camera));
-        channelList.add(new Channel(R.drawable.img_home_weixin, getString(R.string.string_home_wechat), R.drawable.icon_home_weixin));
+        channelList.add(new Channel(R.drawable.img_home_beiwanglu, getString(R.string.string_home_beiwanglu), R.drawable.icon_home_beiwanglu));
         channelList.add(new Channel(R.drawable.img_home_qqmusic, getString(R.string.string_home_qq_music), R.drawable.icon_home_qqmusic));
         channelList.add(new Channel(R.drawable.img_home_ximalaya, getString(R.string.string_home_ximalaya), R.drawable.icon_home_ximalaya));
         channelList.add(new Channel(R.drawable.img_home_gaode, getString(R.string.string_home_gaode), R.drawable.icon_home_gaode));
+        channelList.add(new Channel(R.drawable.img_home_wendang, getString(R.string.string_home_wendang), R.drawable.icon_file_word));
         channelList.add(new Channel(R.drawable.img_home_wps, getString(R.string.string_home_wps), R.drawable.icon_home_wps));
-        channelList.add(new Channel(R.drawable.img_home_kanjia, getString(R.string.string_home_kanjia), R.drawable.icon_home_kanjia));
-//        channelList.add(new Channel(R.drawable.img_home_store, getString(R.string.string_home_store), R.drawable.icon_home_store));
         channelList.add(new Channel(R.drawable.img_home_setting, getString(R.string.string_home_setting), R.drawable.icon_home_setting));
+        // lianwu
+        channelList.add(new Channel(R.drawable.img_home_lianwu, getString(R.string.string_home_lianwu), R.drawable.icon_home_lianwu));
+//        channelList.add(new Channel(R.drawable.img_home_kfc, getString(R.string.string_home_kfc), R.drawable.icon_home_kfc));
+//        channelList.add(new Channel(R.drawable.img_home_store, getString(R.string.string_home_store), R.drawable.icon_home_store));
 
         launcherAdapter = new LauncherAdapter(this, channelList);
         carouselLayoutManager = new CarouselLayoutManager(CarouselLayoutManager.HORIZONTAL, false);
@@ -194,7 +195,7 @@ public class MainActivity extends BaseActivity {
     }
 
     private void setLayoutManager(CarouselLayoutManager carouselLayoutManager, LauncherAdapter launcherAdapter) {
-        carouselLayoutManager.setPostLayoutListener(new CarouselZoomPostLayoutListener(0.12f));
+        carouselLayoutManager.setPostLayoutListener(new CarouselZoomPostLayoutListener(0.20f));
         carouselLayoutManager.setMaxVisibleItems(3);
         launcherRecyclerView.setLayoutManager(carouselLayoutManager);
         launcherRecyclerView.setScrollingTouchSlop(250);
@@ -314,7 +315,7 @@ public class MainActivity extends BaseActivity {
                         temperatureTextView.setText(temp + "℃");
                     }
                     if (weatherTextView != null) {
-                        weatherTextView.setText(text + "℃");
+                        weatherTextView.setText(text);
                     }
                     if (weatherImageView != null) {
                         weatherImageView.setImageResource(WeatherResUtil.getEqualRes(icon));

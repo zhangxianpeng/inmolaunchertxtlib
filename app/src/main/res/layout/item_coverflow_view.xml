@@ -1,12 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="160pt"
-    android:layout_height="260pt"
+    android:layout_width="180pt"
+    android:layout_height="292pt"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
-    app:cardCornerRadius="8pt"
-    android:layout_marginStart="100pt"
-    android:layout_marginEnd="100pt">
+    app:cardCornerRadius="8pt">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -16,25 +14,25 @@
 
         <ImageView
             android:id="@+id/iv_channelImg"
-            android:layout_width="142pt"
-            android:layout_height="178pt"
+            android:layout_width="160pt"
+            android:layout_height="200pt"
             android:layout_marginStart="10pt"
             android:layout_marginTop="10pt"
             android:src="@drawable/img_home_kuaizhao_qqmusic" />
 
         <ImageView
             android:id="@+id/iv_icon"
-            android:layout_width="32pt"
-            android:layout_height="32pt"
+            android:layout_width="36pt"
+            android:layout_height="36pt"
             android:layout_gravity="center"
-            android:layout_marginTop="9pt"
+            android:layout_marginTop="10pt"
             android:src="@drawable/ic_icon_home_qqmusic" />
 
         <TextView
             android:id="@+id/tv_appName"
             style="@style/text_style"
             android:layout_gravity="center"
-            android:layout_marginTop="3pt"
+            android:layout_marginTop="4pt"
             android:gravity="center"
             android:text="@string/string_home_qq_music"
             android:textSize="18pt" />

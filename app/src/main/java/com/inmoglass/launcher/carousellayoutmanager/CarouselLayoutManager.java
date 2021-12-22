@@ -22,20 +22,7 @@ import java.util.Iterator;
 import java.util.List;
 
 /**
- * An implementation of {@link RecyclerView.LayoutManager} that layout items like carousel.
- * Generally there is one center item and bellow this item there are maximum {@link com.mig35.carousellayoutmanager.CarouselLayoutManager#getMaxVisibleItems()} items on each side of the center
- * item. By default {@link com.mig35.carousellayoutmanager.CarouselLayoutManager#getMaxVisibleItems()} is {@link com.mig35.carousellayoutmanager.CarouselLayoutManager#MAX_VISIBLE_ITEMS}.<br />
- * <br />
- * This LayoutManager supports only fixedSized adapter items.<br />
- * <br />
- * This LayoutManager supports {@link com.mig35.carousellayoutmanager.CarouselLayoutManager#HORIZONTAL} and {@link com.mig35.carousellayoutmanager.CarouselLayoutManager#VERTICAL} orientations. <br />
- * <br />
- * This LayoutManager supports circle layout. By default it if disabled. We don't recommend to use circle layout with adapter items count less then 3. <br />
- * <br />
- * Please be sure that layout_width of adapter item is a constant value and not {@link ViewGroup.LayoutParams#MATCH_PARENT}
- * for {@link #HORIZONTAL} orientation.
- * So like layout_height is not {@link ViewGroup.LayoutParams#MATCH_PARENT} for {@link com.mig35.carousellayoutmanager.CarouselLayoutManager#VERTICAL}<br />
- * <br />
+ * @author Administrator
  */
 public class CarouselLayoutManager extends RecyclerView.LayoutManager implements RecyclerView.SmoothScroller.ScrollVectorProvider {
 
@@ -351,16 +338,13 @@ public class CarouselLayoutManager extends RecyclerView.LayoutManager implements
 
         if (null == mDecoratedChildWidth || mDecoratedChildSizeInvalid) {
             final List<RecyclerView.ViewHolder> scrapList = recycler.getScrapList();
-
             final boolean shouldRecycle;
             final View view;
             if (scrapList.isEmpty()) {
                 shouldRecycle = true;
                 final int itemsCount = state.getItemCount();
                 view = recycler.getViewForPosition(
-                        mPendingScrollPosition == INVALID_POSITION ?
-                                0 :
-                                Math.max(0, Math.min(itemsCount - 1, mPendingScrollPosition))
+                        mPendingScrollPosition == INVALID_POSITION ? 0 : Math.max(0, Math.min(itemsCount - 1, mPendingScrollPosition))
                 );
                 addView(view);
             } else {
@@ -927,8 +911,7 @@ public class CarouselLayoutManager extends RecyclerView.LayoutManager implements
             parcel.writeInt(mCenterItemPosition);
         }
 
-        public static final Creator<CarouselSavedState> CREATOR
-                = new Creator<CarouselSavedState>() {
+        public static final Creator<CarouselSavedState> CREATOR = new Creator<CarouselSavedState>() {
             @Override
             public CarouselSavedState createFromParcel(final Parcel parcel) {
                 return new CarouselSavedState(parcel);

@@ -2,7 +2,7 @@
     <string name="app_name">LAUNCHER</string>
     <string name="string_home_beiwanglu">备忘录</string>
     <string name="string_home_wendang">文档</string>
-    <string name="string_home_media">媒体文件</string>
+    <string name="string_home_media">相册</string>
     <string name="string_home_camera">相机</string>
     <string name="string_home_setting">设置</string>
     <string name="string_home_store">应用商店</string>
@@ -13,6 +13,8 @@
     <string name="string_home_wps">WPS</string>
     <string name="string_home_ximalaya">喜马拉雅</string>
     <string name="string_home_momo">陌陌</string>
+    <string name="string_home_lianwu">莲雾</string>
+    <string name="string_home_kfc">AI训练</string>
 
     <string name="string_home_tencent">腾讯视频</string>
     <string name="string_home_kugou">酷狗音乐</string>
