@@ -7,7 +7,6 @@ import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.text.TextUtils;
-import android.util.Log;
 import android.widget.Toast;
 
 import com.blankj.utilcode.util.LogUtils;
@@ -63,7 +62,7 @@ public class AppUtil {
                 isInstalled = true;
             }
         }
-        Log.i(TAG, packageName + "is installed ? " + isInstalled);
+        LogUtils.i(TAG, packageName + "is installed ? " + isInstalled);
         return isInstalled;
     }
 
@@ -106,7 +105,7 @@ public class AppUtil {
             return;
         }
 
-        Log.i(TAG, "The package will be open : " + pkgName);
+        LogUtils.i(TAG, "The package will be open : " + pkgName);
         Intent intent = mContext.getPackageManager().getLaunchIntentForPackage(pkgName);
         if (intent == null) {
             return;

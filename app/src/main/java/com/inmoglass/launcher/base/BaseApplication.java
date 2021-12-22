@@ -3,6 +3,7 @@ package com.inmoglass.launcher.base;
 import android.app.Application;
 import android.content.Context;
 
+import com.blankj.utilcode.util.LogUtils;
 import com.qweather.sdk.view.HeConfig;
 import com.tencent.mmkv.MMKV;
 
@@ -17,6 +18,8 @@ public class BaseApplication extends Application {
         MMKV.initialize(this);
         initWaetherSdk();
         mContext = this;
+        // Log统一配置
+        LogUtils.getConfig().setLogSwitch(true);
     }
 
     private void initWaetherSdk() {

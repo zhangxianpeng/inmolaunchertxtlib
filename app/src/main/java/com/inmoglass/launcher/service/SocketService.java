@@ -18,7 +18,6 @@ import android.os.Binder;
 import android.os.Build;
 import android.os.IBinder;
 import android.text.TextUtils;
-import android.util.Log;
 
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
@@ -240,7 +239,7 @@ public class SocketService extends Service {
      * @param instruction 伴随操作
      */
     private void openGallery(String instruction, FileTransferInfo fileTransferInfo) {
-        Log.i(TAG, "openGallery,instruction=" + instruction);
+        LogUtils.i(TAG, "openGallery,instruction=" + instruction);
         if (instruction.equals(GET_WIFIP2P_INFO)) {
             return;
         }
@@ -250,7 +249,7 @@ public class SocketService extends Service {
         if (instruction.equals(OPEN_GALLRY_APP)) {
             String ssid = fileTransferInfo.getSSID();
             String pwd = fileTransferInfo.getPWD();
-            Log.i(TAG, "进入图库的编辑模式,手机端已经创建热点,SSID=" + ssid + ",PWD=" + pwd);
+            LogUtils.i(TAG, "进入图库的编辑模式,手机端已经创建热点,SSID=" + ssid + ",PWD=" + pwd);
             broadcastIntent.putExtra("open_edit_mode", true);
             broadcastIntent.putExtra("create_wifip2p_group", false);
             broadcastIntent.putExtra("SSID", ssid);
@@ -280,18 +279,18 @@ public class SocketService extends Service {
             // 把数据取出来
             String name = cursor.getString(cursor.getColumnIndex("name"));
             String phone = cursor.getString(cursor.getColumnIndex("number"));
-            Log.d(TAG, "name" + cursor.getString(cursor.getColumnIndex("name")));
+            LogUtils.d(TAG, "name" + cursor.getString(cursor.getColumnIndex("name")));
             BluttohPhoneBean bluttohPhoneBean = new BluttohPhoneBean();
             bluttohPhoneBean.setPhone(phone);
             bluttohPhoneBean.setName(name);
             bluttohPhoneBeanList.add(bluttohPhoneBean);
         }
-        Log.d(TAG, "bluttohPhoneBeanList" + bluttohPhoneBeanList.toString());
+        LogUtils.d(TAG, "bluttohPhoneBeanList" + bluttohPhoneBeanList.toString());
         for (int i = 0; i < bluttohPhoneBeanList.size(); i++) {
-            Log.d(TAG, "nameis" + bluttohPhoneBeanList.get(i).getName());
+            LogUtils.d(TAG, "nameis" + bluttohPhoneBeanList.get(i).getName());
             resolver.delete(uri_phonebook, "name" + "='" + bluttohPhoneBeanList.get(i).getName() + "'", null);
         }
-        Log.d(TAG, "datashuju" + bluttohPhoneBeanList.size());
+        LogUtils.d(TAG, "datashuju" + bluttohPhoneBeanList.size());
         for (int i = 0; i < contacts.size(); i++) {
             ContentValues values = new ContentValues();
             values.put(Dispatcher.PHONEBOOK_NAME, contacts.get(i).getName());

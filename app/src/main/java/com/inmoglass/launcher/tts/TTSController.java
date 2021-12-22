@@ -3,10 +3,14 @@ package com.inmoglass.launcher.tts;
 import android.content.Context;
 import android.speech.tts.TextToSpeech;
 import android.speech.tts.UtteranceProgressListener;
-import android.util.Log;
+
+import com.blankj.utilcode.util.LogUtils;
 
 import java.util.Locale;
 
+/**
+ * @author Administrator
+ */
 public class TTSController {
     private static final String TAG = TTSController.class.getSimpleName();
     private static volatile TTSController mTTSController;
@@ -47,9 +51,10 @@ public class TTSController {
         if (mSpeech != null) {
             int result = mSpeech.setLanguage(Locale.CHINESE);
             //如果返回值为-2，说明不支持这种语言
-            Log.e(TAG, "是否支持该语言：" + (result != TextToSpeech.LANG_NOT_SUPPORTED));
+            LogUtils.e(TAG, "是否支持该语言：" + (result != TextToSpeech.LANG_NOT_SUPPORTED));
         }
     }
+
     /**
      * 将文本用TTS播放
      *
@@ -61,18 +66,18 @@ public class TTSController {
         }
         if (mSpeech.isSpeaking()) return;
         mSpeech.speak(str, TextToSpeech.QUEUE_FLUSH, null);
-        Log.i(TAG, "播放语音为：" + str);
+        LogUtils.i(TAG, "播放语音为：" + str);
     }
 
     private final class TTSListener implements TextToSpeech.OnInitListener {
         @Override
         public void onInit(int status) {
-            Log.e(TAG, "初始化结果：" + (status == TextToSpeech.SUCCESS));
+            LogUtils.e(TAG, "初始化结果：" + (status == TextToSpeech.SUCCESS));
             if (status == TextToSpeech.SUCCESS) {
                 if (mSpeech != null) {
                     int result = mSpeech.setLanguage(Locale.CHINESE);
                     //如果返回值为-2，说明不支持这种语言
-                    Log.e(TAG, "是否支持该语言：" + (result != TextToSpeech.LANG_NOT_SUPPORTED));
+                    LogUtils.e(TAG, "是否支持该语言：" + (result != TextToSpeech.LANG_NOT_SUPPORTED));
                     mSpeech.setOnUtteranceProgressListener(new TTSUtteranceListener());
                 }
             }
@@ -81,11 +86,14 @@ public class TTSController {
     }
 
     private ISpeechComplete mISpeechComplete;
-    public void setSpeechComplete(ISpeechComplete speechComplete){
+
+    public void setSpeechComplete(ISpeechComplete speechComplete) {
         mISpeechComplete = speechComplete;
     }
-    public interface ISpeechComplete{
+
+    public interface ISpeechComplete {
         void speechComplete();
+
         void speechError();
     }
 
@@ -96,13 +104,14 @@ public class TTSController {
 
         @Override
         public void onDone(String utteranceId) {
-            if(mISpeechComplete != null){
+            if (mISpeechComplete != null) {
                 mISpeechComplete.speechComplete();
             }
         }
+
         @Override
         public void onError(String utteranceId) {
-            if(mISpeechComplete != null){
+            if (mISpeechComplete != null) {
                 mISpeechComplete.speechError();
             }
         }
