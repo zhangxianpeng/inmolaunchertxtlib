@@ -175,17 +175,17 @@ public class MainActivity extends BaseActivity {
     //    相册、相机、备忘录、QQ音乐、喜马拉雅、高德地图、文档、WPS、设置、莲雾
     private void initAdapter() {
         channelList = new ArrayList<>();
-        channelList.add(new Channel(R.drawable.img_home_meitiwenjian, getString(R.string.string_home_media), R.drawable.icon_home_meiti));
-        channelList.add(new Channel(R.drawable.img_home_camera, getString(R.string.string_home_camera), R.drawable.icon_home_camera));
-        channelList.add(new Channel(R.drawable.img_home_beiwanglu, getString(R.string.string_home_beiwanglu), R.drawable.icon_home_beiwanglu));
-        channelList.add(new Channel(R.drawable.img_home_qqmusic, getString(R.string.string_home_qq_music), R.drawable.icon_home_qqmusic));
-        channelList.add(new Channel(R.drawable.img_home_ximalaya, getString(R.string.string_home_ximalaya), R.drawable.icon_home_ximalaya));
-        channelList.add(new Channel(R.drawable.img_home_gaode, getString(R.string.string_home_gaode), R.drawable.icon_home_gaode));
-        channelList.add(new Channel(R.drawable.img_home_wendang, getString(R.string.string_home_wendang), R.drawable.icon_file_word));
-        channelList.add(new Channel(R.drawable.img_home_wps, getString(R.string.string_home_wps), R.drawable.icon_home_wps));
-        channelList.add(new Channel(R.drawable.img_home_setting, getString(R.string.string_home_setting), R.drawable.icon_home_setting));
+        channelList.add(new Channel(R.drawable.img_home_meitiwenjian, getString(R.string.string_home_media), R.drawable.icon_home_meiti,""));
+        channelList.add(new Channel(R.drawable.img_home_camera, getString(R.string.string_home_camera), R.drawable.icon_home_camera,""));
+        channelList.add(new Channel(R.drawable.img_home_beiwanglu, getString(R.string.string_home_beiwanglu), R.drawable.icon_home_beiwanglu,""));
+        channelList.add(new Channel(R.drawable.img_home_qqmusic, getString(R.string.string_home_qq_music), R.drawable.icon_home_qqmusic,""));
+        channelList.add(new Channel(R.drawable.img_home_ximalaya, getString(R.string.string_home_ximalaya), R.drawable.icon_home_ximalaya,""));
+        channelList.add(new Channel(R.drawable.img_home_gaode, getString(R.string.string_home_gaode), R.drawable.icon_home_gaode,""));
+        channelList.add(new Channel(R.drawable.img_home_wendang, getString(R.string.string_home_wendang), R.drawable.icon_file_word,""));
+        channelList.add(new Channel(R.drawable.img_home_wps, getString(R.string.string_home_wps), R.drawable.icon_home_wps,""));
+        channelList.add(new Channel(R.drawable.img_home_setting, getString(R.string.string_home_setting), R.drawable.icon_home_setting,""));
         // lianwu
-        channelList.add(new Channel(R.drawable.img_home_lianwu, getString(R.string.string_home_lianwu), R.drawable.icon_home_lianwu));
+        channelList.add(new Channel(R.drawable.img_home_lianwu, getString(R.string.string_home_lianwu), R.drawable.icon_home_lianwu,""));
 //        channelList.add(new Channel(R.drawable.img_home_kfc, getString(R.string.string_home_kfc), R.drawable.icon_home_kfc));
 //        channelList.add(new Channel(R.drawable.img_home_store, getString(R.string.string_home_store), R.drawable.icon_home_store));
 

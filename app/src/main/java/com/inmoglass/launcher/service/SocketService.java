@@ -20,7 +20,6 @@ import android.os.IBinder;
 import android.text.TextUtils;
 
 import androidx.annotation.Nullable;
-import androidx.annotation.RequiresApi;
 
 import com.blankj.utilcode.util.LogUtils;
 import com.google.gson.Gson;
@@ -35,7 +34,6 @@ import com.inmo.inmodata.message.Dispatcher;
 import com.inmo.inmodata.notify.NotifyInfo;
 import com.inmo.inmodata.weather.WeatherInfo;
 import com.inmoglass.launcher.bean.BluttohPhoneBean;
-import com.inmoglass.launcher.tts.TTSController;
 import com.inmoglass.launcher.util.SystemUtils;
 import com.tencent.mmkv.MMKV;
 
@@ -59,7 +57,6 @@ public class SocketService extends Service {
     private String phoneMac;
     private String phoneName;
     private Gson gson;
-    private TTSController ttsController;
 
     private boolean naviStarted = false;
     private int lastLevel;
@@ -79,9 +76,6 @@ public class SocketService extends Service {
         LogUtils.i(TAG,"SocketService oncreate");
         startForeground();
         initBt();
-        ttsController = TTSController.getInstance();
-        ttsController.init(getApplicationContext());
-        ttsController.setChineseLanguage();
 
         // 监听电量变化
         IntentFilter intentFilter = new IntentFilter(Intent.ACTION_BATTERY_CHANGED);

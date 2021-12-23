@@ -70,7 +70,8 @@ public class WeatherResUtil {
             return R.drawable.ic_351;
         } else if (iconCode.equals("399")) {
             return R.drawable.ic_399;
+        } else {
+            return R.drawable.ic_102;
         }
-        return 0;
     }
 }

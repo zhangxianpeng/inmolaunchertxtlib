@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/container"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <androidx.constraintlayout.utils.widget.ImageFilterView
+        android:id="@+id/ifvShutDown"
+        android:layout_width="78pt"
+        android:layout_height="78pt"
+        android:layout_marginEnd="48pt"
+        app:layout_constraintBottom_toBottomOf="@+id/ifvCancel"
+        app:layout_constraintEnd_toStartOf="@+id/ifvCancel"
+        app:layout_constraintTop_toTopOf="@+id/ifvCancel"
+        app:srcCompat="@drawable/ic_icon_key_light" />
+
+    <TextView
+        android:id="@+id/tvShutDown"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10pt"
+        android:text="关机"
+        android:textColor="@color/white"
+        android:textSize="20sp"
+        app:layout_constraintEnd_toEndOf="@+id/ifvShutDown"
+        app:layout_constraintStart_toStartOf="@+id/ifvShutDown"
+        app:layout_constraintTop_toBottomOf="@+id/ifvShutDown" />
+
+    <androidx.constraintlayout.utils.widget.ImageFilterView
+        android:id="@+id/ifvShutDownSelectedBg"
+        android:layout_width="88pt"
+        android:layout_height="88pt"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toBottomOf="@+id/ifvShutDown"
+        app:layout_constraintEnd_toEndOf="@+id/ifvShutDown"
+        app:layout_constraintStart_toStartOf="@+id/ifvShutDown"
+        app:layout_constraintTop_toTopOf="@+id/ifvShutDown"
+        app:srcCompat="@drawable/shape_selected_bg" />
+
+    <androidx.constraintlayout.utils.widget.ImageFilterView
+        android:id="@+id/ifvCancel"
+        android:layout_width="96pt"
+        android:layout_height="96pt"
+        android:layout_marginBottom="65pt"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:srcCompat="@drawable/ic_icon_key_cancel" />
+
+    <TextView
+        android:id="@+id/textView3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10pt"
+        android:text="取消"
+        android:textColor="@color/white"
+        android:textSize="24sp"
+        app:layout_constraintEnd_toEndOf="@+id/ifvCancel"
+        app:layout_constraintStart_toStartOf="@+id/ifvCancel"
+        app:layout_constraintTop_toBottomOf="@+id/ifvCancel" />
+
+    <androidx.constraintlayout.utils.widget.ImageFilterView
+        android:id="@+id/ifvCancelSelectedBg"
+        android:layout_width="106pt"
+        android:layout_height="106pt"
+        android:layout_marginBottom="60pt"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:srcCompat="@drawable/shape_selected_bg" />
+    
+    <androidx.constraintlayout.utils.widget.ImageFilterView
+        android:id="@+id/ifvReboot"
+        android:layout_width="78pt"
+        android:layout_height="78pt"
+        android:layout_marginStart="48pt"
+        app:layout_constraintBottom_toBottomOf="@+id/ifvCancel"
+        app:layout_constraintStart_toEndOf="@+id/ifvCancel"
+        app:layout_constraintTop_toTopOf="@+id/ifvCancel"
+        app:srcCompat="@drawable/ic_icon_key_more" />
+
+    <TextView
+        android:id="@+id/tvReboot"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10pt"
+        android:text="重启"
+        android:textColor="@color/white"
+        android:textSize="20sp"
+        app:layout_constraintEnd_toEndOf="@+id/ifvReboot"
+        app:layout_constraintStart_toStartOf="@+id/ifvReboot"
+        app:layout_constraintTop_toBottomOf="@+id/ifvReboot" />
+
+    <androidx.constraintlayout.utils.widget.ImageFilterView
+        android:id="@+id/ifvRebootSelectedBg"
+        android:layout_width="88pt"
+        android:layout_height="88pt"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toBottomOf="@+id/ifvReboot"
+        app:layout_constraintEnd_toEndOf="@+id/ifvReboot"
+        app:layout_constraintStart_toStartOf="@+id/ifvReboot"
+        app:layout_constraintTop_toTopOf="@+id/ifvReboot"
+        app:srcCompat="@drawable/shape_selected_bg" />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

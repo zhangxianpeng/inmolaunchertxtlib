@@ -1,10 +1,14 @@
 package com.inmoglass.launcher.ui;
 
 import android.Manifest;
+import android.bluetooth.BluetoothDevice;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
+import android.net.wifi.WifiManager;
 import android.os.BatteryManager;
 import android.os.Build;
 import android.os.Bundle;
@@ -38,6 +42,8 @@ import com.inmoglass.launcher.carousellayoutmanager.CarouselZoomPostLayoutListen
 import com.inmoglass.launcher.carousellayoutmanager.CenterScrollListener;
 import com.inmoglass.launcher.service.SocketService;
 import com.inmoglass.launcher.util.AppUtil;
+import com.inmoglass.launcher.util.LauncherManager;
+import com.inmoglass.launcher.util.ToastUtil;
 import com.inmoglass.launcher.util.WeatherResUtil;
 import com.inmoglass.launcher.view.PowerConsumptionRankingsBatteryView;
 import com.permissionx.guolindev.PermissionX;
@@ -46,38 +52,15 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
-import java.util.List;
 
 /**
  * 此类为动态配置排列顺序使用
+ *
  * @author Administrator
  */
 public class MainActivity2 extends BaseActivity {
 
     private static final String TAG = MainActivity2.class.getSimpleName();
-    private static final String SHUT_DOWN_ACTION = "com.android.systemui.ready.poweraction";
-
-    private final String[] packageNames = new String[]{
-            "com.inmolens.inmomemo",
-            "com.inmoglass.documents",
-            "com.inmoglass.album",
-            "com.yulong.coolcamera",
-            "com.inmo.settings",
-            "com.ichano.athome.camera",
-            "com.tencent.qqmusicpad",
-            "com.autonavi.amapauto"
-    };
-
-    private final String[] packageActivities = new String[]{
-            "com.inmolens.inmomemo.MainActivity",
-            "com.inmoglass.documents.ui.MainActivity",
-            "com.inmoglass.album.ui.MainActivity",
-            "com.yulong.arcamera.MainActivity",
-            "com.inmo.settings.MainActivity",
-            "com.ichano.athome.camera.LoadingActivity",
-            "com.tencent.qqmusicpad.activity.AppStarterActivity",
-            "com.autonavi.amapauto.MainMapActivity"
-    };
 
     private PowerConsumptionRankingsBatteryView batteryView;
     private ImageView isChargingImageView;
@@ -86,10 +69,11 @@ public class MainActivity2 extends BaseActivity {
     private TextView temperatureTextView;
     private LauncherAdapter launcherAdapter;
     private RecyclerView launcherRecyclerView;
-    private List<Channel> channelList;
+    private ArrayList<Channel> channelList;
     private CarouselLayoutManager carouselLayoutManager;
 
     private BatteryReceiver batteryReceiver;
+    private AppReceiver appReceiver;
 
     /**
      * 记录滚动选中的position
@@ -97,19 +81,24 @@ public class MainActivity2 extends BaseActivity {
     private int selectPosition = 0;
 
     private GestureDetector mGestureDetector;
+    private static final String SHUT_DOWN_ACTION = "com.android.systemui.ready.poweraction";
+    public static final String ALARM_MEMO_LOG = "com.inmolens.intent.action.ALARM_MEMO";
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        channelList = new ArrayList<>();
         initViews();
-
         PermissionX.init(this)
                 .permissions(Manifest.permission.ACCESS_COARSE_LOCATION,
-                        Manifest.permission.ACCESS_FINE_LOCATION)
+                        Manifest.permission.ACCESS_FINE_LOCATION,
+                        Manifest.permission.READ_EXTERNAL_STORAGE,
+                        Manifest.permission.WRITE_EXTERNAL_STORAGE)
                 .request((allGranted, grantedList, deniedList) -> {
                     if (allGranted) {
                         startLocation();
+                        writeCardList2File();
                     }
                 });
 
@@ -118,21 +107,32 @@ public class MainActivity2 extends BaseActivity {
         mGestureDetector = new GestureDetector(this, new GestureDetector.SimpleOnGestureListener() {
             @Override
             public boolean onSingleTapUp(MotionEvent e) {
-                AppUtil.getInstance().openApplication(packageNames[selectPosition], packageActivities[selectPosition]);
+                LogUtils.i(TAG, "selectPosition = " + selectPosition);
+                if (selectPosition == 1) { // camera
+                    AppUtil.getInstance().openApplication("com.yulong.coolcamera", "com.yulong.arcamera.MainActivity");
+                } else {
+                    AppUtil.getInstance().openApplicationByPkgName(channelList.get(selectPosition).getPackageName());
+                }
                 return true;
             }
         });
+
+        subscribeBroadCast();
     }
 
     @Override
     protected void onResume() {
+        LogUtils.i(TAG, "onResume");
         super.onResume();
-        batteryReceiver = new BatteryReceiver();
-        IntentFilter intentFilter = new IntentFilter();
-        intentFilter.addAction(Intent.ACTION_BATTERY_CHANGED);
-        intentFilter.addAction(SHUT_DOWN_ACTION);
-        registerReceiver(batteryReceiver, intentFilter);
+
         startLocation();
+        channelList.clear();
+        ArrayList<Channel> local = LauncherManager.getInstance().getLauncherCardList();
+        LogUtils.i(TAG, "local = " + local.size());
+        channelList.addAll(local);
+        updateAdapter();
+
+        isShowMemo = false;
     }
 
     @Override
@@ -177,15 +177,6 @@ public class MainActivity2 extends BaseActivity {
     }
 
     private void initAdapter() {
-        channelList = new ArrayList<>();
-        channelList.add(new Channel(R.drawable.img_home_beiwanglu, getString(R.string.string_home_beiwanglu), R.drawable.icon_home_beiwanglu));
-        channelList.add(new Channel(R.drawable.img_home_wendang, getString(R.string.string_home_wendang), R.drawable.icon_file_word));
-        channelList.add(new Channel(R.drawable.img_home_meitiwenjian, getString(R.string.string_home_media), R.drawable.icon_home_meiti));
-        channelList.add(new Channel(R.drawable.img_home_camera, getString(R.string.string_home_camera), R.drawable.icon_home_camera));
-        channelList.add(new Channel(R.drawable.img_home_setting, getString(R.string.string_home_setting), R.drawable.icon_home_setting));
-        channelList.add(new Channel(R.drawable.img_home_kanjia, getString(R.string.string_home_kanjia), R.drawable.icon_home_kanjia));
-        channelList.add(new Channel(R.drawable.img_home_qqmusic, getString(R.string.string_home_qq_music), R.drawable.icon_home_qqmusic));
-        channelList.add(new Channel(R.drawable.img_home_gaode, getString(R.string.string_home_gaode), R.drawable.icon_home_gaode));
         launcherAdapter = new LauncherAdapter(this, channelList);
         carouselLayoutManager = new CarouselLayoutManager(CarouselLayoutManager.HORIZONTAL, false);
         setLayoutManager(carouselLayoutManager, launcherAdapter);
@@ -265,21 +256,74 @@ public class MainActivity2 extends BaseActivity {
         }
     }
 
+    private void writeCardList2File() {
+        ArrayList<Channel> local = LauncherManager.getInstance().getLauncherCardList();
+        if (local == null || local.isEmpty()) {
+            LauncherManager.getInstance().setLauncherCardList();
+        }
+    }
+
+    private void subscribeBroadCast() {
+        batteryReceiver = new BatteryReceiver();
+        IntentFilter batteryFilter = new IntentFilter();
+        // 电量变化
+        batteryFilter.addAction(Intent.ACTION_BATTERY_CHANGED);
+        // 关机广播
+        batteryFilter.addAction(SHUT_DOWN_ACTION);
+        // 备忘录
+        batteryFilter.addAction(ALARM_MEMO_LOG);
+        // wifi
+        batteryFilter.addAction(WifiManager.NETWORK_STATE_CHANGED_ACTION);
+        batteryFilter.addAction(WifiManager.WIFI_STATE_CHANGED_ACTION);
+        batteryFilter.addAction(ConnectivityManager.CONNECTIVITY_ACTION);
+        // 蓝牙
+        batteryFilter.addAction(BluetoothDevice.ACTION_ACL_DISCONNECTED);
+        batteryFilter.addAction(BluetoothDevice.ACTION_ACL_CONNECTED);
+        registerReceiver(batteryReceiver, batteryFilter);
+
+        // 卸载安装
+        appReceiver = new AppReceiver();
+        IntentFilter appFilter = new IntentFilter();
+        appFilter.addAction(Intent.ACTION_PACKAGE_ADDED);
+        appFilter.addAction(Intent.ACTION_PACKAGE_REMOVED);
+        appFilter.addDataScheme("package");
+        registerReceiver(appReceiver, appFilter);
+    }
+
     class BatteryReceiver extends BroadcastReceiver {
 
         @Override
         public void onReceive(Context context, Intent intent) {
             String action = intent.getAction();
+            LogUtils.i(TAG, "onReceive Broadcast =" + action);
             switch (action) {
+                case ALARM_MEMO_LOG:
+                    // 接收到备忘录传过来的内容
+                    String content = intent.getStringExtra("MemoContent");
+                    long memoTime = intent.getLongExtra("MemoShowTime", -1);
+                    if (System.currentTimeMillis() > memoTime + 10000) {
+                        // 对已经超时的备忘录不做提示
+                        return;
+                    }
+                    if (!isShowMemo) {
+                        Intent memoIntent = new Intent(MainActivity2.this, MemoShowActivity.class);
+                        memoIntent.putExtra("content", content);
+                        LogUtils.i(TAG, "startActivity 2 MemoShowActivity");
+                        isShowMemo = true;
+                        startActivity(memoIntent);
+                    }
+                    break;
                 case SHUT_DOWN_ACTION:
-                    Intent shutdownIntent = new Intent("com.android.systemui.keyguard.shutdown");
-                    sendBroadcast(shutdownIntent);
+                    startActivity(new Intent(MainActivity2.this, PopupWindowActivity.class));
                     break;
                 case Intent.ACTION_BATTERY_CHANGED:
                     int battery = intent.getIntExtra(BatteryManager.EXTRA_LEVEL, 0);
                     int isCharging = intent.getIntExtra(BatteryManager.EXTRA_PLUGGED, -1);
                     isChargingImageView.setVisibility(isCharging == 0 ? View.INVISIBLE : View.VISIBLE);
                     batteryView.setLevelHeight(battery);
+                    if (battery < 15) {
+                        ToastUtil.showImageToast(getApplicationContext());
+                    }
                     if (battery >= 0 && battery <= 5) {
                         batteryView.setOnline(getColor(R.color.color_battery_red));
                     } else if (battery > 5 && battery <= 15) {
@@ -288,9 +332,91 @@ public class MainActivity2 extends BaseActivity {
                         batteryView.setOnline(getColor(R.color.color_battery_white));
                     }
                     break;
+                case WifiManager.NETWORK_STATE_CHANGED_ACTION:
+                    NetworkInfo info = intent.getParcelableExtra(WifiManager.EXTRA_NETWORK_INFO);
+                    if (info.getState().equals(NetworkInfo.State.DISCONNECTED)) {
+                        ToastUtil.showToast(getApplicationContext(), getString(R.string.string_wlan_disconnected));
+//                        startActivity(new Intent(getApplicationContext(),MemoShowActivity.class));
+                        LogUtils.i(TAG, "wifi断开");
+                    } else if (info.getState().equals(NetworkInfo.State.CONNECTED)) {
+                        ToastUtil.showToast(getApplicationContext(), getString(R.string.string_wlan_connected));
+                        LogUtils.i(TAG, "wifi连接");
+                    }
+                    break;
+                case BluetoothDevice.ACTION_ACL_CONNECTED:
+                    ToastUtil.showToast(getApplicationContext(), getString(R.string.string_bluetooth_connected));
+                    LogUtils.i(TAG, "蓝牙设备已连接");
+                    break;
+                case BluetoothDevice.ACTION_ACL_DISCONNECTED:
+                    ToastUtil.showToast(getApplicationContext(), getString(R.string.string_bluetooth_disconnected));
+                    LogUtils.i(TAG, "蓝牙设备已断开");
+                    break;
                 default:
                     break;
             }
+        }
+    }
+
+    class AppReceiver extends BroadcastReceiver {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            String action = intent.getAction();
+            String packageName = intent.getDataString();
+            switch (action) {
+                case Intent.ACTION_PACKAGE_REMOVED:  // 卸载
+                    updateAppList(false, packageName);
+                    break;
+                case Intent.ACTION_PACKAGE_ADDED:    // 安装
+                    updateAppList(true, packageName);
+                    break;
+                default:
+                    break;
+            }
+        }
+    }
+
+    /**
+     * 更新列表顺序
+     *
+     * @param isAdd       是安装还是卸载
+     * @param packageName
+     */
+    // 确保这个只执行一次
+    private boolean isAddSuccess = false;
+    private boolean isRemoveSuccess = false;
+    private boolean isShowMemo = false;
+
+    private void updateAppList(boolean isAdd, String packageName) {
+        // 截去package:
+        String realPackageName = packageName.substring(8);
+        if (isAdd && !isAddSuccess) { // 安装
+            LogUtils.i(TAG, "isAdd = " + isAdd + ",packageName = " + realPackageName);
+            isAddSuccess = true;
+            Channel bean = AppUtil.getInstance().getRecentInstallApp(this, realPackageName);
+            LogUtils.i(TAG, "recentInstall App = " + bean.getAppName() + "," + bean.getPackageName());
+            channelList.add(bean);
+            updateAdapter();
+        }
+        if (!isAdd && !isRemoveSuccess) { // 卸载
+            LogUtils.i(TAG, "isAdd = " + isAdd + ",packageName = " + realPackageName);
+            if (channelList != null && !channelList.isEmpty()) {
+                for (int i = 0; i < channelList.size(); i++) {
+                    if (channelList.get(i).getPackageName().equals(realPackageName)) {
+                        channelList.remove(i);
+                        isRemoveSuccess = true;
+                    }
+                }
+                updateAdapter();
+            }
+        }
+
+        // 写文件更新顺序
+        LauncherManager.getInstance().updateCardList(channelList);
+    }
+
+    private void updateAdapter() {
+        if (launcherAdapter != null) {
+            launcherAdapter.notifyDataSetChanged();
         }
     }
 
@@ -303,6 +429,7 @@ public class MainActivity2 extends BaseActivity {
                 JSONObject response = (JSONObject) msg.obj;
                 try {
                     JSONObject nowObj = response.getJSONObject("now");
+                    LogUtils.i(TAG, "weather = " + nowObj.toString());
                     String temp = (String) nowObj.get("temp");
                     String icon = (String) nowObj.get("icon");
                     String text = (String) nowObj.get("text");
@@ -310,7 +437,7 @@ public class MainActivity2 extends BaseActivity {
                         temperatureTextView.setText(temp + "℃");
                     }
                     if (weatherTextView != null) {
-                        weatherTextView.setText(text + "℃");
+                        weatherTextView.setText(text);
                     }
                     if (weatherImageView != null) {
                         weatherImageView.setImageResource(WeatherResUtil.getEqualRes(icon));

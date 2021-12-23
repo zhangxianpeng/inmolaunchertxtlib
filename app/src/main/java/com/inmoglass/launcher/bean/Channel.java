@@ -7,11 +7,13 @@ public class Channel {
     private int appImg;
     private String appName;
     private int appIcon;
+    private String packageName;
 
-    public Channel(int appImg, String appName, int appIcon) {
+    public Channel(int appImg, String appName, int appIcon,String packageName) {
         this.appImg = appImg;
         this.appName = appName;
         this.appIcon = appIcon;
+        this.packageName = packageName;
     }
 
     public int getAppImg() {
@@ -36,5 +38,13 @@ public class Channel {
 
     public void setAppIcon(int appIcon) {
         this.appIcon = appIcon;
+    }
+
+    public String getPackageName() {
+        return packageName;
+    }
+
+    public void setPackageName(String packageName) {
+        this.packageName = packageName;
     }
 }

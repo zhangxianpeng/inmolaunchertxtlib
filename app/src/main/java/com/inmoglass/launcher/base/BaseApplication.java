@@ -7,6 +7,9 @@ import com.blankj.utilcode.util.LogUtils;
 import com.qweather.sdk.view.HeConfig;
 import com.tencent.mmkv.MMKV;
 
+/**
+ * @author Administrator
+ */
 public class BaseApplication extends Application {
     public static final String WEATHER_PRODUCT_ID = "HE1701090954491910";
     public static final String WEATHER_KEY = "b9754523666e4abeabef84808c64ed2b";

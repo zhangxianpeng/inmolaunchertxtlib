@@ -4,9 +4,10 @@ import android.content.Context;
 
 import com.inmoglass.launcher.R;
 import com.inmoglass.launcher.base.BaseApplication;
-import com.inmoglass.launcher.bean.Channel2;
+import com.inmoglass.launcher.bean.Channel;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -14,49 +15,26 @@ import java.util.List;
  * 桌面卡片排列顺序管理类
  */
 public class LauncherManager {
-
     private static final String TAG = LauncherManager.class.getSimpleName();
     private static LauncherManager mLauncherManager;
     private Context mContext;
 
-    private List<Channel2> appList;
+    private List<String> appPackagesList;
 
+    //首页应用顺序依次为: 相册、相机、备忘录、QQ音乐、喜马拉雅、高德地图、文档、WPS、设置
     private final String[] packageNames = new String[]{
-            "com.inmolens.inmomemo",
-            "com.inmoglass.documents",
             "com.inmoglass.album",
             "com.yulong.coolcamera",
-            "com.inmo.settings",
-            "com.inmoglass.appstore",
-            "com.ichano.athome.camera",
-            "com.tencent.qqmusicpad",
-            "com.autonavi.amapauto"
+            "com.inmolens.inmomemo",
+            "com.tencent.qqmusiccar",
+            "com.ximalaya.ting.android.car",
+            "com.autonavi.amapauto",
+            "com.inmoglass.documents",
+            "cn.wps.moffice_eng",
+            "com.inmo.settings"
     };
 
-    private final String[] packageActivities = new String[]{
-            "com.inmolens.inmomemo.MainActivity",
-            "com.inmoglass.documents.ui.MainActivity",
-            "com.inmoglass.album.ui.MainActivity",
-            "com.yulong.arcamera.MainActivity",
-            "com.inmo.settings.MainActivity",
-            "com.inmoglass.appstore.MainActivity",
-            "com.ichano.athome.camera.LoadingActivity",
-            "com.tencent.qqmusicpad.activity.AppStarterActivity",
-            "com.autonavi.amapauto.MainMapActivity"
-    };
-
-    /**
-     * 出厂预装
-     */
-    private static final String FACTORY_INSTALL_APP = "factoryInstallAppList";
-    /**
-     * yingyongshangdian
-     */
-    private static final String APP_STORE_INSTALL_APP = "appStoreInstallAppList";
-    /**
-     * disanfangzijianzhuang
-     */
-    private static final String THIRD_INSTALL_APP = "thirdInstallAppList";
+    private static final String APP_PACKAGES_LIST = "AppList";
 
     public static synchronized LauncherManager getInstance() {
         if (mLauncherManager == null) {
@@ -69,40 +47,59 @@ public class LauncherManager {
         this.mContext = BaseApplication.mContext;
     }
 
+    public void setLauncherCardList() {
+        appPackagesList = new ArrayList<>();
+        appPackagesList.addAll(Arrays.asList(packageNames));
+        MMKVUtils.setArray(mContext, appPackagesList, APP_PACKAGES_LIST);
+    }
+
     /**
-     * 写入出厂预装的应用
+     * 读取本地储存的APP卡片列表的顺序
+     *
+     * @return
      */
-    public void writeFactoryPresetApp() {
-        appList = new ArrayList<>();
-        appList.add(new Channel2(R.drawable.img_home_beiwanglu, R.drawable.icon_home_beiwanglu,
-                mContext.getString(R.string.string_home_beiwanglu), packageNames[0], packageActivities[0], "", ""));
-        appList.add(new Channel2(R.drawable.img_home_wendang, R.drawable.icon_file_word,
-                mContext.getString(R.string.string_home_wendang), packageNames[1], packageActivities[1], "", ""));
-        appList.add(new Channel2(R.drawable.img_home_meitiwenjian, R.drawable.icon_home_meiti,
-                mContext.getString(R.string.string_home_media), packageNames[2], packageActivities[2], "", ""));
-        appList.add(new Channel2(R.drawable.img_home_camera, R.drawable.icon_home_camera,
-                mContext.getString(R.string.string_home_camera), packageNames[3], packageActivities[3], "", ""));
-        appList.add(new Channel2(R.drawable.img_home_setting, R.drawable.icon_home_setting,
-                mContext.getString(R.string.string_home_setting), packageNames[4], packageActivities[4], "", ""));
-        appList.add(new Channel2(R.drawable.img_home_store, R.drawable.icon_home_store,
-                mContext.getString(R.string.string_home_store), packageNames[5], packageActivities[5], "", ""));
-        appList.add(new Channel2(R.drawable.img_home_kanjia, R.drawable.icon_home_kanjia,
-                mContext.getString(R.string.string_home_kanjia), packageNames[6], packageActivities[6], "", ""));
-        appList.add(new Channel2(R.drawable.img_home_qqmusic, R.drawable.icon_home_qqmusic,
-                mContext.getString(R.string.string_home_qq_music), packageNames[7], packageActivities[7], "", ""));
-        appList.add(new Channel2(R.drawable.img_home_gaode, R.drawable.icon_home_gaode,
-                mContext.getString(R.string.string_home_gaode), packageNames[8], packageActivities[8], "", ""));
-
-        MMKVUtils.setArray(mContext, appList, "appList");
+    public ArrayList<Channel> getLauncherCardList() {
+        String packageName = "";
+        ArrayList<String> packagesList = MMKVUtils.getArray(mContext, APP_PACKAGES_LIST, packageName);
+        ArrayList<Channel> beanList = new ArrayList<>();
+        for (String appPackage : packagesList) {
+            Channel bean = null;
+            if (appPackage.equals(packageNames[0])) {
+                bean = new Channel(R.drawable.img_home_meitiwenjian, BaseApplication.mContext.getString(R.string.string_home_media), R.drawable.icon_home_meiti, packageNames[0]);
+            } else if (appPackage.equals(packageNames[1])) {
+                bean = new Channel(R.drawable.img_home_camera, BaseApplication.mContext.getString(R.string.string_home_camera), R.drawable.icon_home_camera, packageNames[1]);
+            } else if (appPackage.equals(packageNames[2])) {
+                bean = new Channel(R.drawable.img_home_beiwanglu, BaseApplication.mContext.getString(R.string.string_home_beiwanglu), R.drawable.icon_home_beiwanglu, packageNames[2]);
+            } else if (appPackage.equals(packageNames[3])) {
+                bean = new Channel(R.drawable.img_home_qqmusic, BaseApplication.mContext.getString(R.string.string_home_qq_music), R.drawable.icon_home_qqmusic, packageNames[3]);
+            } else if (appPackage.equals(packageNames[4])) {
+                bean = new Channel(R.drawable.img_home_ximalaya, BaseApplication.mContext.getString(R.string.string_home_ximalaya), R.drawable.icon_home_ximalaya, packageNames[4]);
+            } else if (appPackage.equals(packageNames[5])) {
+                bean = new Channel(R.drawable.img_home_gaode, BaseApplication.mContext.getString(R.string.string_home_gaode), R.drawable.icon_home_gaode, packageNames[5]);
+            } else if (appPackage.equals(packageNames[6])) {
+                bean = new Channel(R.drawable.img_home_wendang, BaseApplication.mContext.getString(R.string.string_home_wendang), R.drawable.icon_file_word, packageNames[6]);
+            } else if (appPackage.equals(packageNames[7])) {
+                bean = new Channel(R.drawable.img_home_wps, BaseApplication.mContext.getString(R.string.string_home_wps), R.drawable.icon_home_wps, packageNames[7]);
+            } else if (appPackage.equals(packageNames[8])) {
+                bean = new Channel(R.drawable.img_home_setting, BaseApplication.mContext.getString(R.string.string_home_setting), R.drawable.icon_home_setting, packageNames[8]);
+            } else {
+                bean = new Channel(R.drawable.img_home_kfc, AppUtil.getInstance().getAppName(appPackage), R.drawable.icon_home_kfc, appPackage);
+            }
+            beanList.add(bean);
+        }
+        return beanList;
     }
 
-    public void writeAppStoreInstalledApp() {
-        Channel2 channel2 = new Channel2();
-        ArrayList<Channel2> result = MMKVUtils.getArray(mContext, "appList", channel2);
-        // TODO: 2021/12/17 获取应用商店下载安装的应用列表，并写入本地
-    }
-
-    public void writeThirdInstalledApp() {
-
+    /**
+     * 按传入的顺序更新到本地文件
+     *
+     * @param channelList
+     */
+    public void updateCardList(ArrayList<Channel> channelList) {
+        ArrayList<String> realList = new ArrayList<>();
+        for (Channel channel : channelList) {
+            realList.add(channel.getPackageName());
+        }
+        MMKVUtils.setArray(mContext, realList, APP_PACKAGES_LIST);
     }
 }

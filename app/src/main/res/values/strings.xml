@@ -18,7 +18,11 @@
     <string name="string_home_lianwu">莲雾</string>
     <string name="string_home_kfc">AI训练</string>
     <string name="string_home_more_apps">MORE APPS</string>
-
     <string name="string_app_not_installed">The APP IS NOT INSTALLED</string>
     <string name="string_app_list">APP LIST</string>
+    <string name="string_wlan_disconnected">WLAN已断开</string>
+    <string name="string_wlan_connected">WLAN已连接</string>
+    <string name="string_bluetooth_disconnected">蓝牙已断开</string>
+    <string name="string_bluetooth_connected">蓝牙已连接</string>
+    <string name="string_low_battery">电量低,请及时充电</string>
 </resources>

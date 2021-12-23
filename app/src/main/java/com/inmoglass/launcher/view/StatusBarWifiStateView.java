@@ -59,6 +59,9 @@ public class StatusBarWifiStateView extends AppCompatImageView {
                 return;
             }
             switch (msg.what) {
+                case LEVEL_1:
+                    wifiStateView.setImageResource(R.drawable.ic_icon_statusbar_wifi01);
+                    break;
                 case LEVEL_2:
                     wifiStateView.setImageResource(R.drawable.ic_icon_statusbar_wifi02);
                     break;
@@ -70,7 +73,7 @@ public class StatusBarWifiStateView extends AppCompatImageView {
                     break;
                 case LEVEL_NONE:
                 default:
-                    wifiStateView.setImageResource(R.drawable.ic_icon_statusbar_wifi01);
+                    wifiStateView.setImageDrawable(null);
                     break;
             }
         }

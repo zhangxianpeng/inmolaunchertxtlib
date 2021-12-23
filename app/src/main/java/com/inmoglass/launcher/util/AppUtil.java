@@ -12,6 +12,7 @@ import android.widget.Toast;
 import com.blankj.utilcode.util.LogUtils;
 import com.inmoglass.launcher.R;
 import com.inmoglass.launcher.base.BaseApplication;
+import com.inmoglass.launcher.bean.Channel;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -162,36 +163,47 @@ public class AppUtil {
         return result;
     }
 
-    private static List<String> selfStudyApps;
-
     /**
-     * 过滤自研应用
+     * 获取到刚刚安装的应用
      *
      * @param context
      * @return
      */
-    public static List<PackageInfo> filterSelfStudyApp(Context context) {
-        List<PackageInfo> result = new ArrayList<>();
-        selfStudyApps = new ArrayList<>();
-        selfStudyApps.add("com.inmoglass.launcher");
-        selfStudyApps.add("com.yulong.coolgallery");
-        selfStudyApps.add("com.inmo.settings");
-        selfStudyApps.add("com.yulong.coolcamera");
-        selfStudyApps.add("com.inmoglass.music");
-        selfStudyApps.add("com.koushikdutta.vysor");
-        selfStudyApps.add("com.inmo.translation");
-        selfStudyApps.add("com.inmo.settings");
-        selfStudyApps.add("com.inmolens.inmomemo");
-        selfStudyApps.add("com.inmolens.voiceidentify");
-        selfStudyApps.add("com.inmoglass.sensorcontrol");
+    public Channel getRecentInstallApp(Context context, String packageName) {
+        Channel channel = null;
         List<PackageInfo> packageInfos = getPackageInfos(context, 2);
         PackageManager pm = context.getPackageManager();
         for (PackageInfo packageInfo : packageInfos) {
-            if ((packageInfo.applicationInfo.flags & ApplicationInfo.FLAG_SYSTEM) == 0 && !selfStudyApps.contains(packageInfo.packageName)) {
-                result.add(packageInfo);
+            ApplicationInfo applicationInfo = packageInfo.applicationInfo;
+            String appPackageName = applicationInfo.packageName;
+            if (appPackageName.equals(packageName)) {
+                String appName = applicationInfo.loadLabel(pm).toString();
+                channel = new Channel(R.drawable.img_home_kfc, appName, R.drawable.icon_home_kfc, packageName);
+                break;
             }
         }
-        return result;
+        return channel;
     }
 
+    /**
+     * 根据包名获取APP名字
+     *
+     * @param appPackage
+     * @return
+     */
+    public String getAppName(String appPackage) {
+        String realName = "";
+        Channel channel = null;
+        List<PackageInfo> packageInfos = getPackageInfos(mContext, 2);
+        PackageManager pm = mContext.getPackageManager();
+        for (PackageInfo packageInfo : packageInfos) {
+            ApplicationInfo applicationInfo = packageInfo.applicationInfo;
+            String appPackageName = applicationInfo.packageName;
+            if (appPackageName.equals(appPackage)) {
+                realName = applicationInfo.loadLabel(pm).toString();
+                break;
+            }
+        }
+        return realName;
+    }
 }
