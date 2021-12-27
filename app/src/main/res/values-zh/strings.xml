@@ -1,23 +1,14 @@
 <resources>
-    <string name="app_name">LAUNCHER</string>
+    <string name="app_name">Launcher</string>
     <string name="string_home_beiwanglu">备忘录</string>
     <string name="string_home_wendang">文档</string>
     <string name="string_home_media">相册</string>
     <string name="string_home_camera">相机</string>
     <string name="string_home_setting">设置</string>
-    <string name="string_home_store">应用商店</string>
-    <string name="string_home_kanjia">掌上看家</string>
-    <string name="string_home_wechat">微信</string>
     <string name="string_home_qq_music">QQ音乐</string>
     <string name="string_home_gaode">高德地图</string>
     <string name="string_home_wps">WPS</string>
     <string name="string_home_ximalaya">喜马拉雅</string>
-    <string name="string_home_momo">陌陌</string>
-    <string name="string_home_lianwu">莲雾</string>
-    <string name="string_home_kfc">AI训练</string>
-    <string name="string_home_tencent">腾讯视频</string>
-    <string name="string_home_kugou">酷狗音乐</string>
-    <string name="string_home_more_apps">更多应用</string>
     <string name="string_app_not_installed">该应用未安装</string>
     <string name="string_app_list">应用列表</string>
     <string name="string_wlan_disconnected">WLAN已断开</string>
@@ -25,4 +16,12 @@
     <string name="string_bluetooth_disconnected">蓝牙已断开</string>
     <string name="string_bluetooth_connected">蓝牙已连接</string>
     <string name="string_low_battery">电量低,请及时充电</string>
+    <string name="string_too_low_battery">电量过低,请及时充电</string>
+    <string name="string_too_low_battery_shutdown">电量耗尽,即将自动关机</string>
+    <string name="string_memo_data">您有备忘录事项,请及时处理</string>
+    <string name="string_click_to_close">点击关闭提醒</string>
+    <string name="string_shut_down">关机</string>
+    <string name="string_reboot">重启</string>
+    <string name="string_cancel">取消</string>
+    <string name="string_charging">正在充电</string>
 </resources>

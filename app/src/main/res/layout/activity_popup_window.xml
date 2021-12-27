@@ -16,11 +16,10 @@
         app:srcCompat="@drawable/ic_icon_key_light" />
 
     <TextView
-        android:id="@+id/tvShutDown"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="10pt"
-        android:text="关机"
+        android:text="@string/string_shut_down"
         android:textColor="@color/white"
         android:textSize="20sp"
         app:layout_constraintEnd_toEndOf="@+id/ifvShutDown"
@@ -49,11 +48,10 @@
         app:srcCompat="@drawable/ic_icon_key_cancel" />
 
     <TextView
-        android:id="@+id/textView3"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="10pt"
-        android:text="取消"
+        android:text="@string/string_cancel"
         android:textColor="@color/white"
         android:textSize="24sp"
         app:layout_constraintEnd_toEndOf="@+id/ifvCancel"
@@ -81,11 +79,10 @@
         app:srcCompat="@drawable/ic_icon_key_more" />
 
     <TextView
-        android:id="@+id/tvReboot"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="10pt"
-        android:text="重启"
+        android:text="@string/string_reboot"
         android:textColor="@color/white"
         android:textSize="20sp"
         app:layout_constraintEnd_toEndOf="@+id/ifvReboot"

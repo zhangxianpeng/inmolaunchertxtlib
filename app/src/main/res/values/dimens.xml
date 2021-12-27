@@ -4,12 +4,9 @@
 
     <dimen name="pt_5">5pt</dimen>
     <dimen name="pt_10">10pt</dimen>
-    <dimen name="pt_30">30pt</dimen>
 
     <!--电池控件 高度-->
-    <dimen name="power_consumption_rankings_dimen_main_battery_view_height">18pt</dimen>
     <!--电池控件 宽度-->
-    <dimen name="power_consumption_rankings_dimen_main_battery_view_width">14pt</dimen>
     <!--电池外壳 厚度-->
     <dimen name="power_consumption_rankings_dimen_main_battery_view_shell_stroke_width">2pt</dimen>
     <!--电池外壳 宽度-->

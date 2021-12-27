@@ -9,6 +9,7 @@ import androidx.recyclerview.widget.RecyclerView;
 /**
  * Custom implementation of {@link RecyclerView.SmoothScroller} that can work only with {@link CarouselLayoutManager}.
  *
+ * @author Administrator
  * @see CarouselLayoutManager
  */
 public class CarouselSmoothScroller {

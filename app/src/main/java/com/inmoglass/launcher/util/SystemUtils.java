@@ -16,6 +16,9 @@ import java.io.File;
 import java.io.FileReader;
 import java.util.Locale;
 
+/**
+ * @author Administrator
+ */
 public class SystemUtils {
     public static String getProcessName() {
         try {

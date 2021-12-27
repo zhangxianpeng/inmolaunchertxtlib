@@ -22,7 +22,7 @@ public class LauncherManager {
     private List<String> appPackagesList;
 
     //首页应用顺序依次为: 相册、相机、备忘录、QQ音乐、喜马拉雅、高德地图、文档、WPS、设置
-    private final String[] packageNames = new String[]{
+    public static final String[] packageNames = new String[]{
             "com.inmoglass.album",
             "com.yulong.coolcamera",
             "com.inmolens.inmomemo",

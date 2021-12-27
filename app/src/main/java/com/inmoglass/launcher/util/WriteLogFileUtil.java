@@ -7,7 +7,12 @@ import com.blankj.utilcode.util.LogUtils;
 import java.io.File;
 import java.io.RandomAccessFile;
 
+/**
+ * @author Administrator
+ * 写关机日志，监听关机广播，是否存在无故关机问题
+ */
 public class WriteLogFileUtil {
+    private static final String TAG = WriteLogFileUtil.class.getSimpleName();
     public final static String FILE_PATH = Environment.getExternalStorageDirectory() + "/shutdownLog/";
 
     public static void writeFile() {
@@ -30,7 +35,7 @@ public class WriteLogFileUtil {
             raf.close();
         } catch (Exception e) {
             e.printStackTrace();
-            LogUtils.i("zxp",e.getMessage());
+            LogUtils.i(TAG, e.getMessage());
         }
     }
 

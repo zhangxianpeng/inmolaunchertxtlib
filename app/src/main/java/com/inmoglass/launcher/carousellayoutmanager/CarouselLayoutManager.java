@@ -482,9 +482,9 @@ public class CarouselLayoutManager extends RecyclerView.LayoutManager implements
         } else {
             view.layout(Math.round(start + transformation.mTranslationX), Math.round(top + transformation.mTranslationY),
                     Math.round(end + transformation.mTranslationX), Math.round(bottom + transformation.mTranslationY));
-
             view.setScaleX(transformation.mScaleX);
             view.setScaleY(transformation.mScaleY);
+            view.setAlpha(transformation.mAlpha);
         }
     }
 

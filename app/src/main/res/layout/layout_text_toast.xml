@@ -11,7 +11,7 @@
         android:gravity="center"
         android:paddingTop="10pt"
         android:paddingBottom="10pt"
-        android:text="提醒成功"
+        android:text="@string/string_wlan_connected"
         android:textColor="@color/black"
         android:textSize="22pt" />
 

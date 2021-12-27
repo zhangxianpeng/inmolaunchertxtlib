@@ -6,6 +6,7 @@ import androidx.recyclerview.widget.RecyclerView;
 /**
  * Class for centering items after scroll event.<br />
  * This class will listen to current scroll state and if item is not centered after scroll it will automatically scroll it to center.
+ * @author Administrator
  */
 public class CenterScrollListener extends RecyclerView.OnScrollListener {
 

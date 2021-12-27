@@ -15,6 +15,7 @@ import com.inmoglass.launcher.base.BaseApplication;
 import com.inmoglass.launcher.bean.Channel;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -205,5 +206,19 @@ public class AppUtil {
             }
         }
         return realName;
+    }
+
+    /**
+     * 检测此app是否已经存在
+     *
+     * @param appPackage
+     * @return
+     */
+    public boolean checkAppIsExit(String appPackage) {
+        String[] factory = LauncherManager.packageNames;
+        List<String> names = new ArrayList<>();
+        names.addAll(Arrays.asList(factory));
+        names.add("com.inmoglass.launcher");
+        return names.contains(appPackage);
     }
 }
