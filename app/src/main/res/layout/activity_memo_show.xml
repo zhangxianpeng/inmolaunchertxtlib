@@ -25,23 +25,38 @@
         android:layout_marginRight="34pt"
         android:background="@drawable/bg_home_note"
         android:orientation="vertical"
+        android:paddingTop="28pt"
+        android:paddingBottom="28pt"
         app:layout_constraintTop_toBottomOf="@+id/tvTitle">
 
-        <TextView
-            android:id="@+id/tvMemoContent"
-            style="@style/text_style"
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:layout_marginTop="28pt"
-            android:textSize="28pt"
-            tools:ignore="MissingConstraints" />
+            android:orientation="horizontal">
+
+            <ImageView
+                android:layout_width="17pt"
+                android:layout_height="17pt"
+                android:layout_gravity="center"
+                android:src="@drawable/icon_note_rectangle" />
+
+            <TextView
+                android:id="@+id/tvMemoContent"
+                style="@style/text_style"
+                android:layout_gravity="center"
+                android:layout_marginStart="10pt"
+                android:textSize="28pt"
+                tools:ignore="MissingConstraints" />
+        </LinearLayout>
 
         <TextClock
             style="@style/text_style"
             android:layout_gravity="center"
             android:layout_marginTop="12pt"
-            android:textSize="20pt"
             android:format12Hour="MM月dd日 EEEE"
             android:format24Hour="MM月dd日 EEEE"
+            android:textSize="20pt"
             tools:ignore="MissingConstraints" />
     </LinearLayout>
 

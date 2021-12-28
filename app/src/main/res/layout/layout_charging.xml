@@ -6,30 +6,31 @@
     android:layout_height="match_parent">
 
     <TextView
+        android:id="@+id/tvBatteryLevel"
         style="@style/text_style"
-        android:text="@string/string_charging"
-        android:textSize="30pt"
+        android:textSize="26pt"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tvBatteryLevel" />
+        app:layout_constraintTop_toBottomOf="@+id/tv"
+        android:layout_marginTop="10pt"/>
 
     <TextView
-        android:id="@+id/tvBatteryLevel"
+        android:id="@+id/tv"
         style="@style/text_style"
         android:textSize="30pt"
         app:layout_constraintBottom_toTopOf="@+id/guideline4"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
-    <androidx.constraintlayout.utils.widget.ImageFilterView
+    <ImageView
         android:id="@+id/ifvCancelSelectedBg"
-        android:layout_width="206pt"
-        android:layout_height="206pt"
+        android:layout_width="187pt"
+        android:layout_height="196pt"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/shape_selected_bg" />
+        android:src="@drawable/icon_charging" />
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/guideline4"

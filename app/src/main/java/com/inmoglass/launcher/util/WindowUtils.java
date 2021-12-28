@@ -1,6 +1,7 @@
 package com.inmoglass.launcher.util;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.PixelFormat;
 import android.os.CountDownTimer;
 import android.os.Handler;
@@ -16,6 +17,7 @@ import android.widget.TextView;
 import com.blankj.utilcode.util.LogUtils;
 import com.inmoglass.launcher.R;
 import com.inmoglass.launcher.tts.TtsManager;
+import com.inmoglass.launcher.ui.MainActivity;
 
 /**
  * @author Administrator
@@ -25,7 +27,7 @@ public class WindowUtils {
     private static View mView = null;
     private static WindowManager mWindowManager = null;
     private static Context mContext = null;
-    public static Boolean isShown = false;
+    public static boolean isShown = false;
     private static Handler myHandler = new Handler(Looper.getMainLooper());
 
     public enum UI_STATE {
@@ -78,6 +80,7 @@ public class WindowUtils {
         if (state == UI_STATE.CHARGING) {
             myHandler.postDelayed(() -> {
                 mWindowManager.removeView(mView);
+                isShown = false;
             }, 2000);
         }
         LogUtils.i(TAG, "add view");
@@ -119,19 +122,24 @@ public class WindowUtils {
         } else if (state == UI_STATE.BATTERY_BELOW_2) {
             view = LayoutInflater.from(context).inflate(R.layout.layout_shutdown_countdown, null);
             TextView countDownTextView = view.findViewById(R.id.tvCountdownTime);
-            CountDownTimer timer = new CountDownTimer(30000, 1000) {
+            CountDownTimer timer = new CountDownTimer(15000, 1000) {
                 @Override
                 public void onTick(long millisUntilFinished) {
                     countDownTextView.setText(millisUntilFinished / 1000 + "S");
                     LogUtils.i(TAG, "seconds remaining: " + millisUntilFinished / 1000);
+                    if (MainActivity.isChargingNow) {
+                        // 倒计时过程中插入充电器，倒计时弹层消失
+                        hidePopupWindow();
+                    }
                 }
 
                 @Override
                 public void onFinish() {
-                    // TODO: 2021/12/27 倒计时过程中充电，弹层消失，不关机
                     // 倒计时结束后直接关机
-//                    Intent shutdownIntent = new Intent("com.android.systemui.keyguard.shutdown");
-//                    mContext.sendBroadcast(shutdownIntent);
+                    if (!MainActivity.isChargingNow) {
+                        Intent shutdownIntent = new Intent("com.android.systemui.keyguard.shutdown");
+                        mContext.sendBroadcast(shutdownIntent);
+                    }
                 }
             };
             timer.start();

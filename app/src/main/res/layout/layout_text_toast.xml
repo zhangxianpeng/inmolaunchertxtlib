@@ -1,18 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="wrap_content"
+    android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
     <TextView
         android:id="@+id/tv_content"
-        android:layout_width="190pt"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:background="@drawable/bg_toast"
-        android:gravity="center"
+        android:layout_gravity="center"
+        android:gravity="center_horizontal"
+        android:paddingLeft="20pt"
         android:paddingTop="10pt"
+        android:paddingRight="20pt"
         android:paddingBottom="10pt"
-        android:text="@string/string_wlan_connected"
-        android:textColor="@color/black"
-        android:textSize="22pt" />
+        android:text="@string/string_too_low_battery"
+        android:textColor="@android:color/white"
+        android:textSize="26pt" />
 
 </LinearLayout>

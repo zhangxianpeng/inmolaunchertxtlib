@@ -38,10 +38,16 @@ public class PopupWindowActivity extends BaseActivity {
     private boolean isSwipeLeft = false;
     private boolean isSwipeRight = false;
 
+    /**
+     * 判断是否激活
+     */
+    public static boolean isActive = false;
+
     @SuppressLint("ClickableViewAccessibility")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        isActive = true;
         setContentView(R.layout.activity_popup_window);
         containerLayout = findViewById(R.id.container);
         containerLayout.setOnTouchListener((view, motionEvent) -> {
@@ -50,6 +56,9 @@ public class PopupWindowActivity extends BaseActivity {
                     LogUtils.i(TAG, "ACTION_DOWN");
                     x1 = motionEvent.getX();
                     y1 = motionEvent.getY();
+                    if (!isSwipeLeft && !isSwipeRight) {
+                        cancel();
+                    }
                     break;
                 case MotionEvent.ACTION_UP:
                     if (isSwipeRight && !isSwipeLeft) {
@@ -139,6 +148,7 @@ public class PopupWindowActivity extends BaseActivity {
     }
 
     private void cancel() {
+        isActive = false;
         finish();
     }
 }

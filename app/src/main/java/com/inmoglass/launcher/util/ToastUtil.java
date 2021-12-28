@@ -22,7 +22,7 @@ public class ToastUtil {
     public static void showImageToast(Context context) {
         View root = LayoutInflater.from(context).inflate(R.layout.layout_image_text_toast, null);
         Toast toast = new Toast(context);
-        toast.setGravity(Gravity.TOP, 0, 40);
+        toast.setGravity(Gravity.TOP, 0, 0);
         toast.setDuration(Toast.LENGTH_SHORT);
         toast.setView(root);
         toast.show();
@@ -36,10 +36,10 @@ public class ToastUtil {
      */
     public static void showToast(Context context, String content) {
         View root = LayoutInflater.from(context).inflate(R.layout.layout_text_toast, null);
-        TextView contentTextView = (TextView) root.findViewById(R.id.tv_content);
+        TextView contentTextView = root.findViewById(R.id.tv_content);
         contentTextView.setText(content);
         Toast toast = new Toast(context);
-        toast.setGravity(Gravity.TOP, 0, 40);
+        toast.setGravity(Gravity.TOP, 0, 0);
         toast.setDuration(Toast.LENGTH_SHORT);
         toast.setView(root);
         toast.show();

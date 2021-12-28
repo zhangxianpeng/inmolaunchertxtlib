@@ -320,12 +320,19 @@ public class MainActivity extends BaseActivity {
     private boolean isBatteryBelow2 = false;
     private boolean isShowCharging = false;
 
+    /**
+     * 是否在充电
+     **/
+    public static boolean isChargingNow = false;
+
     class BatteryReceiver extends BroadcastReceiver {
 
         @Override
         public void onReceive(Context context, Intent intent) {
+            isChargingNow = intent.getIntExtra(BatteryManager.EXTRA_PLUGGED, -1) != 0;
+            LogUtils.i(TAG, "是否在充电?=  " + isChargingNow);
+            LogUtils.i(TAG, "action =  " + intent.getAction());
             String action = intent.getAction();
-            LogUtils.i(TAG, "onReceive Broadcast =" + action);
             switch (action) {
                 case ALARM_MEMO_LOG:
                     // 接收到备忘录传过来的内容
@@ -340,17 +347,21 @@ public class MainActivity extends BaseActivity {
                     }
                     break;
                 case SHUT_DOWN_ACTION:
-                    startActivity(new Intent(MainActivity.this, PopupWindowActivity.class));
+                    if (!PopupWindowActivity.isActive) {
+                        startActivity(new Intent(MainActivity.this, PopupWindowActivity.class));
+                    }
                     break;
                 case Intent.ACTION_BATTERY_CHANGED:
                     int battery = intent.getIntExtra(BatteryManager.EXTRA_LEVEL, 0);
                     LogUtils.i(TAG, "当前电量 = " + battery);
-                    int isCharging = intent.getIntExtra(BatteryManager.EXTRA_PLUGGED, -1);
-                    isChargingImageView.setVisibility(isCharging == 0 ? View.INVISIBLE : View.VISIBLE);
+                    isChargingImageView.setVisibility(isChargingNow ? View.VISIBLE : View.INVISIBLE);
                     if (!isShowCharging) {
-                        if (isCharging != 0) {
+                        if (isChargingNow) {
+                            // 正在充电
                             WindowUtils.showPopupWindow(getApplicationContext(), WindowUtils.UI_STATE.CHARGING, battery + "");
+                            isShowCharging = true;
                         } else {
+                            // 未充电
                             if (WindowUtils.isShown) {
                                 WindowUtils.hidePopupWindow();
                                 isShowCharging = false;

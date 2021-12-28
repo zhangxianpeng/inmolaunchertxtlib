@@ -1,27 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="wrap_content"
+    android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="@drawable/bg_toast"
     android:orientation="vertical">
 
     <ImageView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="44pt"
+        android:layout_height="44pt"
         android:layout_gravity="center"
         android:paddingTop="10pt"
-        android:src="@drawable/icon_home_beiwanglu" />
+        android:src="@drawable/icon_low_battery" />
 
     <TextView
         android:id="@+id/tv_content"
-        android:layout_width="250pt"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="center"
+        android:layout_gravity="center_horizontal"
         android:gravity="center"
+        android:paddingLeft="20pt"
         android:paddingTop="10pt"
+        android:paddingRight="20pt"
         android:paddingBottom="10pt"
         android:text="@string/string_low_battery"
-        android:textColor="@color/black"
+        android:textColor="@color/colorWhite"
         android:textSize="22pt" />
 
 </LinearLayout>
