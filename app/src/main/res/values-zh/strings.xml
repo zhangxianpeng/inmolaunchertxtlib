@@ -15,7 +15,7 @@
     <string name="string_wlan_connected">WLAN已连接</string>
     <string name="string_bluetooth_disconnected">蓝牙已断开</string>
     <string name="string_bluetooth_connected">蓝牙已连接</string>
-    <string name="string_low_battery">电量低,请及时充电</string>
+    <string name="string_low_battery">电池电量低于15%</string>
     <string name="string_too_low_battery">电量过低,请及时充电</string>
     <string name="string_too_low_battery_shutdown">电量耗尽,即将自动关机</string>
     <string name="string_memo_data">您有备忘录事项,请及时处理</string>

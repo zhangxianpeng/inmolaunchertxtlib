@@ -80,6 +80,7 @@ public class WindowUtils {
         params.height = LayoutParams.MATCH_PARENT;
         params.gravity = Gravity.CENTER;
         if (state != UI_STATE.SHUT_DOWN_ACTION) {
+            // 关机的操作交给它本身
             mView.setOnTouchListener((view, motionEvent) -> {
                 if (motionEvent.getAction() == MotionEvent.ACTION_DOWN) {
                     hidePopupWindow();
@@ -114,7 +115,7 @@ public class WindowUtils {
         LogUtils.i(TAG, "setUp view");
         View view = null;
         if (state == UI_STATE.MEMO_STATE) {
-            view = LayoutInflater.from(context).inflate(R.layout.activity_memo_show, null);
+            view = LayoutInflater.from(context).inflate(R.layout.layout_memo_show, null);
             TextView memoTextView = view.findViewById(R.id.tvMemoContent);
             memoTextView.setText(content);
             TtsManager.getInstance().init(context, new TtsManager.TtsListener() {
@@ -128,7 +129,6 @@ public class WindowUtils {
 
                 }
             });
-
         } else if (state == UI_STATE.BATTERY_BELOW_6) {
             view = LayoutInflater.from(context).inflate(R.layout.layout_low_battery, null);
         } else if (state == UI_STATE.BATTERY_BELOW_2) {
@@ -145,7 +145,7 @@ public class WindowUtils {
         return view;
     }
 
-    /** ==================================低电量倒计时关机弹层===========================================**/
+    /**==================================低电量倒计时关机弹层===========================================**/
     private static void initTimerShutDownView(View view) {
         TextView countDownTextView = view.findViewById(R.id.tvCountdownTime);
         CountDownTimer timer = new CountDownTimer(16000, 1000) {
@@ -172,7 +172,7 @@ public class WindowUtils {
     }
     /** ==================================低电量倒计时关机弹层===========================================**/
 
-    /** ==================================关机重启弹层===========================================**/
+    /**==================================关机重启弹层===========================================**/
     static boolean isSwipeLeft = false;
     static boolean isSwipeRight = false;
     static int mCurrentIndex = 1;
@@ -190,9 +190,6 @@ public class WindowUtils {
             @Override
             public boolean onDown(View view, int x, int y, MotionEvent event) {
                 LogUtils.i(TAG, "onDown");
-//                if (mCurrentIndex == 1) {
-//                    cancel();
-//                }
                 return false;
             }
 
@@ -221,6 +218,9 @@ public class WindowUtils {
                 if (isSwipeRight && !isSwipeLeft) {
                     mCurrentIndex++;
                     moveAndShow();
+                }
+                if (!isSwipeLeft && !isSwipeRight && mCurrentIndex == 1) {
+                    cancel();
                 }
                 return false;
             }
