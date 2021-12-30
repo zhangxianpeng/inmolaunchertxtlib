@@ -29,16 +29,17 @@
             android:textSize="26pt" />
 
         <TextView
-            style="@style/text_style"
+            android:layout_width="360pt"
+            android:layout_height="62pt"
             android:layout_below="@+id/tvMemoContent"
             android:layout_centerHorizontal="true"
             android:layout_marginTop="47pt"
             android:background="@drawable/bg_btn_ok"
+            android:gravity="center"
             android:paddingLeft="50pt"
-            android:paddingTop="20pt"
             android:paddingRight="50pt"
-            android:paddingBottom="20pt"
             android:text="@string/string_i_kwnon"
+            android:textColor="@color/colorWhite"
             android:textSize="22pt" />
     </RelativeLayout>
 </RelativeLayout>

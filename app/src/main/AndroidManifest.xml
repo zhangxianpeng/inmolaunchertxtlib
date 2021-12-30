@@ -47,10 +47,6 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.NORMAL">
         <activity
-            android:name=".ui.PopupWindowActivity"
-            android:exported="true"
-            android:theme="@style/FullScreenTranslucentTheme" />
-        <activity
             android:name=".ui.AppManagerActivity"
             android:exported="true" />
         <activity

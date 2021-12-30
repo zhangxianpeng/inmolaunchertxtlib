@@ -13,7 +13,7 @@
         app:layout_constraintBottom_toBottomOf="@+id/ifvCancel"
         app:layout_constraintEnd_toStartOf="@+id/ifvCancel"
         app:layout_constraintTop_toTopOf="@+id/ifvCancel"
-        app:srcCompat="@drawable/ic_icon_key_light" />
+        app:srcCompat="@drawable/icon_shut_down" />
 
     <TextView
         android:layout_width="wrap_content"
@@ -76,7 +76,7 @@
         app:layout_constraintBottom_toBottomOf="@+id/ifvCancel"
         app:layout_constraintStart_toEndOf="@+id/ifvCancel"
         app:layout_constraintTop_toTopOf="@+id/ifvCancel"
-        app:srcCompat="@drawable/ic_icon_key_more" />
+        app:srcCompat="@drawable/icon_restart" />
 
     <TextView
         android:layout_width="wrap_content"

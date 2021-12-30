@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.graphics.drawable.Drawable;
 import android.text.TextUtils;
 import android.widget.Toast;
 
@@ -13,6 +14,7 @@ import com.blankj.utilcode.util.LogUtils;
 import com.inmoglass.launcher.R;
 import com.inmoglass.launcher.base.BaseApplication;
 import com.inmoglass.launcher.bean.Channel;
+import com.inmoglass.launcher.ui.MainActivity;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -179,7 +181,7 @@ public class AppUtil {
             String appPackageName = applicationInfo.packageName;
             if (appPackageName.equals(packageName)) {
                 String appName = applicationInfo.loadLabel(pm).toString();
-                channel = new Channel(R.drawable.img_home_kfc, appName, R.drawable.icon_home_kfc, packageName);
+                channel = new Channel(R.drawable.img_home_default, appName, 0, packageName,getAppIcon(packageName));
                 break;
             }
         }
@@ -202,6 +204,26 @@ public class AppUtil {
             String appPackageName = applicationInfo.packageName;
             if (appPackageName.equals(appPackage)) {
                 realName = applicationInfo.loadLabel(pm).toString();
+                break;
+            }
+        }
+        return realName;
+    }
+
+    /**
+     * 通过包名获取app应用图标
+     * @param appPackage
+     * @return
+     */
+    public Drawable getAppIcon(String appPackage) {
+        Drawable  realName = null;
+        List<PackageInfo> packageInfos = getPackageInfos(mContext, 2);
+        PackageManager pm = mContext.getPackageManager();
+        for (PackageInfo packageInfo : packageInfos) {
+            ApplicationInfo applicationInfo = packageInfo.applicationInfo;
+            String appPackageName = applicationInfo.packageName;
+            if (appPackageName.equals(appPackage)) {
+                realName = pm.getApplicationIcon(applicationInfo);
                 break;
             }
         }

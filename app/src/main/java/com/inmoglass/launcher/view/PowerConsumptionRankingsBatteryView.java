@@ -114,17 +114,9 @@ public class PowerConsumptionRankingsBatteryView extends View {
     private RectF levelRect;
 
     /**
-     * 低电颜色
-     */
-    private int lowerPowerColor;
-    /**
      * 在线颜色
      */
     private int onlineColor;
-    /**
-     * 离线颜色
-     */
-    private int offlineColor;
 
     public PowerConsumptionRankingsBatteryView(Context context) {
         super(context);
@@ -159,9 +151,7 @@ public class PowerConsumptionRankingsBatteryView extends View {
      */
     private void initTypeArray(Context context, @Nullable AttributeSet attrs) {
         TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.PowerConsumptionRankingsBatteryView);
-        lowerPowerColor = typedArray.getColor(R.styleable.PowerConsumptionRankingsBatteryView_batteryLowerPowerColor, getResources().getColor(R.color.lowerPowerColor));
-        onlineColor = typedArray.getColor(R.styleable.PowerConsumptionRankingsBatteryView_batteryOnlineColor, getResources().getColor(R.color.onlineColor));
-        offlineColor = typedArray.getColor(R.styleable.PowerConsumptionRankingsBatteryView_batteryOfflineColor, getResources().getColor(R.color.offlineColor));
+        onlineColor = typedArray.getColor(R.styleable.PowerConsumptionRankingsBatteryView_batteryOnlineColor, getResources().getColor(R.color.color_battery_white));
 
         //外壳的相关信息
         shellCornerRadius = typedArray.getDimensionPixelOffset(R.styleable.PowerConsumptionRankingsBatteryView_batteryShellCornerRadius,
@@ -210,7 +200,6 @@ public class PowerConsumptionRankingsBatteryView extends View {
         canvas.setDrawFilter(drawFilter);
 
         // 电池头 矩形的坐标
-
         //坐标 left：控件整体宽度的一半 减去 电池头宽度的一半
         shellHeadRect.left = width / 2 - shellHeadWidth / 2;
         //坐标 top： 0
@@ -286,26 +275,8 @@ public class PowerConsumptionRankingsBatteryView extends View {
      * 设置在线 重绘
      */
     public void setOnline(int color) {
-        shellPaint.setColor(offlineColor);
+        shellPaint.setColor(onlineColor);
         levelPaint.setColor(color);
-        postInvalidate();
-    }
-
-    /**
-     * 设置离线 重绘
-     */
-    public void setOffline() {
-        shellPaint.setColor(offlineColor);
-        levelPaint.setColor(offlineColor);
-        postInvalidate();
-    }
-
-    /**
-     * 设置低电 重绘
-     */
-    public void setLowerPower() {
-        shellPaint.setColor(lowerPowerColor);
-        levelPaint.setColor(lowerPowerColor);
         postInvalidate();
     }
 }

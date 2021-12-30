@@ -14,8 +14,13 @@ import android.view.WindowManager;
 import android.view.WindowManager.LayoutParams;
 import android.widget.TextView;
 
+import androidx.constraintlayout.utils.widget.ImageFilterView;
+import androidx.constraintlayout.widget.ConstraintLayout;
+
 import com.blankj.utilcode.util.LogUtils;
+import com.blankj.utilcode.util.TouchUtils;
 import com.inmoglass.launcher.R;
+import com.inmoglass.launcher.base.BaseApplication;
 import com.inmoglass.launcher.tts.TtsManager;
 import com.inmoglass.launcher.ui.MainActivity;
 
@@ -31,6 +36,10 @@ public class WindowUtils {
     private static Handler myHandler = new Handler(Looper.getMainLooper());
 
     public enum UI_STATE {
+        /**
+         * 关机
+         */
+        SHUT_DOWN_ACTION,
         /**
          * 备忘录
          */
@@ -70,13 +79,16 @@ public class WindowUtils {
         params.width = LayoutParams.MATCH_PARENT;
         params.height = LayoutParams.MATCH_PARENT;
         params.gravity = Gravity.CENTER;
-        mView.setOnTouchListener((view, motionEvent) -> {
-            if (motionEvent.getAction() == MotionEvent.ACTION_DOWN) {
-                hidePopupWindow();
-            }
-            return false;
-        });
+        if (state != UI_STATE.SHUT_DOWN_ACTION) {
+            mView.setOnTouchListener((view, motionEvent) -> {
+                if (motionEvent.getAction() == MotionEvent.ACTION_DOWN) {
+                    hidePopupWindow();
+                }
+                return false;
+            });
+        }
         mWindowManager.addView(mView, params);
+        // 充电界面2S自动关闭
         if (state == UI_STATE.CHARGING) {
             myHandler.postDelayed(() -> {
                 mWindowManager.removeView(mView);
@@ -121,33 +133,162 @@ public class WindowUtils {
             view = LayoutInflater.from(context).inflate(R.layout.layout_low_battery, null);
         } else if (state == UI_STATE.BATTERY_BELOW_2) {
             view = LayoutInflater.from(context).inflate(R.layout.layout_shutdown_countdown, null);
-            TextView countDownTextView = view.findViewById(R.id.tvCountdownTime);
-            CountDownTimer timer = new CountDownTimer(15000, 1000) {
-                @Override
-                public void onTick(long millisUntilFinished) {
-                    countDownTextView.setText(millisUntilFinished / 1000 + "S");
-                    LogUtils.i(TAG, "seconds remaining: " + millisUntilFinished / 1000);
-                    if (MainActivity.isChargingNow) {
-                        // 倒计时过程中插入充电器，倒计时弹层消失
-                        hidePopupWindow();
-                    }
-                }
-
-                @Override
-                public void onFinish() {
-                    // 倒计时结束后直接关机
-                    if (!MainActivity.isChargingNow) {
-                        Intent shutdownIntent = new Intent("com.android.systemui.keyguard.shutdown");
-                        mContext.sendBroadcast(shutdownIntent);
-                    }
-                }
-            };
-            timer.start();
+            initTimerShutDownView(view);
         } else if (state == UI_STATE.CHARGING) {
             view = LayoutInflater.from(context).inflate(R.layout.layout_charging, null);
             TextView batteryLevelTextView = view.findViewById(R.id.tvBatteryLevel);
             batteryLevelTextView.setText(content + "%");
+        } else if (state == UI_STATE.SHUT_DOWN_ACTION) {
+            view = LayoutInflater.from(context).inflate(R.layout.layout_shutdown, null);
+            initShutDownWindowView(view);
         }
         return view;
     }
+
+    /** ==================================低电量倒计时关机弹层===========================================**/
+    private static void initTimerShutDownView(View view) {
+        TextView countDownTextView = view.findViewById(R.id.tvCountdownTime);
+        CountDownTimer timer = new CountDownTimer(16000, 1000) {
+            @Override
+            public void onTick(long millisUntilFinished) {
+                countDownTextView.setText(millisUntilFinished / 1000 + "S");
+                LogUtils.i(TAG, "seconds remaining: " + millisUntilFinished / 1000);
+                if (MainActivity.isChargingNow) {
+                    // 倒计时过程中插入充电器，倒计时弹层消失
+                    hidePopupWindow();
+                }
+            }
+
+            @Override
+            public void onFinish() {
+                // 倒计时结束后直接关机
+                if (!MainActivity.isChargingNow) {
+                    Intent shutdownIntent = new Intent("com.android.systemui.keyguard.shutdown");
+                    mContext.sendBroadcast(shutdownIntent);
+                }
+            }
+        };
+        timer.start();
+    }
+    /** ==================================低电量倒计时关机弹层===========================================**/
+
+    /** ==================================关机重启弹层===========================================**/
+    static boolean isSwipeLeft = false;
+    static boolean isSwipeRight = false;
+    static int mCurrentIndex = 1;
+    static ImageFilterView ifvShutDownSelectedBg;
+    static ImageFilterView ifvCancelSelectedBg;
+    static ImageFilterView ifvRebootSelectedBg;
+
+    private static void initShutDownWindowView(View view) {
+        ifvShutDownSelectedBg = view.findViewById(R.id.ifvShutDownSelectedBg);
+        ifvCancelSelectedBg = view.findViewById(R.id.ifvCancelSelectedBg);
+        ifvRebootSelectedBg = view.findViewById(R.id.ifvRebootSelectedBg);
+
+        ConstraintLayout layout = view.findViewById(R.id.container);
+        layout.setOnTouchListener(new TouchUtils.OnTouchUtilsListener() {
+            @Override
+            public boolean onDown(View view, int x, int y, MotionEvent event) {
+                LogUtils.i(TAG, "onDown");
+//                if (mCurrentIndex == 1) {
+//                    cancel();
+//                }
+                return false;
+            }
+
+            @Override
+            public boolean onMove(View view, int direction, int x, int y, int dx, int dy, int totalX, int totalY, MotionEvent event) {
+                LogUtils.i(TAG, "onMove = " + direction);
+                if (direction == 1) {
+                    // 左滑
+                    isSwipeLeft = true;
+                    isSwipeRight = false;
+                } else if (direction == 4) {
+                    // 右滑
+                    isSwipeRight = true;
+                    isSwipeLeft = false;
+                }
+                return false;
+            }
+
+            @Override
+            public boolean onStop(View view, int direction, int x, int y, int totalX, int totalY, int vx, int vy, MotionEvent event) {
+                LogUtils.i(TAG, "onStop");
+                if (isSwipeLeft && !isSwipeRight) {
+                    mCurrentIndex--;
+                    moveAndShow();
+                }
+                if (isSwipeRight && !isSwipeLeft) {
+                    mCurrentIndex++;
+                    moveAndShow();
+                }
+                return false;
+            }
+        });
+    }
+
+    private static void moveAndShow() {
+        // 防止越界
+        if (mCurrentIndex > 2) {
+            mCurrentIndex = 2;
+        } else if (mCurrentIndex < 1) {
+            mCurrentIndex = 0;
+        }
+        LogUtils.i("mCurrentIndex=" + mCurrentIndex);
+        switch (mCurrentIndex) {
+            case 0:
+                ifvShutDownSelectedBg.setVisibility(View.VISIBLE);
+                ifvCancelSelectedBg.setVisibility(View.GONE);
+                ifvRebootSelectedBg.setVisibility(View.GONE);
+                break;
+            case 1:
+                ifvShutDownSelectedBg.setVisibility(View.GONE);
+                ifvCancelSelectedBg.setVisibility(View.VISIBLE);
+                ifvRebootSelectedBg.setVisibility(View.GONE);
+                break;
+            case 2:
+                ifvShutDownSelectedBg.setVisibility(View.GONE);
+                ifvCancelSelectedBg.setVisibility(View.GONE);
+                ifvRebootSelectedBg.setVisibility(View.VISIBLE);
+                break;
+            default:
+                break;
+        }
+        useCurrentFunction();
+    }
+
+    private static void useCurrentFunction() {
+        switch (mCurrentIndex) {
+            case 0:
+                shutdownSystem();
+                break;
+            case 2:
+                rebootSystem();
+                break;
+            case 1:
+            default:
+                cancel();
+                break;
+        }
+    }
+
+    private static void shutdownSystem() {
+        // 写入文件测试是否收到这个广播,/sdcard/shutdownLog/data.txt
+        WriteLogFileUtil.writeFile();
+        Intent shutdownIntent = new Intent("com.android.systemui.keyguard.shutdown");
+        BaseApplication.mContext.sendBroadcast(shutdownIntent);
+    }
+
+    private static void rebootSystem() {
+        Intent rebootIntent = new Intent("com.android.systemui.keyguard.shutdown");
+        rebootIntent.putExtra("reboot", true);
+        BaseApplication.mContext.sendBroadcast(rebootIntent);
+    }
+
+    private static void cancel() {
+        mCurrentIndex = 1;
+        hidePopupWindow();
+    }
+    /**==================================关机重启弹层===========================================*/
+
 }

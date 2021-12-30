@@ -22,15 +22,15 @@
 
     <com.inmoglass.launcher.view.PowerConsumptionRankingsBatteryView
         android:id="@+id/sbb_battery"
-        android:layout_width="10pt"
-        android:layout_height="15pt"
+        android:layout_width="11pt"
+        android:layout_height="17pt"
         android:layout_centerVertical="true"
         android:layout_toStartOf="@+id/iv_isCharging" />
 
     <ImageView
         android:id="@+id/iv_isCharging"
-        android:layout_width="14pt"
-        android:layout_height="18pt"
+        android:layout_width="16pt"
+        android:layout_height="20pt"
         android:layout_alignParentEnd="true"
         android:layout_centerVertical="true"
         android:layout_marginEnd="21pt"

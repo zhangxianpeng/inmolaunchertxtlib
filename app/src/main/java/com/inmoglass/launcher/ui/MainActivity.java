@@ -1,8 +1,11 @@
 package com.inmoglass.launcher.ui;
 
+import static com.inmoglass.launcher.util.AppUtil.isInstalled;
+
 import android.Manifest;
 import android.bluetooth.BluetoothDevice;
 import android.content.BroadcastReceiver;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
@@ -16,6 +19,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.provider.Settings;
+import android.text.TextUtils;
 import android.view.GestureDetector;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
@@ -32,6 +36,7 @@ import com.baidu.location.BDLocation;
 import com.baidu.location.LocationClient;
 import com.baidu.location.LocationClientOption;
 import com.blankj.utilcode.util.LogUtils;
+import com.blankj.utilcode.util.ToastUtils;
 import com.inmo.network.AndroidNetworking;
 import com.inmo.network.error.ANError;
 import com.inmo.network.interfaces.JSONObjectRequestListener;
@@ -113,9 +118,9 @@ public class MainActivity extends BaseActivity {
             public boolean onSingleTapUp(MotionEvent e) {
                 LogUtils.i(TAG, "selectPosition = " + selectPosition);
                 if (selectPosition == 1) { // camera 特殊处理
-                    AppUtil.getInstance().openApplication("com.yulong.coolcamera", "com.yulong.arcamera.MainActivity");
+                    openApplication("com.yulong.coolcamera", "com.yulong.arcamera.MainActivity");
                 } else {
-                    AppUtil.getInstance().openApplicationByPkgName(channelList.get(selectPosition).getPackageName());
+                    openApplicationByPkgName(channelList.get(selectPosition).getPackageName());
                 }
                 return true;
             }
@@ -347,25 +352,22 @@ public class MainActivity extends BaseActivity {
                     }
                     break;
                 case SHUT_DOWN_ACTION:
-                    if (!PopupWindowActivity.isActive) {
-                        startActivity(new Intent(MainActivity.this, PopupWindowActivity.class));
-                    }
+                    WindowUtils.showPopupWindow(getApplicationContext(), WindowUtils.UI_STATE.SHUT_DOWN_ACTION, "");
                     break;
                 case Intent.ACTION_BATTERY_CHANGED:
                     int battery = intent.getIntExtra(BatteryManager.EXTRA_LEVEL, 0);
                     LogUtils.i(TAG, "当前电量 = " + battery);
                     isChargingImageView.setVisibility(isChargingNow ? View.VISIBLE : View.INVISIBLE);
-                    if (!isShowCharging) {
-                        if (isChargingNow) {
-                            // 正在充电
+                    if (isChargingNow) {
+                        if (!isShowCharging) {
+                            // 保证一次插入移除充电器显示一次
                             WindowUtils.showPopupWindow(getApplicationContext(), WindowUtils.UI_STATE.CHARGING, battery + "");
                             isShowCharging = true;
-                        } else {
-                            // 未充电
-                            if (WindowUtils.isShown) {
-                                WindowUtils.hidePopupWindow();
-                                isShowCharging = false;
-                            }
+                        }
+                    } else {
+                        isShowCharging = false;
+                        if (WindowUtils.isShown) {
+                            WindowUtils.hidePopupWindow();
                         }
                     }
                     if (battery < 15 && !isBatteryBelow15) {
@@ -384,14 +386,15 @@ public class MainActivity extends BaseActivity {
                         WindowUtils.showPopupWindow(getApplicationContext(), WindowUtils.UI_STATE.BATTERY_BELOW_2, "");
                     }
                     if (battery >= 0 && battery <= 5) {
-                        batteryView.setLevelHeight(battery);
+                        // 假数据，不然不到一个等级不明显
+                        batteryView.setLevelHeight(battery + 20);
                         batteryView.setOnline(getColor(R.color.color_battery_red));
                     } else if (battery > 5 && battery <= 15) {
-                        // 假数据，不然不明显
+                        // 假数据，不然不到一个等级不明显
                         batteryView.setLevelHeight(battery + 20);
                         batteryView.setOnline(getColor(R.color.color_battery_orange));
                     } else if (battery > 15 && battery <= 100) {
-                        // 假数据，不然不明显
+                        // 假数据，不然不到一个等级不明显
                         batteryView.setLevelHeight(battery + 20);
                         batteryView.setOnline(getColor(R.color.color_battery_white));
                     }
@@ -470,7 +473,7 @@ public class MainActivity extends BaseActivity {
             LogUtils.i(TAG, "isAdd = " + isAdd + ",packageName = " + realPackageName);
             if (channelList != null && !channelList.isEmpty()) {
                 for (int i = 0; i < channelList.size(); i++) {
-                    if (channelList.get(i).getPackageName().equals(realPackageName)) {
+                    if (channelList.get(i).getPackageName().equals(realPackageName) && !AppUtil.getInstance().checkAppIsExit(realPackageName)) {
                         channelList.remove(i);
                         isRemoveSuccess = true;
                     }
@@ -518,4 +521,44 @@ public class MainActivity extends BaseActivity {
         }
     };
 
+    private void openApplicationByPkgName(String pkgName) {
+        if (TextUtils.isEmpty(pkgName)) {
+            return;
+        }
+
+        if (!isInstalled(MainActivity.this, pkgName)) {
+            ToastUtils.showShort(getString(R.string.string_app_not_installed));
+            return;
+        }
+
+        LogUtils.i(TAG, "The package will be open : " + pkgName);
+        Intent intent = getPackageManager().getLaunchIntentForPackage(pkgName);
+        if (intent == null) {
+            return;
+        }
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(intent);
+//        MainActivity.this.overridePendingTransition(R.anim.translate_in, 0);
+    }
+
+    private void openApplication(String pkgName, String activityName) {
+        if (TextUtils.isEmpty(pkgName)) {
+            return;
+        }
+        if (!isInstalled(MainActivity.this, pkgName)) {
+            ToastUtils.showShort(getString(R.string.string_app_not_installed));
+            return;
+        }
+        Intent intent1 = getPackageManager().getLaunchIntentForPackage(pkgName);
+        if (intent1 == null) {
+            return;
+        }
+        Intent intent = new Intent();
+        ComponentName componentName = new ComponentName(pkgName, activityName);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        intent.setComponent(componentName);
+        LogUtils.d("packageName = " + pkgName + " activityName = " + activityName);
+        startActivity(intent);
+//        MainActivity.this.overridePendingTransition(R.anim.translate_in, 0);
+    }
 }

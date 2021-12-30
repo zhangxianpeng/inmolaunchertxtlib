@@ -65,25 +65,25 @@ public class LauncherManager {
         for (String appPackage : packagesList) {
             Channel bean = null;
             if (appPackage.equals(packageNames[0])) {
-                bean = new Channel(R.drawable.img_home_meitiwenjian, BaseApplication.mContext.getString(R.string.string_home_media), R.drawable.icon_home_meiti, packageNames[0]);
+                bean = new Channel(R.drawable.img_home_meitiwenjian, BaseApplication.mContext.getString(R.string.string_home_media), R.drawable.icon_home_meiti, packageNames[0], null);
             } else if (appPackage.equals(packageNames[1])) {
-                bean = new Channel(R.drawable.img_home_camera, BaseApplication.mContext.getString(R.string.string_home_camera), R.drawable.icon_home_camera, packageNames[1]);
+                bean = new Channel(R.drawable.img_home_camera, BaseApplication.mContext.getString(R.string.string_home_camera), R.drawable.icon_home_camera, packageNames[1], null);
             } else if (appPackage.equals(packageNames[2])) {
-                bean = new Channel(R.drawable.img_home_beiwanglu, BaseApplication.mContext.getString(R.string.string_home_beiwanglu), R.drawable.icon_home_beiwanglu, packageNames[2]);
+                bean = new Channel(R.drawable.img_home_beiwanglu, BaseApplication.mContext.getString(R.string.string_home_beiwanglu), R.drawable.icon_home_beiwanglu, packageNames[2], null);
             } else if (appPackage.equals(packageNames[3])) {
-                bean = new Channel(R.drawable.img_home_qqmusic, BaseApplication.mContext.getString(R.string.string_home_qq_music), R.drawable.icon_home_qqmusic, packageNames[3]);
+                bean = new Channel(R.drawable.img_home_qqmusic, BaseApplication.mContext.getString(R.string.string_home_qq_music), R.drawable.icon_home_qqmusic, packageNames[3], null);
             } else if (appPackage.equals(packageNames[4])) {
-                bean = new Channel(R.drawable.img_home_ximalaya, BaseApplication.mContext.getString(R.string.string_home_ximalaya), R.drawable.icon_home_ximalaya, packageNames[4]);
+                bean = new Channel(R.drawable.img_home_ximalaya, BaseApplication.mContext.getString(R.string.string_home_ximalaya), R.drawable.icon_home_ximalaya, packageNames[4], null);
             } else if (appPackage.equals(packageNames[5])) {
-                bean = new Channel(R.drawable.img_home_gaode, BaseApplication.mContext.getString(R.string.string_home_gaode), R.drawable.icon_home_gaode, packageNames[5]);
+                bean = new Channel(R.drawable.img_home_gaode, BaseApplication.mContext.getString(R.string.string_home_gaode), R.drawable.icon_home_gaode, packageNames[5], null);
             } else if (appPackage.equals(packageNames[6])) {
-                bean = new Channel(R.drawable.img_home_wendang, BaseApplication.mContext.getString(R.string.string_home_wendang), R.drawable.icon_file_word, packageNames[6]);
+                bean = new Channel(R.drawable.img_home_wendang, BaseApplication.mContext.getString(R.string.string_home_wendang), R.drawable.icon_file_word, packageNames[6], null);
             } else if (appPackage.equals(packageNames[7])) {
-                bean = new Channel(R.drawable.img_home_wps, BaseApplication.mContext.getString(R.string.string_home_wps), R.drawable.icon_home_wps, packageNames[7]);
+                bean = new Channel(R.drawable.img_home_wps, BaseApplication.mContext.getString(R.string.string_home_wps), R.drawable.icon_home_wps, packageNames[7], null);
             } else if (appPackage.equals(packageNames[8])) {
-                bean = new Channel(R.drawable.img_home_setting, BaseApplication.mContext.getString(R.string.string_home_setting), R.drawable.icon_home_setting, packageNames[8]);
+                bean = new Channel(R.drawable.img_home_setting, BaseApplication.mContext.getString(R.string.string_home_setting), R.drawable.icon_home_setting, packageNames[8], null);
             } else {
-                bean = new Channel(R.drawable.img_home_kfc, AppUtil.getInstance().getAppName(appPackage), R.drawable.icon_home_kfc, appPackage);
+                bean = new Channel(R.drawable.img_home_default, AppUtil.getInstance().getAppName(appPackage), 0, appPackage, AppUtil.getInstance().getAppIcon(appPackage));
             }
             beanList.add(bean);
         }
