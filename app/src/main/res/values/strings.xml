@@ -24,4 +24,5 @@
     <string name="string_reboot">Reboot</string>
     <string name="string_cancel">Cancel</string>
     <string name="string_i_kwnon">Got It</string>
+    <string name="string_time_format">MM dd E</string>
 </resources>

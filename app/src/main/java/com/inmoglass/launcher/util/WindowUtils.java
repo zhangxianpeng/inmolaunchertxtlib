@@ -6,6 +6,7 @@ import android.graphics.PixelFormat;
 import android.os.CountDownTimer;
 import android.os.Handler;
 import android.os.Looper;
+import android.os.PowerManager;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -116,19 +117,7 @@ public class WindowUtils {
         View view = null;
         if (state == UI_STATE.MEMO_STATE) {
             view = LayoutInflater.from(context).inflate(R.layout.layout_memo_show, null);
-            TextView memoTextView = view.findViewById(R.id.tvMemoContent);
-            memoTextView.setText(content);
-            TtsManager.getInstance().init(context, new TtsManager.TtsListener() {
-                @Override
-                public void onInitSuccess() {
-                    TtsManager.getInstance().playTTS(content);
-                }
-
-                @Override
-                public void onInitFail() {
-
-                }
-            });
+            initMemoView(view, content);
         } else if (state == UI_STATE.BATTERY_BELOW_6) {
             view = LayoutInflater.from(context).inflate(R.layout.layout_low_battery, null);
         } else if (state == UI_STATE.BATTERY_BELOW_2) {
@@ -143,6 +132,37 @@ public class WindowUtils {
             initShutDownWindowView(view);
         }
         return view;
+    }
+
+    private static void initMemoView(View view,String content) {
+        TextView memoTextView = view.findViewById(R.id.tvMemoContent);
+        memoTextView.setText(content);
+        wakeUpScreen();
+        TtsManager.getInstance().init(mContext, new TtsManager.TtsListener() {
+            @Override
+            public void onInitSuccess() {
+                TtsManager.getInstance().playTTS(content);
+            }
+
+            @Override
+            public void onInitFail() {
+
+            }
+        });
+    }
+
+    /**
+     * 唤醒屏幕
+     */
+    private static void wakeUpScreen() {
+        // 获取电源管理器对象
+        PowerManager pm = (PowerManager) mContext.getSystemService(Context.POWER_SERVICE);
+        // 获取PowerManager.WakeLock对象,后面的参数|表示同时传入两个值,最后的是LogCat里用的Tag
+        PowerManager.WakeLock wl = pm.newWakeLock(PowerManager.ACQUIRE_CAUSES_WAKEUP | PowerManager.SCREEN_DIM_WAKE_LOCK, "bright");
+        // 点亮屏幕
+        wl.acquire();
+        // 释放
+        wl.release();
     }
 
     /**==================================低电量倒计时关机弹层===========================================**/

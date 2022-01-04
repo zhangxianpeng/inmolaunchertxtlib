@@ -304,7 +304,6 @@ public class MainActivity extends BaseActivity {
         // 熄屏、亮屏
         batteryFilter.addAction(Intent.ACTION_SCREEN_ON);
         batteryFilter.addAction(Intent.ACTION_SCREEN_OFF);
-
         registerReceiver(batteryReceiver, batteryFilter);
 
         // 卸载、安装
@@ -358,42 +357,45 @@ public class MainActivity extends BaseActivity {
                     int battery = intent.getIntExtra(BatteryManager.EXTRA_LEVEL, 0);
                     LogUtils.i(TAG, "当前电量 = " + battery);
                     isChargingImageView.setVisibility(isChargingNow ? View.VISIBLE : View.INVISIBLE);
-                    if (isChargingNow) {
-                        if (!isShowCharging) {
-                            // 保证一次插入移除充电器显示一次
-                            WindowUtils.showPopupWindow(getApplicationContext(), WindowUtils.UI_STATE.CHARGING, battery + "");
-                            isShowCharging = true;
-                        }
-                    } else {
-                        isShowCharging = false;
-                        if (WindowUtils.isShown) {
-                            WindowUtils.hidePopupWindow();
-                        }
-                    }
-                    if (battery < 15 && !isBatteryBelow15) {
+//                    if (isChargingNow) {
+//                        if (!isShowCharging) {
+//                            // 保证一次插入移除充电器显示一次
+//                            WindowUtils.showPopupWindow(getApplicationContext(), WindowUtils.UI_STATE.CHARGING, battery + "");
+//                            isShowCharging = true;
+//                        }
+//                    } else {
+//                        isShowCharging = false;
+//                        if (WindowUtils.isShown) {
+//                            WindowUtils.hidePopupWindow();
+//                        }
+//                    }
+                    if (battery > 5 && battery < 15 && !isBatteryBelow15) {
                         // 电量低于15时显示Toast提示电量低
                         isBatteryBelow15 = true;
                         ToastUtil.showImageToast(getApplicationContext());
                     }
-                    if (battery < 6 && !isBatteryBelow6) {
+                    if (battery >= 2 && battery < 6 && !isBatteryBelow6) {
                         // 电量低于6时显示低电量提示
                         isBatteryBelow6 = true;
                         WindowUtils.showPopupWindow(getApplicationContext(), WindowUtils.UI_STATE.BATTERY_BELOW_6, "");
                     }
                     if (battery < 2 && !isBatteryBelow2) {
-                        // 电量低于2时倒计时30S关机
+                        // 电量低于2时倒计时15S关机
                         isBatteryBelow2 = true;
                         WindowUtils.showPopupWindow(getApplicationContext(), WindowUtils.UI_STATE.BATTERY_BELOW_2, "");
                     }
                     if (battery >= 0 && battery <= 5) {
                         // 假数据，不然不到一个等级不明显
+                        isBatteryBelow2 = false;
                         batteryView.setLevelHeight(battery + 20);
                         batteryView.setOnline(getColor(R.color.color_battery_red));
                     } else if (battery > 5 && battery <= 15) {
+                        isBatteryBelow6 = false;
                         // 假数据，不然不到一个等级不明显
                         batteryView.setLevelHeight(battery + 20);
                         batteryView.setOnline(getColor(R.color.color_battery_orange));
                     } else if (battery > 15 && battery <= 100) {
+                        isBatteryBelow15 = false;
                         // 假数据，不然不到一个等级不明显
                         batteryView.setLevelHeight(battery + 20);
                         batteryView.setOnline(getColor(R.color.color_battery_white));
@@ -436,9 +438,11 @@ public class MainActivity extends BaseActivity {
             String packageName = intent.getDataString();
             switch (action) {
                 case Intent.ACTION_PACKAGE_REMOVED:  // 卸载
+                    LogUtils.i(TAG, "卸载应用");
                     updateAppList(false, packageName);
                     break;
                 case Intent.ACTION_PACKAGE_ADDED:    // 安装
+                    LogUtils.i(TAG, "安装应用");
                     updateAppList(true, packageName);
                     break;
                 default:
@@ -487,6 +491,8 @@ public class MainActivity extends BaseActivity {
     }
 
     private void updateAdapter() {
+        isAddSuccess = false;
+        isRemoveSuccess = false;
         if (launcherAdapter != null) {
             launcherAdapter.notifyDataSetChanged();
         }
@@ -538,7 +544,7 @@ public class MainActivity extends BaseActivity {
         }
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(intent);
-//        MainActivity.this.overridePendingTransition(R.anim.translate_in, 0);
+//        MainActivity.this.overridePendingTransition(R.anim.translate_in, R.anim.translate_exit);
     }
 
     private void openApplication(String pkgName, String activityName) {
@@ -559,6 +565,6 @@ public class MainActivity extends BaseActivity {
         intent.setComponent(componentName);
         LogUtils.d("packageName = " + pkgName + " activityName = " + activityName);
         startActivity(intent);
-//        MainActivity.this.overridePendingTransition(R.anim.translate_in, 0);
+//        MainActivity.this.overridePendingTransition(R.anim.translate_in, R.anim.translate_exit);
     }
 }

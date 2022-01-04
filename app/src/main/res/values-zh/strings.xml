@@ -24,4 +24,5 @@
     <string name="string_reboot">重启</string>
     <string name="string_cancel">取消</string>
     <string name="string_i_kwnon">我知道了</string>
+    <string name="string_time_format">MM月dd日 E</string>
 </resources>

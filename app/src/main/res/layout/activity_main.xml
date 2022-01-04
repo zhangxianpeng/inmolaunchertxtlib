@@ -36,8 +36,8 @@
                 <TextClock
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:format12Hour="MM月dd日 E"
-                    android:format24Hour="MM月dd日 E"
+                    android:format12Hour="@string/string_time_format"
+                    android:format24Hour="@string/string_time_format"
                     android:gravity="start"
                     android:textColor="@android:color/white"
                     android:textSize="18pt" />
