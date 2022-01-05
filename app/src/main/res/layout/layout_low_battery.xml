@@ -33,7 +33,7 @@
             android:layout_height="62pt"
             android:layout_below="@+id/tvMemoContent"
             android:layout_centerHorizontal="true"
-            android:layout_marginTop="47pt"
+            android:layout_marginTop="35pt"
             android:background="@drawable/bg_btn_ok"
             android:gravity="center"
             android:paddingLeft="50pt"

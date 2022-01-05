@@ -280,10 +280,10 @@ public class WindowUtils {
     private static void useCurrentFunction() {
         switch (mCurrentIndex) {
             case 0:
-                shutdownSystem();
+                rebootSystem();
                 break;
             case 2:
-                rebootSystem();
+                shutdownSystem();
                 break;
             case 1:
             default:

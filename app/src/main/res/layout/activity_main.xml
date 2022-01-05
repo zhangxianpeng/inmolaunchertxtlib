@@ -48,7 +48,8 @@
                 android:layout_width="64pt"
                 android:layout_height="64pt"
                 android:layout_centerVertical="true"
-                android:layout_toStartOf="@+id/ll_right" />
+                android:layout_toStartOf="@+id/ll_right"
+                android:layout_marginEnd="4pt"/>
 
             <LinearLayout
                 android:id="@+id/ll_right"

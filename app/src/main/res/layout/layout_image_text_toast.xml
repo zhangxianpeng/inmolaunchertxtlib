@@ -19,7 +19,6 @@
         android:layout_gravity="center_horizontal"
         android:gravity="center"
         android:paddingLeft="20pt"
-        android:paddingTop="10pt"
         android:paddingRight="20pt"
         android:paddingBottom="10pt"
         android:text="@string/string_low_battery"

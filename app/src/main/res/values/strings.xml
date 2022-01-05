@@ -16,7 +16,7 @@
     <string name="string_bluetooth_disconnected">Bluetooth Disconnected</string>
     <string name="string_bluetooth_connected">Bluetooth Connected</string>
     <string name="string_low_battery">Battery level is lower than 15%</string>
-    <string name="string_too_low_battery">Battery is too low,Please charge in time</string>
+    <string name="string_too_low_battery">Battery is lower than 5%,Please charge in time</string>
     <string name="string_too_low_battery_shutdown">Low battery,It will shut down</string>
     <string name="string_memo_data">You have a memo,Please deal with it in time</string>
     <string name="string_click_to_close">Click to close reminder</string>

@@ -13,13 +13,13 @@
         app:layout_constraintBottom_toBottomOf="@+id/ifvCancel"
         app:layout_constraintEnd_toStartOf="@+id/ifvCancel"
         app:layout_constraintTop_toTopOf="@+id/ifvCancel"
-        app:srcCompat="@drawable/icon_shut_down" />
+        app:srcCompat="@drawable/icon_restart" />
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="10pt"
-        android:text="@string/string_shut_down"
+        android:text="@string/string_reboot"
         android:textColor="@color/white"
         android:textSize="20sp"
         app:layout_constraintEnd_toEndOf="@+id/ifvShutDown"
@@ -76,13 +76,13 @@
         app:layout_constraintBottom_toBottomOf="@+id/ifvCancel"
         app:layout_constraintStart_toEndOf="@+id/ifvCancel"
         app:layout_constraintTop_toTopOf="@+id/ifvCancel"
-        app:srcCompat="@drawable/icon_restart" />
+        app:srcCompat="@drawable/icon_shut_down" />
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="10pt"
-        android:text="@string/string_reboot"
+        android:text="@string/string_shut_down"
         android:textColor="@color/white"
         android:textSize="20sp"
         app:layout_constraintEnd_toEndOf="@+id/ifvReboot"

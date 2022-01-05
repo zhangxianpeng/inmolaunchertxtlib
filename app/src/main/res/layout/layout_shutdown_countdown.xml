@@ -26,7 +26,7 @@
             android:layout_height="wrap_content"
             android:layout_below="@+id/tvCountdownTime"
             android:layout_centerHorizontal="true"
-            android:layout_marginTop="12pt"
+            android:layout_marginTop="6pt"
             android:ellipsize="end"
             android:gravity="center"
             android:maxLines="2"
