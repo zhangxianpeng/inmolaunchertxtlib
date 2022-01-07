@@ -61,10 +61,11 @@ public class WindowUtils {
     }
 
     public static void showPopupWindow(Context context, UI_STATE state, final String content) {
-        if (isShown) {
-            LogUtils.i(TAG, "return cause already shown");
-            return;
-        }
+        // fix bug: 弹框可以覆盖显示
+//        if (isShown) {
+//            LogUtils.i(TAG, "return cause already shown");
+//            return;
+//        }
         isShown = true;
         LogUtils.i(TAG, "showPopupWindow");
         // 获取应用的Context

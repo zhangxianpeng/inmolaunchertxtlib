@@ -12,7 +12,6 @@ import android.content.IntentFilter;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
-import android.net.wifi.WifiManager;
 import android.os.BatteryManager;
 import android.os.Build;
 import android.os.Bundle;
@@ -117,7 +116,8 @@ public class MainActivity extends BaseActivity {
             @Override
             public boolean onSingleTapUp(MotionEvent e) {
                 LogUtils.i(TAG, "selectPosition = " + selectPosition);
-                if (selectPosition == 1) { // camera 特殊处理
+                // fix bug:camera 特殊处理,防止卡死
+                if (selectPosition == 1) {
                     openApplication("com.yulong.coolcamera", "com.yulong.arcamera.MainActivity");
                 } else {
                     openApplicationByPkgName(channelList.get(selectPosition).getPackageName());
@@ -153,8 +153,6 @@ public class MainActivity extends BaseActivity {
         LogUtils.i(TAG, "local = " + local.size());
         channelList.addAll(local);
         updateAdapter();
-
-        isShowMemo = false;
     }
 
     @Override
@@ -295,8 +293,6 @@ public class MainActivity extends BaseActivity {
         // 备忘录
         batteryFilter.addAction(ALARM_MEMO_LOG);
         // wifi
-        batteryFilter.addAction(WifiManager.NETWORK_STATE_CHANGED_ACTION);
-        batteryFilter.addAction(WifiManager.WIFI_STATE_CHANGED_ACTION);
         batteryFilter.addAction(ConnectivityManager.CONNECTIVITY_ACTION);
         // 蓝牙
         batteryFilter.addAction(BluetoothDevice.ACTION_ACL_DISCONNECTED);
@@ -318,7 +314,6 @@ public class MainActivity extends BaseActivity {
     // 确保收到多次广播回调只执行一次
     private boolean isAddSuccess = false;
     private boolean isRemoveSuccess = false;
-    private boolean isShowMemo = false;
     private boolean isBatteryBelow15 = false;
     private boolean isBatteryBelow6 = false;
     private boolean isBatteryBelow2 = false;
@@ -341,14 +336,7 @@ public class MainActivity extends BaseActivity {
                 case ALARM_MEMO_LOG:
                     // 接收到备忘录传过来的内容
                     String content = intent.getStringExtra("MemoContent");
-                    long memoTime = intent.getLongExtra("MemoShowTime", -1);
-                    if (System.currentTimeMillis() > memoTime + 10000) {
-                        // 对已经超时的备忘录不做提示
-                        return;
-                    }
-                    if (!isShowMemo) {
-                        WindowUtils.showPopupWindow(getApplicationContext(), WindowUtils.UI_STATE.MEMO_STATE, content);
-                    }
+                    WindowUtils.showPopupWindow(getApplicationContext(), WindowUtils.UI_STATE.MEMO_STATE, content);
                     break;
                 case SHUT_DOWN_ACTION:
                     WindowUtils.showPopupWindow(getApplicationContext(), WindowUtils.UI_STATE.SHUT_DOWN_ACTION, "");
@@ -401,14 +389,13 @@ public class MainActivity extends BaseActivity {
                         batteryView.setOnline(getColor(R.color.color_battery_white));
                     }
                     break;
-                case WifiManager.NETWORK_STATE_CHANGED_ACTION:
-                    NetworkInfo info = intent.getParcelableExtra(WifiManager.EXTRA_NETWORK_INFO);
-                    if (info.getState().equals(NetworkInfo.State.DISCONNECTED)) {
-                        ToastUtil.showToast(getApplicationContext(), getString(R.string.string_wlan_disconnected));
-                        LogUtils.i(TAG, "wifi断开");
-                    } else if (info.getState().equals(NetworkInfo.State.CONNECTED)) {
+                case ConnectivityManager.CONNECTIVITY_ACTION:
+                    ConnectivityManager manager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+                    NetworkInfo info = manager.getActiveNetworkInfo();
+                    if (info != null && info.isAvailable()) {
                         ToastUtil.showToast(getApplicationContext(), getString(R.string.string_wlan_connected));
-                        LogUtils.i(TAG, "wifi连接");
+                    } else {
+                        ToastUtil.showToast(getApplicationContext(), getString(R.string.string_wlan_disconnected));
                     }
                     break;
                 case BluetoothDevice.ACTION_ACL_CONNECTED:
@@ -468,6 +455,10 @@ public class MainActivity extends BaseActivity {
                 return;
             }
             Channel bean = AppUtil.getInstance().getRecentInstallApp(this, realPackageName);
+            // fix bug:安装语音APK的时候闪退
+            if(bean == null){
+                return;
+            }
             LogUtils.i(TAG, "recentInstall App = " + bean.getAppName() + "," + bean.getPackageName());
             channelList.add(bean);
             updateAdapter();
