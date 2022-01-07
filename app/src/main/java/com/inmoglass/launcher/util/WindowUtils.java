@@ -61,11 +61,10 @@ public class WindowUtils {
     }
 
     public static void showPopupWindow(Context context, UI_STATE state, final String content) {
-        // fix bug: 弹框可以覆盖显示
-//        if (isShown) {
-//            LogUtils.i(TAG, "return cause already shown");
-//            return;
-//        }
+        if (isShown) {
+            LogUtils.i(TAG, "return cause already shown");
+            return;
+        }
         isShown = true;
         LogUtils.i(TAG, "showPopupWindow");
         // 获取应用的Context
@@ -110,6 +109,7 @@ public class WindowUtils {
             LogUtils.i(TAG, "hidePopupWindow");
             mWindowManager.removeView(mView);
             isShown = false;
+            isShowingMemory = false;
         }
     }
 
@@ -135,10 +135,25 @@ public class WindowUtils {
         return view;
     }
 
-    private static void initMemoView(View view,String content) {
+    /**
+     * ==================================备忘录弹层===========================================
+     **/
+    static boolean isShowingMemory = false;
+
+    private static void initMemoView(View view, String content) {
         TextView memoTextView = view.findViewById(R.id.tvMemoContent);
+        long showMemoTime = System.currentTimeMillis();
         memoTextView.setText(content);
+        isShowingMemory = true;
         wakeUpScreen();
+        playMemoContent(content);
+        // fix bug: 325 时间触发备忘录事项提醒，只提醒1次
+        if (isShowingMemory && System.currentTimeMillis() - showMemoTime > 30000) {
+            playMemoContent(content);
+        }
+    }
+
+    private static void playMemoContent(String content) {
         TtsManager.getInstance().init(mContext, new TtsManager.TtsListener() {
             @Override
             public void onInitSuccess() {
@@ -166,7 +181,11 @@ public class WindowUtils {
         wl.release();
     }
 
-    /**==================================低电量倒计时关机弹层===========================================**/
+    /**==================================备忘录弹层===========================================**/
+
+    /**
+     * ==================================低电量倒计时关机弹层===========================================
+     **/
     private static void initTimerShutDownView(View view) {
         TextView countDownTextView = view.findViewById(R.id.tvCountdownTime);
         CountDownTimer timer = new CountDownTimer(16000, 1000) {
@@ -193,7 +212,9 @@ public class WindowUtils {
     }
     /** ==================================低电量倒计时关机弹层===========================================**/
 
-    /**==================================关机重启弹层===========================================**/
+    /**
+     * ==================================关机重启弹层===========================================
+     **/
     static boolean isSwipeLeft = false;
     static boolean isSwipeRight = false;
     static int mCurrentIndex = 1;

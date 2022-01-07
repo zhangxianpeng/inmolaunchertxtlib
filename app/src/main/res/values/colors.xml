@@ -12,5 +12,6 @@
     <color name="color_battery_red">#FF2828</color>
     <color name="color_battery_orange">#FF9712</color>
     <color name="color_battery_white">#FFFFFF</color>
+    <color name="color_battery_green">#00D823</color>
 
 </resources>

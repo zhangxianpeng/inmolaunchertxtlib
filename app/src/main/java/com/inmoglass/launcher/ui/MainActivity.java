@@ -336,6 +336,7 @@ public class MainActivity extends BaseActivity {
                 case ALARM_MEMO_LOG:
                     // 接收到备忘录传过来的内容
                     String content = intent.getStringExtra("MemoContent");
+                    LogUtils.i(TAG, "Memo content = " + content);
                     WindowUtils.showPopupWindow(getApplicationContext(), WindowUtils.UI_STATE.MEMO_STATE, content);
                     break;
                 case SHUT_DOWN_ACTION:
@@ -386,7 +387,11 @@ public class MainActivity extends BaseActivity {
                         isBatteryBelow15 = false;
                         // 假数据，不然不到一个等级不明显
                         batteryView.setLevelHeight(battery + 20);
-                        batteryView.setOnline(getColor(R.color.color_battery_white));
+                        if (isChargingNow) {
+                            batteryView.setOnline(getColor(R.color.color_battery_green));
+                        } else {
+                            batteryView.setOnline(getColor(R.color.color_battery_white));
+                        }
                     }
                     break;
                 case ConnectivityManager.CONNECTIVITY_ACTION:
@@ -456,7 +461,7 @@ public class MainActivity extends BaseActivity {
             }
             Channel bean = AppUtil.getInstance().getRecentInstallApp(this, realPackageName);
             // fix bug:安装语音APK的时候闪退
-            if(bean == null){
+            if (bean == null) {
                 return;
             }
             LogUtils.i(TAG, "recentInstall App = " + bean.getAppName() + "," + bean.getPackageName());
