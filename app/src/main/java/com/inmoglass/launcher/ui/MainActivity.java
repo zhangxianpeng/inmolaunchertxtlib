@@ -48,6 +48,7 @@ import com.inmoglass.launcher.carousellayoutmanager.CarouselZoomPostLayoutListen
 import com.inmoglass.launcher.carousellayoutmanager.CenterScrollListener;
 import com.inmoglass.launcher.service.SocketService;
 import com.inmoglass.launcher.util.AppUtil;
+import com.inmoglass.launcher.util.CommonUtil;
 import com.inmoglass.launcher.util.LauncherManager;
 import com.inmoglass.launcher.util.ToastUtil;
 import com.inmoglass.launcher.util.WeatherResUtil;
@@ -149,7 +150,7 @@ public class MainActivity extends BaseActivity {
 
         startLocation();
         channelList.clear();
-        ArrayList<Channel> local = LauncherManager.getInstance().getLauncherCardList();
+        ArrayList<Channel> local = CommonUtil.isEn() ? LauncherManager.getInstance().getLauncherCardList_EN() : LauncherManager.getInstance().getLauncherCardList();
         LogUtils.i(TAG, "local = " + local.size());
         channelList.addAll(local);
         updateAdapter();
@@ -241,6 +242,7 @@ public class MainActivity extends BaseActivity {
         String key = "b9754523666e4abeabef84808c64ed2b";
         AndroidNetworking.get(baseUrl)
                 .addQueryParameter("key", key)
+                .addQueryParameter("lang", CommonUtil.isEn() ? "en" : "zh")
                 .addQueryParameter("location", longitude + "," + latitude)
                 .build()
                 .getAsJSONObject(new JSONObjectRequestListener() {
@@ -277,7 +279,7 @@ public class MainActivity extends BaseActivity {
     }
 
     private void writeCardList2File() {
-        ArrayList<Channel> local = LauncherManager.getInstance().getLauncherCardList();
+        ArrayList<Channel> local = CommonUtil.isEn() ? LauncherManager.getInstance().getLauncherCardList_EN() : LauncherManager.getInstance().getLauncherCardList();
         if (local == null || local.isEmpty()) {
             LauncherManager.getInstance().setLauncherCardList();
         }

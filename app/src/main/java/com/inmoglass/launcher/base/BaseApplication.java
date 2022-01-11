@@ -4,6 +4,7 @@ import android.app.Application;
 import android.content.Context;
 
 import com.blankj.utilcode.util.LogUtils;
+import com.inmo.network.AndroidNetworking;
 import com.qweather.sdk.view.HeConfig;
 import com.tencent.mmkv.MMKV;
 
@@ -23,6 +24,7 @@ public class BaseApplication extends Application {
         mContext = this;
         // Log统一配置
         LogUtils.getConfig().setLogSwitch(true);
+        AndroidNetworking.enableLogging();
     }
 
     private void initWaetherSdk() {

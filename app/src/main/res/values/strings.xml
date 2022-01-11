@@ -9,20 +9,20 @@
     <string name="string_home_gaode">Amap</string>
     <string name="string_home_wps">WPS</string>
     <string name="string_home_ximalaya">XMLY</string>
-    <string name="string_app_not_installed">The APP IS NOT INSTALLED</string>
+    <string name="string_app_not_installed">The app is not installed</string>
     <string name="string_app_list">APP LIST</string>
     <string name="string_wlan_disconnected">WLAN Disconnected</string>
     <string name="string_wlan_connected">WLAN Connected</string>
     <string name="string_bluetooth_disconnected">Bluetooth Disconnected</string>
     <string name="string_bluetooth_connected">Bluetooth Connected</string>
     <string name="string_low_battery">Battery level is lower than 15%</string>
-    <string name="string_too_low_battery">Battery is lower than 5%,Please charge in time</string>
-    <string name="string_too_low_battery_shutdown">Low battery,It will shut down</string>
-    <string name="string_memo_data">You have a memo,Please deal with it in time</string>
+    <string name="string_too_low_battery">Battery level is lower than 5%,please charge in time</string>
+    <string name="string_too_low_battery_shutdown">Low battery,it will shut down</string>
+    <string name="string_memo_data">You have a memo,please deal with it in time</string>
     <string name="string_click_to_close">Click to close reminder</string>
     <string name="string_shut_down">Shut down</string>
     <string name="string_reboot">Reboot</string>
     <string name="string_cancel">Cancel</string>
     <string name="string_i_kwnon">Got It</string>
-    <string name="string_time_format">MM dd E</string>
+    <string name="string_time_format">MM/dd E</string>
 </resources>

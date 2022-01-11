@@ -4,6 +4,8 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.os.Handler;
@@ -13,7 +15,9 @@ import android.util.AttributeSet;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.AppCompatImageView;
 
+import com.blankj.utilcode.util.LogUtils;
 import com.inmoglass.launcher.R;
+import com.inmoglass.launcher.base.BaseApplication;
 
 import java.lang.ref.WeakReference;
 
@@ -97,8 +101,18 @@ public class StatusBarWifiStateView extends AppCompatImageView {
                         }
                         WifiInfo wifiInfo = wifiManager.getConnectionInfo();
                         int level = WifiManager.calculateSignalLevel(wifiInfo.getRssi(), 5);
-
                         wifiHandler.sendEmptyMessage(level);
+                        break;
+                    case ConnectivityManager.CONNECTIVITY_ACTION:
+                        ConnectivityManager manager = (ConnectivityManager) BaseApplication.mContext.getSystemService(Context.CONNECTIVITY_SERVICE);
+                        NetworkInfo info = manager.getActiveNetworkInfo();
+                        if (info != null && info.isAvailable()) {
+                            LogUtils.i(TAG, "info.isAvailable()");
+                        } else {
+                            // fix bug:353 【launcher】离开WIFI辐射区，终端已提示WIFI已断开连接，但launcher界面WIFI图标仍显示为0格
+                            wifiHandler.sendEmptyMessage(LEVEL_NONE);
+                            return;
+                        }
                         break;
                     default:
                         break;
@@ -130,6 +144,8 @@ public class StatusBarWifiStateView extends AppCompatImageView {
         intentFilter.addAction(WifiManager.WIFI_STATE_CHANGED_ACTION);
         // Wifi信号强度变化
         intentFilter.addAction(WifiManager.RSSI_CHANGED_ACTION);
+        // wifi连接断开监听
+        intentFilter.addAction(ConnectivityManager.CONNECTIVITY_ACTION);
         getContext().registerReceiver(wifiStateReceiver, intentFilter);
     }
 
