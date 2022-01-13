@@ -617,7 +617,7 @@ public class CarouselLayoutManager extends RecyclerView.LayoutManager implements
             dimenDiff = (getWidthNoPadding() - mDecoratedChildWidth) / 2;
         }
         //noinspection NumericCastThatLosesPrecision
-        return (int) Math.round(Math.signum(itemPositionDiff) * dimenDiff * smoothPosition);
+        return (int) Math.round(Math.signum(itemPositionDiff) * (dimenDiff - 40) * smoothPosition);
     }
 
     /**

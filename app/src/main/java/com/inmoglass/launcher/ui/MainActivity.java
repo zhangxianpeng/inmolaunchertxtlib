@@ -205,7 +205,7 @@ public class MainActivity extends BaseActivity {
 
     private void setLayoutManager(CarouselLayoutManager carouselLayoutManager, LauncherAdapter launcherAdapter) {
         carouselLayoutManager.setPostLayoutListener(new CarouselZoomPostLayoutListener(0.20f, 0.20f));
-        carouselLayoutManager.setMaxVisibleItems(3);
+        carouselLayoutManager.setMaxVisibleItems(2);
         launcherRecyclerView.setLayoutManager(carouselLayoutManager);
         launcherRecyclerView.setScrollingTouchSlop(250);
         launcherRecyclerView.setHasFixedSize(true);

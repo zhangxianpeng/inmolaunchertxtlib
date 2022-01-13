@@ -80,8 +80,6 @@
             android:id="@+id/list"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_marginStart="20pt"
-            android:layout_marginEnd="20pt"
             android:overScrollMode="never"
             android:scrollbars="none" />
     </LinearLayout>

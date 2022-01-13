@@ -1,14 +1,9 @@
 package com.inmoglass.launcher.util;
 
-import android.app.ActivityManager;
-import android.content.ComponentName;
-
-import com.blankj.utilcode.util.LogUtils;
 import com.inmoglass.launcher.base.BaseApplication;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.List;
 import java.util.Locale;
 
 public class CommonUtil {

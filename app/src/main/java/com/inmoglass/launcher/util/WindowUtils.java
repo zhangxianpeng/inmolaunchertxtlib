@@ -16,14 +16,13 @@ import android.view.WindowManager.LayoutParams;
 import android.widget.TextView;
 
 import androidx.constraintlayout.utils.widget.ImageFilterView;
-import androidx.constraintlayout.widget.ConstraintLayout;
 
 import com.blankj.utilcode.util.LogUtils;
-import com.blankj.utilcode.util.TouchUtils;
 import com.inmoglass.launcher.R;
 import com.inmoglass.launcher.base.BaseApplication;
 import com.inmoglass.launcher.tts.TtsManager;
 import com.inmoglass.launcher.ui.MainActivity;
+import com.inmoglass.launcher.view.MyConstraintLayout;
 
 /**
  * @author Administrator
@@ -80,6 +79,7 @@ public class WindowUtils {
         params.width = LayoutParams.MATCH_PARENT;
         params.height = LayoutParams.MATCH_PARENT;
         params.gravity = Gravity.CENTER;
+        params.setTitle("InmoShutDown");
         if (state != UI_STATE.SHUT_DOWN_ACTION) {
             // 关机的操作交给它本身
             mView.setOnTouchListener((view, motionEvent) -> {
@@ -215,8 +215,6 @@ public class WindowUtils {
     /**
      * ==================================关机重启弹层===========================================
      **/
-    static boolean isSwipeLeft = false;
-    static boolean isSwipeRight = false;
     static int mCurrentIndex = 1;
     static ImageFilterView ifvShutDownSelectedBg;
     static ImageFilterView ifvCancelSelectedBg;
@@ -227,44 +225,28 @@ public class WindowUtils {
         ifvCancelSelectedBg = view.findViewById(R.id.ifvCancelSelectedBg);
         ifvRebootSelectedBg = view.findViewById(R.id.ifvRebootSelectedBg);
 
-        ConstraintLayout layout = view.findViewById(R.id.container);
-        layout.setOnTouchListener(new TouchUtils.OnTouchUtilsListener() {
+        MyConstraintLayout layout = view.findViewById(R.id.container);
+        layout.setListener(new MyConstraintLayout.OnGestureListener() {
             @Override
-            public boolean onDown(View view, int x, int y, MotionEvent event) {
-                LogUtils.i(TAG, "onDown");
-                return false;
+            public void onSwipeLeft() {
+                mCurrentIndex++;
+                moveAndShow();
             }
 
             @Override
-            public boolean onMove(View view, int direction, int x, int y, int dx, int dy, int totalX, int totalY, MotionEvent event) {
-                LogUtils.i(TAG, "onMove = " + direction);
-                if (direction == 1) {
-                    // 左滑
-                    isSwipeLeft = true;
-                    isSwipeRight = false;
-                } else if (direction == 4) {
-                    // 右滑
-                    isSwipeRight = true;
-                    isSwipeLeft = false;
-                }
-                return false;
+            public void onSwipeRight() {
+                mCurrentIndex--;
+                moveAndShow();
             }
 
             @Override
-            public boolean onStop(View view, int direction, int x, int y, int totalX, int totalY, int vx, int vy, MotionEvent event) {
-                LogUtils.i(TAG, "onStop");
-                if (isSwipeLeft && !isSwipeRight) {
-                    mCurrentIndex--;
-                    moveAndShow();
-                }
-                if (isSwipeRight && !isSwipeLeft) {
-                    mCurrentIndex++;
-                    moveAndShow();
-                }
-                if (!isSwipeLeft && !isSwipeRight && mCurrentIndex == 1) {
-                    cancel();
-                }
-                return false;
+            public void onCancel() {
+                cancel();
+            }
+
+            @Override
+            public void onEnsure() {
+                useCurrentFunction();
             }
         });
     }
@@ -296,7 +278,6 @@ public class WindowUtils {
             default:
                 break;
         }
-        useCurrentFunction();
     }
 
     private static void useCurrentFunction() {

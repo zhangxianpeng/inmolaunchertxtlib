@@ -2,6 +2,7 @@ package com.inmoglass.launcher.util;
 
 import android.content.Context;
 
+import com.blankj.utilcode.util.LogUtils;
 import com.inmoglass.launcher.R;
 import com.inmoglass.launcher.base.BaseApplication;
 import com.inmoglass.launcher.bean.Channel;
@@ -80,7 +81,7 @@ public class LauncherManager {
             if (appPackage.equals(packageNames[0])) {
                 bean = new Channel(R.drawable.img_home_meitiwenjian, BaseApplication.mContext.getString(R.string.string_home_media), R.drawable.icon_home_meiti, packageNames[0], null);
             } else if (appPackage.equals(packageNames[1])) {
-                bean = new Channel(CommonUtil.isEn() ? R.drawable.img_home_camera_en : R.drawable.img_home_camera, BaseApplication.mContext.getString(R.string.string_home_camera), R.drawable.icon_home_camera, packageNames[1], null);
+                bean = new Channel(R.drawable.img_home_camera, BaseApplication.mContext.getString(R.string.string_home_camera), R.drawable.icon_home_camera, packageNames[1], null);
             } else if (appPackage.equals(packageNames[2])) {
                 bean = new Channel(R.drawable.img_home_beiwanglu, BaseApplication.mContext.getString(R.string.string_home_beiwanglu), R.drawable.icon_home_beiwanglu, packageNames[2], null);
             } else if (appPackage.equals(packageNames[3])) {
@@ -94,7 +95,7 @@ public class LauncherManager {
             } else if (appPackage.equals(packageNames[7])) {
                 bean = new Channel(R.drawable.img_home_wps, BaseApplication.mContext.getString(R.string.string_home_wps), R.drawable.icon_home_wps, packageNames[7], null);
             } else if (appPackage.equals(packageNames[8])) {
-                bean = new Channel(CommonUtil.isEn() ? R.drawable.img_home_setting_en : R.drawable.img_home_setting, BaseApplication.mContext.getString(R.string.string_home_setting), R.drawable.icon_home_setting, packageNames[8], null);
+                bean = new Channel(R.drawable.img_home_setting, BaseApplication.mContext.getString(R.string.string_home_setting), R.drawable.icon_home_setting, packageNames[8], null);
             } else {
                 bean = new Channel(R.drawable.img_home_default, AppUtil.getInstance().getAppName(appPackage), 0, appPackage, AppUtil.getInstance().getAppIcon(appPackage));
             }
@@ -118,9 +119,9 @@ public class LauncherManager {
             if (appPackage.equals(packageNames_EN[0])) {
                 bean = new Channel(R.drawable.img_home_meitiwenjian, BaseApplication.mContext.getString(R.string.string_home_media), R.drawable.icon_home_meiti, packageNames_EN[0], null);
             } else if (appPackage.equals(packageNames_EN[1])) {
-                bean = new Channel(CommonUtil.isEn() ? R.drawable.img_home_camera_en : R.drawable.img_home_camera, BaseApplication.mContext.getString(R.string.string_home_camera), R.drawable.icon_home_camera, packageNames_EN[1], null);
+                bean = new Channel(R.drawable.img_home_camera_en, BaseApplication.mContext.getString(R.string.string_home_camera), R.drawable.icon_home_camera, packageNames_EN[1], null);
             } else if (appPackage.equals(packageNames_EN[2])) {
-                bean = new Channel(CommonUtil.isEn() ? R.drawable.img_home_setting_en : R.drawable.img_home_setting, BaseApplication.mContext.getString(R.string.string_home_setting), R.drawable.icon_home_setting, packageNames_EN[2], null);
+                bean = new Channel(R.drawable.img_home_setting_en, BaseApplication.mContext.getString(R.string.string_home_setting), R.drawable.icon_home_setting, packageNames_EN[2], null);
             } else {
                 bean = new Channel(R.drawable.img_home_default, AppUtil.getInstance().getAppName(appPackage), 0, appPackage, AppUtil.getInstance().getAppIcon(appPackage));
             }
