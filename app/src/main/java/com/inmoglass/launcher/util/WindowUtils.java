@@ -142,15 +142,16 @@ public class WindowUtils {
 
     private static void initMemoView(View view, String content) {
         TextView memoTextView = view.findViewById(R.id.tvMemoContent);
-        long showMemoTime = System.currentTimeMillis();
         memoTextView.setText(content);
         isShowingMemory = true;
         wakeUpScreen();
         playMemoContent(content);
-        // fix bug: 325 时间触发备忘录事项提醒，只提醒1次
-        if (isShowingMemory && System.currentTimeMillis() - showMemoTime > 30000) {
-            playMemoContent(content);
-        }
+        // fix bug: 325 时间触发备忘录事项提醒，只提醒1次。UX定义30S之后如果没有销毁这个View，重新语音提醒
+        myHandler.postDelayed(() -> {
+            if(isShowingMemory) {
+                playMemoContent(content);
+            }
+        },30000);
     }
 
     private static void playMemoContent(String content) {

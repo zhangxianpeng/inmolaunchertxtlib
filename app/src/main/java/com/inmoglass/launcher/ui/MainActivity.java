@@ -98,18 +98,22 @@ public class MainActivity extends BaseActivity {
         setContentView(R.layout.activity_main);
         channelList = new ArrayList<>();
         initViews();
-        needOverlayPermission();
-        PermissionX.init(this)
-                .permissions(Manifest.permission.ACCESS_COARSE_LOCATION,
-                        Manifest.permission.ACCESS_FINE_LOCATION,
-                        Manifest.permission.READ_EXTERNAL_STORAGE,
-                        Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                .request((allGranted, grantedList, deniedList) -> {
-                    if (allGranted) {
-                        startLocation();
-                        writeCardList2File();
-                    }
-                });
+
+        // fix bug:权限请求交由系统端做,动态请求代码可注释。
+//        needOverlayPermission();
+//        PermissionX.init(this)
+//                .permissions(Manifest.permission.ACCESS_COARSE_LOCATION,
+//                        Manifest.permission.ACCESS_FINE_LOCATION,
+//                        Manifest.permission.READ_EXTERNAL_STORAGE,
+//                        Manifest.permission.WRITE_EXTERNAL_STORAGE)
+//                .request((allGranted, grantedList, deniedList) -> {
+//                    if (allGranted) {
+//                        startLocation();
+//                        writeCardList2File();
+//                    }
+//                });
+        startLocation();
+        writeCardList2File();
 
         startSocketService();
 
