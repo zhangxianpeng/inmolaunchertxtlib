@@ -1,5 +1,7 @@
 package com.inmoglass.launcher.util;
 
+import android.os.Build;
+
 import com.inmoglass.launcher.base.BaseApplication;
 
 import java.text.SimpleDateFormat;
@@ -28,5 +30,15 @@ public class CommonUtil {
         Locale locale = BaseApplication.mContext.getResources().getConfiguration().locale;
         String language = locale.getLanguage();
         return language.contains("en");
+    }
+
+    /**
+     * 判断是否是生产版本
+     * 用于添加MMI测试工具的入口
+     *
+     * @return
+     */
+    public static boolean isProductVersion() {
+        return Build.DISPLAY.toLowerCase().contains("product");
     }
 }

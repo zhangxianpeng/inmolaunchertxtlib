@@ -3,6 +3,7 @@ package com.inmoglass.launcher.util;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.PixelFormat;
+import android.os.Build;
 import android.os.CountDownTimer;
 import android.os.Handler;
 import android.os.Looper;
@@ -148,10 +149,10 @@ public class WindowUtils {
         playMemoContent(content);
         // fix bug: 325 时间触发备忘录事项提醒，只提醒1次。UX定义30S之后如果没有销毁这个View，重新语音提醒
         myHandler.postDelayed(() -> {
-            if(isShowingMemory) {
+            if (isShowingMemory) {
                 playMemoContent(content);
             }
-        },30000);
+        }, 30000);
     }
 
     private static void playMemoContent(String content) {
@@ -227,6 +228,13 @@ public class WindowUtils {
         ifvRebootSelectedBg = view.findViewById(R.id.ifvRebootSelectedBg);
 
         MyConstraintLayout layout = view.findViewById(R.id.container);
+        // fix bug:343 【launcher】语音弹层唤醒，需要关闭关机弹层, View里面监听按键事件
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+            layout.addOnUnhandledKeyEventListener((view1, keyEvent) -> {
+                hidePopupWindow();
+                return false;
+            });
+        }
         layout.setListener(new MyConstraintLayout.OnGestureListener() {
             @Override
             public void onSwipeLeft() {

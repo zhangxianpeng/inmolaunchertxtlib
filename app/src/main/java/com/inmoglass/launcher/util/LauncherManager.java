@@ -2,7 +2,6 @@ package com.inmoglass.launcher.util;
 
 import android.content.Context;
 
-import com.blankj.utilcode.util.LogUtils;
 import com.inmoglass.launcher.R;
 import com.inmoglass.launcher.base.BaseApplication;
 import com.inmoglass.launcher.bean.Channel;
@@ -39,6 +38,23 @@ public class LauncherManager {
     };
 
     /**
+     * 生产版本
+     * 需要测试工具入口
+     */
+    public static final String[] packageNames_pro = new String[]{
+            "com.inmoglass.album",
+            "com.yulong.coolcamera",
+            "com.inmolens.inmomemo",
+            "com.tencent.qqmusiccar",
+            "com.ximalaya.ting.android.car",
+            "com.autonavi.amapauto",
+            "com.inmoglass.documents",
+            "cn.wps.moffice_eng",
+            "com.inmo.settings",
+            "com.inmoglass.validationTools"
+    };
+
+    /**
      * 英文版本默认应用顺序
      * 相册、相机、设置
      */
@@ -63,7 +79,8 @@ public class LauncherManager {
 
     public void setLauncherCardList() {
         appPackagesList = new ArrayList<>();
-        appPackagesList.addAll(Arrays.asList(CommonUtil.isEn() ? packageNames_EN : packageNames));
+        // TODO: 2022/1/17 等生产版本的pac包打出来验证 
+        appPackagesList.addAll(Arrays.asList(CommonUtil.isEn() ? packageNames_EN : (CommonUtil.isProductVersion() ? packageNames_pro : packageNames)));
         MMKVUtils.setArray(mContext, appPackagesList, APP_PACKAGES_LIST);
     }
 
@@ -142,7 +159,7 @@ public class LauncherManager {
             String name = packagesList.get(i);
             if (name.equals("com.inmolens.inmomemo") || name.equals("com.tencent.qqmusiccar")
                     || name.equals("com.ximalaya.ting.android.car") || name.equals("com.autonavi.amapauto")
-                    || name.equals("com.inmoglass.documents") || name.equals("cn.wps.moffice_eng")) {
+                    || name.equals("com.inmoglass.documents") || name.equals("cn.wps.moffice_eng") || name.equals("com.inmoglass.validationTools")) {
             } else {
                 result.add(name);
             }

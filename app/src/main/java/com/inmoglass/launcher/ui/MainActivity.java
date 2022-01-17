@@ -2,7 +2,6 @@ package com.inmoglass.launcher.ui;
 
 import static com.inmoglass.launcher.util.AppUtil.isInstalled;
 
-import android.Manifest;
 import android.bluetooth.BluetoothDevice;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
@@ -28,6 +27,8 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.app.ActivityCompat;
+import androidx.core.app.ActivityOptionsCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.baidu.location.BDAbstractLocationListener;
@@ -54,7 +55,6 @@ import com.inmoglass.launcher.util.ToastUtil;
 import com.inmoglass.launcher.util.WeatherResUtil;
 import com.inmoglass.launcher.util.WindowUtils;
 import com.inmoglass.launcher.view.PowerConsumptionRankingsBatteryView;
-import com.permissionx.guolindev.PermissionX;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -545,8 +545,8 @@ public class MainActivity extends BaseActivity {
             return;
         }
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        startActivity(intent);
-//        MainActivity.this.overridePendingTransition(R.anim.translate_in, R.anim.translate_exit);
+        ActivityOptionsCompat compat = ActivityOptionsCompat.makeCustomAnimation(this, R.anim.anim_in, R.anim.anim_out);
+        ActivityCompat.startActivity(this, intent, compat.toBundle());
     }
 
     private void openApplication(String pkgName, String activityName) {
@@ -565,8 +565,7 @@ public class MainActivity extends BaseActivity {
         ComponentName componentName = new ComponentName(pkgName, activityName);
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         intent.setComponent(componentName);
-        LogUtils.d("packageName = " + pkgName + " activityName = " + activityName);
-        startActivity(intent);
-//        MainActivity.this.overridePendingTransition(R.anim.translate_in, R.anim.translate_exit);
+        ActivityOptionsCompat compat = ActivityOptionsCompat.makeCustomAnimation(this, R.anim.anim_in, R.anim.anim_out);
+        ActivityCompat.startActivity(this, intent, compat.toBundle());
     }
 }
