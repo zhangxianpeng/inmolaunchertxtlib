@@ -16,6 +16,8 @@ import androidx.recyclerview.widget.LinearSmoothScroller;
 import androidx.recyclerview.widget.OrientationHelper;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.blankj.utilcode.util.LogUtils;
+
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -417,6 +419,16 @@ public class CarouselLayoutManager extends RecyclerView.LayoutManager implements
         detectOnItemSelectionChanged(currentScrollPosition, state);
     }
 
+    public void setSoundManagerListener(SoundManagerListener soundManagerListener) {
+        this.mSoundManagerListener = soundManagerListener;
+    }
+
+    public SoundManagerListener mSoundManagerListener;
+
+    public interface SoundManagerListener {
+        void onSound();
+    }
+
     private void detectOnItemSelectionChanged(final float currentScrollPosition, final RecyclerView.State state) {
         final float absCurrentScrollPosition = makeScrollPositionInRange0ToCount(currentScrollPosition, state.getItemCount());
         final int centerItem = Math.round(absCurrentScrollPosition);
@@ -426,6 +438,9 @@ public class CarouselLayoutManager extends RecyclerView.LayoutManager implements
             new Handler(Looper.getMainLooper()).post(new Runnable() {
                 @Override
                 public void run() {
+                    if (mSoundManagerListener != null) {
+                        mSoundManagerListener.onSound();
+                    }
                     selectItemCenterPosition(centerItem);
                 }
             });

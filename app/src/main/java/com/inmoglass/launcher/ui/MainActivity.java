@@ -51,6 +51,7 @@ import com.inmoglass.launcher.service.SocketService;
 import com.inmoglass.launcher.util.AppUtil;
 import com.inmoglass.launcher.util.CommonUtil;
 import com.inmoglass.launcher.util.LauncherManager;
+import com.inmoglass.launcher.util.SoundPoolUtil;
 import com.inmoglass.launcher.util.ToastUtil;
 import com.inmoglass.launcher.util.WeatherResUtil;
 import com.inmoglass.launcher.util.WindowUtils;
@@ -216,6 +217,7 @@ public class MainActivity extends BaseActivity {
         launcherRecyclerView.setAdapter(launcherAdapter);
         launcherRecyclerView.addOnScrollListener(new CenterScrollListener());
         carouselLayoutManager.addOnItemSelectionListener(adapterPosition -> selectPosition = adapterPosition);
+        carouselLayoutManager.setSoundManagerListener(() -> SoundPoolUtil.getInstance(MainActivity.this).play(R.raw.swipe_card));
     }
 
     private void startSocketService() {
