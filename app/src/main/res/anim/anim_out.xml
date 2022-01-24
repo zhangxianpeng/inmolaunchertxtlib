@@ -1,15 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <set xmlns:android="http://schemas.android.com/apk/res/android"
-    android:duration="500">
-    <!--上级页面动效变化-->
-
-    <!--透明度-->
-    <alpha android:fromAlpha="1.0" />
-    <alpha android:toAlpha="0" />
-
-    <scale android:fromXScale="1.0" />
-    <scale android:fromYScale="1.0" />
-    <scale android:toXScale="0.8" />
-    <scale android:toYScale="0.8" />
-
+    android:duration="200"
+    android:interpolator="@android:anim/decelerate_interpolator">
+    <scale
+        android:duration="@android:integer/config_mediumAnimTime"
+        android:fromXScale="1.0"
+        android:fromYScale="1.0"
+        android:pivotX="50%p"
+        android:pivotY="50%p"
+        android:toXScale="0.8"
+        android:toYScale="0.8" />
+    <alpha
+        android:fromAlpha="0"
+        android:toAlpha="1.0" />
 </set>

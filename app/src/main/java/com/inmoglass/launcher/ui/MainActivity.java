@@ -28,8 +28,6 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.core.app.ActivityCompat;
-import androidx.core.app.ActivityOptionsCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.baidu.location.BDAbstractLocationListener;
@@ -424,7 +422,7 @@ public class MainActivity extends BaseActivity {
                 case Intent.ACTION_BATTERY_CHANGED:
                     int battery = intent.getIntExtra(BatteryManager.EXTRA_LEVEL, 0);
                     LogUtils.i(TAG, "当前电量 = " + battery);
-                    isChargingImageView.setVisibility(isChargingNow ? View.VISIBLE : View.INVISIBLE);
+                    isChargingImageView.setVisibility(isChargingNow ? View.VISIBLE : View.GONE);
 //                    if (isChargingNow) {
 //                        if (!isShowCharging) {
 //                            // 保证一次插入移除充电器显示一次
