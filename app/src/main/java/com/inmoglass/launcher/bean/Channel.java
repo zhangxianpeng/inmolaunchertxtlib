@@ -12,6 +12,7 @@ public class Channel {
     // 第三方应用图标用这个
     private Drawable appIconDrawable;
     private String packageName;
+    private InmoMemoData data;
 
     public Channel(int appImg, String appName, int appIcon, String packageName,Drawable appIconDrawable) {
         this.appImg = appImg;
@@ -19,6 +20,19 @@ public class Channel {
         this.appIcon = appIcon;
         this.packageName = packageName;
         this.appIconDrawable = appIconDrawable;
+    }
+
+    public Channel(String packageName,InmoMemoData data) {
+        this.packageName = packageName;
+        this.data = data;
+    }
+
+    public InmoMemoData getData() {
+        return data;
+    }
+
+    public void setData(InmoMemoData data) {
+        this.data = data;
     }
 
     public int getAppImg() {

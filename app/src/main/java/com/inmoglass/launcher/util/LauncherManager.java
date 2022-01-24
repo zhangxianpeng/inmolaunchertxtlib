@@ -113,6 +113,8 @@ public class LauncherManager {
                 bean = new Channel(R.drawable.img_home_wps, BaseApplication.mContext.getString(R.string.string_home_wps), R.drawable.icon_home_wps, packageNames[7], null);
             } else if (appPackage.equals(packageNames[8])) {
                 bean = new Channel(R.drawable.img_home_setting, BaseApplication.mContext.getString(R.string.string_home_setting), R.drawable.icon_home_setting, packageNames[8], null);
+            } else if (appPackage.equals(packageNames_pro[9])) {
+                bean = new Channel(R.drawable.img_home_default, BaseApplication.mContext.getString(R.string.string_home_mmi), 0, appPackage, BaseApplication.mContext.getDrawable(R.mipmap.ic_launcher));
             } else {
                 bean = new Channel(R.drawable.img_home_default, AppUtil.getInstance().getAppName(appPackage), 0, appPackage, AppUtil.getInstance().getAppIcon(appPackage));
             }

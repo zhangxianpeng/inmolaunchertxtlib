@@ -9,6 +9,7 @@
     <string name="string_home_gaode">Amap</string>
     <string name="string_home_wps">WPS</string>
     <string name="string_home_ximalaya">XMLY</string>
+    <string name="string_home_mmi">MMI Test Tool</string>
     <string name="string_app_not_installed">The app is not installed</string>
     <string name="string_app_list">APP LIST</string>
     <string name="string_wlan_disconnected">WLAN Disconnected</string>
@@ -25,4 +26,9 @@
     <string name="string_cancel">Cancel</string>
     <string name="string_i_kwnon">Got It</string>
     <string name="string_time_format">MM/dd E</string>
+    <string name="string_today">Today</string>
+    <string name="string_tomorrow">Tomorrow</string>
+    <string name="string_time_format_1">MM/dd </string>
+    <string name="string_time_format_2">MM/dd Add</string>
+    <string name="string_add_memo">Add memo</string>
 </resources>

@@ -8,6 +8,7 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.database.Cursor;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
@@ -41,9 +42,10 @@ import com.inmo.network.AndroidNetworking;
 import com.inmo.network.error.ANError;
 import com.inmo.network.interfaces.JSONObjectRequestListener;
 import com.inmoglass.launcher.R;
-import com.inmoglass.launcher.adapter.LauncherAdapter;
+import com.inmoglass.launcher.adapter.LauncherAdapter1;
 import com.inmoglass.launcher.base.BaseActivity;
 import com.inmoglass.launcher.bean.Channel;
+import com.inmoglass.launcher.bean.InmoMemoData;
 import com.inmoglass.launcher.carousellayoutmanager.CarouselLayoutManager;
 import com.inmoglass.launcher.carousellayoutmanager.CarouselZoomPostLayoutListener;
 import com.inmoglass.launcher.carousellayoutmanager.CenterScrollListener;
@@ -61,6 +63,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Collections;
 
 /**
  * 此类为动态配置排列顺序使用
@@ -76,7 +79,7 @@ public class MainActivity extends BaseActivity {
     private ImageView weatherImageView;
     private TextView weatherTextView;
     private TextView temperatureTextView;
-    private LauncherAdapter launcherAdapter;
+    private LauncherAdapter1 launcherAdapter;
     private RecyclerView launcherRecyclerView;
     private ArrayList<Channel> channelList;
     private CarouselLayoutManager carouselLayoutManager;
@@ -152,13 +155,9 @@ public class MainActivity extends BaseActivity {
     protected void onResume() {
         LogUtils.i(TAG, "onResume");
         super.onResume();
-
         startLocation();
-        channelList.clear();
-        ArrayList<Channel> local = CommonUtil.isEn() ? LauncherManager.getInstance().getLauncherCardList_EN() : LauncherManager.getInstance().getLauncherCardList();
-        LogUtils.i(TAG, "local = " + local.size());
-        channelList.addAll(local);
-        updateAdapter();
+        setLauncherCard();
+        getMemoData();
     }
 
     @Override
@@ -203,12 +202,12 @@ public class MainActivity extends BaseActivity {
     }
 
     private void initAdapter() {
-        launcherAdapter = new LauncherAdapter(this, channelList);
+        launcherAdapter = new LauncherAdapter1(this, channelList);
         carouselLayoutManager = new CarouselLayoutManager(CarouselLayoutManager.HORIZONTAL, false);
         setLayoutManager(carouselLayoutManager, launcherAdapter);
     }
 
-    private void setLayoutManager(CarouselLayoutManager carouselLayoutManager, LauncherAdapter launcherAdapter) {
+    private void setLayoutManager(CarouselLayoutManager carouselLayoutManager, LauncherAdapter1 launcherAdapter) {
         carouselLayoutManager.setPostLayoutListener(new CarouselZoomPostLayoutListener(0.20f, 0.20f));
         carouselLayoutManager.setMaxVisibleItems(2);
         launcherRecyclerView.setLayoutManager(carouselLayoutManager);
@@ -218,6 +217,8 @@ public class MainActivity extends BaseActivity {
         launcherRecyclerView.addOnScrollListener(new CenterScrollListener());
         carouselLayoutManager.addOnItemSelectionListener(adapterPosition -> selectPosition = adapterPosition);
         carouselLayoutManager.setSoundManagerListener(() -> SoundPoolUtil.getInstance(MainActivity.this).play(R.raw.swipe_card));
+        // 不让左边留白
+        launcherRecyclerView.scrollToPosition(CommonUtil.isEn() ? 1 : 2);
     }
 
     private void startSocketService() {
@@ -227,6 +228,76 @@ public class MainActivity extends BaseActivity {
         } else {
             startService(intent);
         }
+    }
+
+    private void setLauncherCard() {
+        ArrayList<Channel> local = CommonUtil.isEn() ? LauncherManager.getInstance().getLauncherCardList_EN() : LauncherManager.getInstance().getLauncherCardList();
+        channelList.addAll(local);
+        updateAdapter();
+    }
+
+    private String uri = "content://com.inmolens.inmomemo.data.memodb/memo_info";
+    private InmoMemoData showData;
+    private Handler memoHandler = new Handler() {
+        @Override
+        public void handleMessage(@NonNull Message msg) {
+            super.handleMessage(msg);
+            int action = msg.what;
+            channelList.clear();
+            ArrayList<Channel> local = new ArrayList<>();
+            if (action == 1) {
+                InmoMemoData data = (InmoMemoData) msg.obj;
+                Channel memoDataChannel = new Channel("com.inmolens.inmomemo", data);
+                if (CommonUtil.isEn()) {
+                    local = LauncherManager.getInstance().getLauncherCardList_EN();
+                    channelList.addAll(local);
+                } else {
+                    local = LauncherManager.getInstance().getLauncherCardList();
+                    channelList.addAll(local);
+                    Channel oldChannel = channelList.get(2);
+                    Collections.replaceAll(channelList, oldChannel, memoDataChannel);
+                }
+                LogUtils.i(TAG, "local = " + local.size());
+            } else {
+                local = CommonUtil.isEn() ? LauncherManager.getInstance().getLauncherCardList_EN() : LauncherManager.getInstance().getLauncherCardList();
+                channelList.addAll(local);
+            }
+            updateAdapter();
+        }
+    };
+
+    private void getMemoData() {
+        showData = new InmoMemoData();
+        new Thread(() -> {
+            Cursor cursor = getContentResolver().query(Uri.parse(uri), null, null, null, "_id DESC");
+            if (cursor == null) {
+                return;
+            }
+            boolean hasData = cursor.moveToNext();
+            if (hasData) {
+                while (true) {
+                    String id = cursor.getString(cursor.getColumnIndex("_id"));
+                    String content = cursor.getString(cursor.getColumnIndex("info_content"));
+                    long time = cursor.getLong(cursor.getColumnIndex("info_time"));
+                    long createTime = cursor.getLong(cursor.getColumnIndex("info_create_time"));
+                    showData.setId(Integer.parseInt(id));
+                    showData.setContent(content);
+                    showData.setTimestamp(time);
+                    showData.setCreateTime(createTime);
+                    LogUtils.i(TAG, "memoData,id=" + id + "content=" + content + ",time=" + CommonUtil.getStrTime(time));
+                    Message msg = new Message();
+                    msg.what = 1;
+                    msg.obj = showData;
+                    memoHandler.sendMessage(msg);
+                    break;
+                }
+            } else {
+                // 没有备忘录数据的时候直接展示空界面
+                memoHandler.sendEmptyMessage(0);
+            }
+
+        }).start();
+
     }
 
     private LocationClient mLocationClient;
@@ -369,17 +440,23 @@ public class MainActivity extends BaseActivity {
                     if (battery > 5 && battery < 15 && !isBatteryBelow15) {
                         // 电量低于15时显示Toast提示电量低
                         isBatteryBelow15 = true;
+                        isBatteryBelow6 = false;
                         ToastUtil.showImageToast(getApplicationContext());
+                        // fix bug: 低电量提示后不做操作，充电非低电量后弹框不消失
+                        WindowUtils.dismissLowBatteryWindow(WindowUtils.UI_STATE.BATTERY_BELOW_6);
                     }
                     if (battery >= 2 && battery < 6 && !isBatteryBelow6) {
                         // 电量低于6时显示低电量提示
                         isBatteryBelow6 = true;
+                        isBatteryBelow2 = false;
                         WindowUtils.showPopupWindow(getApplicationContext(), WindowUtils.UI_STATE.BATTERY_BELOW_6, "");
+                        SoundPoolUtil.getInstance(MainActivity.this).playSoundUnfinished(R.raw.low_battery);
                     }
                     if (battery < 2 && !isBatteryBelow2) {
                         // 电量低于2时倒计时15S关机
                         isBatteryBelow2 = true;
                         WindowUtils.showPopupWindow(getApplicationContext(), WindowUtils.UI_STATE.BATTERY_BELOW_2, "");
+                        SoundPoolUtil.getInstance(MainActivity.this).playSoundUnfinished(R.raw.will_shut_down);
                     }
                     if (battery >= 0 && battery <= 5) {
                         // 假数据，不然不到一个等级不明显
@@ -407,17 +484,19 @@ public class MainActivity extends BaseActivity {
                     NetworkInfo info = manager.getActiveNetworkInfo();
                     if (info != null && info.isAvailable()) {
                         ToastUtil.showToast(getApplicationContext(), getString(R.string.string_wlan_connected));
+                        SoundPoolUtil.getInstance(MainActivity.this).playSoundUnfinished(R.raw.connect);
                     } else {
                         ToastUtil.showToast(getApplicationContext(), getString(R.string.string_wlan_disconnected));
+                        SoundPoolUtil.getInstance(MainActivity.this).playSoundUnfinished(R.raw.disconnect);
                     }
                     break;
                 case BluetoothDevice.ACTION_ACL_CONNECTED:
                     ToastUtil.showToast(getApplicationContext(), getString(R.string.string_bluetooth_connected));
-                    LogUtils.i(TAG, "蓝牙设备已连接");
+                    SoundPoolUtil.getInstance(MainActivity.this).playSoundUnfinished(R.raw.connect);
                     break;
                 case BluetoothDevice.ACTION_ACL_DISCONNECTED:
                     ToastUtil.showToast(getApplicationContext(), getString(R.string.string_bluetooth_disconnected));
-                    LogUtils.i(TAG, "蓝牙设备已断开");
+                    SoundPoolUtil.getInstance(MainActivity.this).playSoundUnfinished(R.raw.disconnect);
                     break;
                 case Intent.ACTION_SCREEN_ON:
                     LogUtils.i(TAG, "设备亮屏");
@@ -547,8 +626,10 @@ public class MainActivity extends BaseActivity {
             return;
         }
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        ActivityOptionsCompat compat = ActivityOptionsCompat.makeCustomAnimation(this, R.anim.anim_in, R.anim.anim_out);
-        ActivityCompat.startActivity(this, intent, compat.toBundle());
+        startActivity(intent);
+        overridePendingTransition(R.anim.anim_in, R.anim.anim_out);
+//        ActivityOptionsCompat compat = ActivityOptionsCompat.makeCustomAnimation(this, R.anim.anim_in, R.anim.anim_out);
+//        ActivityCompat.startActivity(this, intent, compat.toBundle());
     }
 
     private void openApplication(String pkgName, String activityName) {
@@ -567,7 +648,9 @@ public class MainActivity extends BaseActivity {
         ComponentName componentName = new ComponentName(pkgName, activityName);
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         intent.setComponent(componentName);
-        ActivityOptionsCompat compat = ActivityOptionsCompat.makeCustomAnimation(this, R.anim.anim_in, R.anim.anim_out);
-        ActivityCompat.startActivity(this, intent, compat.toBundle());
+        startActivity(intent);
+        overridePendingTransition(R.anim.anim_in, R.anim.anim_out);
+//        ActivityOptionsCompat compat = ActivityOptionsCompat.makeCustomAnimation(this, R.anim.anim_in, R.anim.anim_out);
+//        ActivityCompat.startActivity(this, intent, compat.toBundle());
     }
 }

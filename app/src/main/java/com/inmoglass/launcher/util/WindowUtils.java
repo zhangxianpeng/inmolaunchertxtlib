@@ -62,8 +62,8 @@ public class WindowUtils {
 
     public static void showPopupWindow(Context context, UI_STATE state, final String content) {
         if (isShown) {
-            LogUtils.i(TAG, "return cause already shown");
-            return;
+            // fix bug:426 【系统】低电提醒界面，长按POWER键未调出关机选项
+            hidePopupWindow();
         }
         isShown = true;
         LogUtils.i(TAG, "showPopupWindow");
@@ -99,6 +99,17 @@ public class WindowUtils {
             }, 2000);
         }
         LogUtils.i(TAG, "add view");
+    }
+
+    /**
+     * 关闭低电量弹层
+     *
+     * @param state
+     */
+    public static void dismissLowBatteryWindow(UI_STATE state) {
+        if (isShown && state == UI_STATE.BATTERY_BELOW_6) {
+            hidePopupWindow();
+        }
     }
 
     /**
@@ -238,13 +249,13 @@ public class WindowUtils {
         layout.setListener(new MyConstraintLayout.OnGestureListener() {
             @Override
             public void onSwipeLeft() {
-                mCurrentIndex++;
+                mCurrentIndex--;
                 moveAndShow();
             }
 
             @Override
             public void onSwipeRight() {
-                mCurrentIndex--;
+                mCurrentIndex++;
                 moveAndShow();
             }
 
@@ -273,16 +284,19 @@ public class WindowUtils {
                 ifvShutDownSelectedBg.setVisibility(View.VISIBLE);
                 ifvCancelSelectedBg.setVisibility(View.GONE);
                 ifvRebootSelectedBg.setVisibility(View.GONE);
+                SoundPoolUtil.getInstance(mContext).play(R.raw.reboot);
                 break;
             case 1:
                 ifvShutDownSelectedBg.setVisibility(View.GONE);
                 ifvCancelSelectedBg.setVisibility(View.VISIBLE);
                 ifvRebootSelectedBg.setVisibility(View.GONE);
+                SoundPoolUtil.getInstance(mContext).play(R.raw.cancel);
                 break;
             case 2:
                 ifvShutDownSelectedBg.setVisibility(View.GONE);
                 ifvCancelSelectedBg.setVisibility(View.GONE);
                 ifvRebootSelectedBg.setVisibility(View.VISIBLE);
+                SoundPoolUtil.getInstance(mContext).play(R.raw.shut_down);
                 break;
             default:
                 break;

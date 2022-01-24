@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="180pt"
+    android:layout_height="292pt"
+    android:orientation="vertical"
+    app:cardCornerRadius="8pt">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@mipmap/bg_home_card"
+        android:orientation="vertical">
+
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="160pt"
+            android:layout_height="200pt"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="10pt"
+            app:cardCornerRadius="6pt"
+            app:cardElevation="0dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@color/colorWhite"
+                android:orientation="vertical">
+
+                <RelativeLayout
+                    android:id="@+id/rl_title"
+                    android:layout_width="match_parent"
+                    android:layout_height="36pt"
+                    android:background="@color/color_memo_title_yellow">
+
+                    <TextView
+                        android:id="@+id/tv_date"
+                        style="@style/text_style"
+                        android:layout_centerVertical="true"
+                        android:layout_marginStart="10pt"
+                        android:textSize="16pt" />
+
+                    <TextView
+                        android:id="@+id/tv_time"
+                        style="@style/text_style"
+                        android:layout_alignParentEnd="true"
+                        android:layout_centerVertical="true"
+                        android:layout_marginEnd="10pt"
+                        android:textSize="16pt" />
+                </RelativeLayout>
+
+                <TextView
+                    android:id="@id/tv_content"
+                    android:layout_width="match_parent"
+                    android:layout_height="80pt"
+                    android:layout_marginLeft="16pt"
+                    android:layout_marginTop="20pt"
+                    android:layout_marginRight="16pt"
+                    android:layout_marginBottom="20pt"
+                    android:ellipsize="end"
+                    android:maxLines="3"
+                    android:textColor="@color/colorBlack"
+                    android:textSize="18pt"
+                    android:visibility="gone" />
+
+                <ImageView
+                    android:id="@+id/iv_default"
+                    android:layout_width="100pt"
+                    android:layout_height="80pt"
+                    android:layout_gravity="center"
+                    android:layout_marginTop="25pt"
+                    android:layout_marginBottom="20pt"
+                    android:src="@mipmap/img_home_note_add" />
+
+                <View
+                    android:layout_width="124pt"
+                    android:layout_height="1pt"
+                    android:layout_gravity="center"
+                    android:background="@color/color_memo_diver" />
+
+                <TextView
+                    android:id="@+id/tv_add_time"
+                    android:layout_width="match_parent"
+                    android:layout_height="36pt"
+                    android:layout_marginStart="10pt"
+                    android:layout_marginTop="5pt"
+                    android:gravity="center_vertical"
+                    android:textColor="@color/color_memo_color"
+                    android:textSize="16pt" />
+
+                <TextView
+                    android:id="@+id/tv_add_something"
+                    android:layout_width="match_parent"
+                    android:layout_height="36pt"
+                    android:gravity="center"
+                    android:text="@string/string_add_memo"
+                    android:textColor="@color/color_memo_color"
+                    android:textSize="16pt" />
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <ImageView
+            android:id="@+id/iv_icon"
+            android:layout_width="36pt"
+            android:layout_height="36pt"
+            android:layout_gravity="center"
+            android:layout_marginTop="10pt"
+            android:src="@drawable/icon_home_beiwanglu" />
+
+        <TextView
+            android:id="@+id/tv_appName"
+            style="@style/text_style"
+            android:layout_gravity="center"
+            android:layout_marginTop="4pt"
+            android:gravity="center"
+            android:text="@string/string_home_beiwanglu"
+            android:textSize="18pt" />
+    </LinearLayout>
+</androidx.cardview.widget.CardView>

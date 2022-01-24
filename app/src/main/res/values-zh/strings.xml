@@ -9,6 +9,7 @@
     <string name="string_home_gaode">高德地图</string>
     <string name="string_home_wps">WPS</string>
     <string name="string_home_ximalaya">喜马拉雅</string>
+    <string name="string_home_mmi">MMI测试工具</string>
     <string name="string_app_not_installed">该应用未安装</string>
     <string name="string_app_list">应用列表</string>
     <string name="string_wlan_disconnected">WLAN已断开</string>
@@ -24,5 +25,11 @@
     <string name="string_reboot">重启</string>
     <string name="string_cancel">取消</string>
     <string name="string_i_kwnon">我知道了</string>
+    <string name="string_today">今天</string>
+    <string name="string_tomorrow">明天</string>
     <string name="string_time_format">MM月dd日 E</string>
+    <string name="string_time_format_1">MM月dd日 </string>
+    <string name="string_time_format_2">MM月dd日添加</string>
+    <string name="string_add_memo">添加事项</string>
+
 </resources>

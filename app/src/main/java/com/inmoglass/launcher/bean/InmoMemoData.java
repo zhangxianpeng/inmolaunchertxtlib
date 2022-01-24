@@ -7,6 +7,7 @@ public class InmoMemoData {
     private int id;
     private String content;
     private long timestamp;
+    private long createTime;
 
     public int getId() {
         return id;
@@ -30,5 +31,13 @@ public class InmoMemoData {
 
     public void setTimestamp(long timestamp) {
         this.timestamp = timestamp;
+    }
+
+    public long getCreateTime() {
+        return createTime;
+    }
+
+    public void setCreateTime(long createTime) {
+        this.createTime = createTime;
     }
 }

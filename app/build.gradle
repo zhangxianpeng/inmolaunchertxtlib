@@ -26,9 +26,25 @@ android {
         }
     }
 
+    signingConfigs {
+        release {
+            storeFile file('../keystore/air_release_system.keystore')
+            storePassword 'android'
+            keyAlias 'android'
+            keyPassword 'android'
+        }
+
+        debug {
+            storeFile file('../keystore/air_release_system.keystore')
+            storePassword 'android'
+            keyAlias 'android'
+            keyPassword 'android'
+        }
+    }
+
     android.applicationVariants.all { variant ->
         variant.outputs.all {
-            outputFileName = "INMOGlass-APP-Launcher-V${variant.versionName}-T${releaseTime()}.apk"
+            outputFileName = "INMO-Launcher-V${variant.versionName}-T${releaseTime()}.apk"
         }
     }
 
