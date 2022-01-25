@@ -60,6 +60,7 @@ import com.inmoglass.launcher.view.PowerConsumptionRankingsBatteryView;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Collections;
 
@@ -213,10 +214,21 @@ public class MainActivity extends BaseActivity {
         launcherRecyclerView.setHasFixedSize(true);
         launcherRecyclerView.setAdapter(launcherAdapter);
         launcherRecyclerView.addOnScrollListener(new CenterScrollListener());
+        setMaxFlingVelocity(launcherRecyclerView, 2000);
         carouselLayoutManager.addOnItemSelectionListener(adapterPosition -> selectPosition = adapterPosition);
         carouselLayoutManager.setSoundManagerListener(() -> SoundPoolUtil.getInstance(MainActivity.this).play(R.raw.swipe_card));
         // 不让左边留白
         launcherRecyclerView.scrollToPosition(CommonUtil.isEn() ? 1 : 2);
+    }
+
+    public static void setMaxFlingVelocity(RecyclerView recyclerView, int velocity) {
+        try {
+            Field field = recyclerView.getClass().getDeclaredField("mMaxFlingVelocity");
+            field.setAccessible(true);
+            field.set(recyclerView, velocity);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     private void startSocketService() {
@@ -489,11 +501,19 @@ public class MainActivity extends BaseActivity {
                     }
                     break;
                 case BluetoothDevice.ACTION_ACL_CONNECTED:
-                    ToastUtil.showToast(getApplicationContext(), getString(R.string.string_bluetooth_connected));
-                    SoundPoolUtil.getInstance(MainActivity.this).playSoundUnfinished(R.raw.connect);
+                    BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
+                    if (device.getBondState() == BluetoothDevice.BOND_BONDED) {
+                        ToastUtil.showToast(getApplicationContext(), getString(R.string.string_bluetooth_connected));
+                        SoundPoolUtil.getInstance(MainActivity.this).playSoundUnfinished(R.raw.connect);
+                    }
                     break;
                 case BluetoothDevice.ACTION_ACL_DISCONNECTED:
-                    ToastUtil.showToast(getApplicationContext(), getString(R.string.string_bluetooth_disconnected));
+                    BluetoothDevice device1 = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
+                    if (device1.getBondState() == BluetoothDevice.BOND_BONDED) {
+                        ToastUtil.showToast(getApplicationContext(), getString(R.string.string_bluetooth_disconnected));
+                    } else if (device1.getBondState() == BluetoothDevice.BOND_NONE) {
+                        ToastUtil.showToast(getApplicationContext(), getString(R.string.string_bluetooth_disconnected_retry));
+                    }
                     SoundPoolUtil.getInstance(MainActivity.this).playSoundUnfinished(R.raw.disconnect);
                     break;
                 case Intent.ACTION_SCREEN_ON:

@@ -80,7 +80,6 @@ public class LauncherManager {
 
     public void setLauncherCardList() {
         appPackagesList = new ArrayList<>();
-        // TODO: 2022/1/17 等生产版本的pac包打出来验证 
         appPackagesList.addAll(Arrays.asList(CommonUtil.isEn() ? packageNames_EN : (CommonUtil.isProductVersion() ? packageNames_pro : packageNames)));
         MMKVUtils.setArray(mContext, appPackagesList, APP_PACKAGES_LIST);
     }

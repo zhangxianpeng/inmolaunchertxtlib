@@ -17,6 +17,7 @@
     <string name="string_wlan_connected">WLAN Connected</string>
     <string name="string_bluetooth_disconnected">Bluetooth Disconnected</string>
     <string name="string_bluetooth_connected">Bluetooth Connected</string>
+    <string name="string_bluetooth_disconnected_retry">Connect fail,try again</string>
     <string name="string_low_battery">Battery level is lower than 15%</string>
     <string name="string_too_low_battery">Battery level is lower than 5%,please charge in time</string>
     <string name="string_too_low_battery_shutdown">Low battery,it will shut down</string>

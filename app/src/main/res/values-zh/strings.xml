@@ -16,6 +16,7 @@
     <string name="string_wlan_disconnected">WLAN已断开</string>
     <string name="string_wlan_connected">WLAN已连接</string>
     <string name="string_bluetooth_disconnected">蓝牙已断开</string>
+    <string name="string_bluetooth_disconnected_retry">连接失败,请重试</string>
     <string name="string_bluetooth_connected">蓝牙已连接</string>
     <string name="string_low_battery">电池电量低于15%</string>
     <string name="string_too_low_battery">电池电量低于5%,请及时充电</string>
