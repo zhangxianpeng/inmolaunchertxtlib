@@ -28,6 +28,7 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.baidu.location.BDAbstractLocationListener;
@@ -35,6 +36,7 @@ import com.baidu.location.BDLocation;
 import com.baidu.location.LocationClient;
 import com.baidu.location.LocationClientOption;
 import com.blankj.utilcode.util.LogUtils;
+import com.blankj.utilcode.util.TimeUtils;
 import com.blankj.utilcode.util.ToastUtils;
 import com.inmo.network.AndroidNetworking;
 import com.inmo.network.error.ANError;
@@ -155,7 +157,7 @@ public class MainActivity extends BaseActivity {
         LogUtils.i(TAG, "onResume");
         super.onResume();
         startLocation();
-        setLauncherCard();
+//        setLauncherCard();
         getMemoData();
     }
 
@@ -175,8 +177,9 @@ public class MainActivity extends BaseActivity {
 
     @Override
     public boolean dispatchTouchEvent(MotionEvent ev) {
-        launcherRecyclerView.dispatchTouchEvent(ev);
         mGestureDetector.onTouchEvent(ev);
+        MotionEvent ev2 = MotionEvent.obtain(ev.getDownTime(), ev.getEventTime(), ev.getAction(), -(ev.getX()), ev.getY(), ev.getMetaState());
+        launcherRecyclerView.dispatchTouchEvent(ev2);
         return true;
     }
 
@@ -204,6 +207,8 @@ public class MainActivity extends BaseActivity {
         launcherAdapter = new LauncherAdapter1(this, channelList);
         carouselLayoutManager = new CarouselLayoutManager(CarouselLayoutManager.HORIZONTAL, false);
         setLayoutManager(carouselLayoutManager, launcherAdapter);
+        // 解决刷新闪烁动画
+        ((DefaultItemAnimator) launcherRecyclerView.getItemAnimator()).setSupportsChangeAnimations(false);
     }
 
     private void setLayoutManager(CarouselLayoutManager carouselLayoutManager, LauncherAdapter1 launcherAdapter) {
@@ -361,7 +366,8 @@ public class MainActivity extends BaseActivity {
         public void onReceiveLocation(BDLocation bdLocation) {
             double latitude = bdLocation.getLatitude();
             double longitude = bdLocation.getLongitude();
-            getLocationWeather(latitude, longitude);
+            // 异步获取天气信息，不然可能造成anr
+            new Thread(()-> getLocationWeather(latitude, longitude)).start();
         }
     }
 
@@ -425,8 +431,12 @@ public class MainActivity extends BaseActivity {
                 case ALARM_MEMO_LOG:
                     // 接收到备忘录传过来的内容
                     String content = intent.getStringExtra("MemoContent");
-                    LogUtils.i(TAG, "Memo content = " + content);
-                    WindowUtils.showPopupWindow(getApplicationContext(), WindowUtils.UI_STATE.MEMO_STATE, content);
+                    long memoTime = intent.getLongExtra("MemoShowTime", 0);
+                    String date = TimeUtils.millis2String(memoTime, getString(R.string.string_time_format_1));
+                    String time = TimeUtils.millis2String(memoTime, "HH:mm");
+                    String completeMemoContent = getString(R.string.string_memo_data) + "," + date + "," + time + "," + content;
+                    LogUtils.i(TAG, "Memo content = " + completeMemoContent);
+                    WindowUtils.showPopupWindow(getApplicationContext(), WindowUtils.UI_STATE.MEMO_STATE, completeMemoContent);
                     break;
                 case SHUT_DOWN_ACTION:
                     WindowUtils.showPopupWindow(getApplicationContext(), WindowUtils.UI_STATE.SHUT_DOWN_ACTION, "");

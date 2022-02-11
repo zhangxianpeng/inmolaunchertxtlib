@@ -16,6 +16,6 @@
         android:paddingBottom="10pt"
         android:text="@string/string_too_low_battery"
         android:textColor="@android:color/white"
-        android:textSize="26pt" />
+        android:textSize="22pt" />
 
 </LinearLayout>

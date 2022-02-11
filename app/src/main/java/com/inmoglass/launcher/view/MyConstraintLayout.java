@@ -12,6 +12,7 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 import com.blankj.utilcode.util.LogUtils;
 
 /**
+ * @author Administrator
  * 自定义约束布局
  * 添加手势监听
  */

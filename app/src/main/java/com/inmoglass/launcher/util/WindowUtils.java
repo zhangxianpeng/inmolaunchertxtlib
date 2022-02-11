@@ -67,13 +67,10 @@ public class WindowUtils {
         }
         isShown = true;
         LogUtils.i(TAG, "showPopupWindow");
-        // 获取应用的Context
         mContext = context.getApplicationContext();
-        // 获取WindowManager
         mWindowManager = (WindowManager) mContext.getSystemService(Context.WINDOW_SERVICE);
         mView = setUpView(context, state, content);
         final WindowManager.LayoutParams params = new WindowManager.LayoutParams();
-        // 类型
         params.type = WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY;
         params.flags = WindowManager.LayoutParams.FLAG_DIM_BEHIND | WindowManager.LayoutParams.FLAG_BLUR_BEHIND;
         params.format = PixelFormat.TRANSLUCENT;

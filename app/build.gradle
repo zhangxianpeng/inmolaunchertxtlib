@@ -11,7 +11,7 @@ android {
         minSdkVersion 24
         targetSdkVersion 30
         versionCode 1
-        versionName "1.0.07"
+        versionName "1.0.08"
 
         ndk {
             // 设置支持的SO库架构（开发者可以根据需要，选择一个或多个平台的so）
@@ -74,7 +74,7 @@ dependencies {
     // util 工具类 使用： 屏幕适配等 教程：https://blankj.com/2016/07/31/android-utils-code/
     implementation 'com.blankj:utilcodex:1.30.6'
     // air系列common
-    implementation 'com.github.zhangxianpeng:InmoAirComponent:1.0.1'
+    implementation 'com.github.zhangxianpeng:InmoAirComponent:1.0.4'
     // data包
     implementation 'com.github.zhangxianpeng:InmoData:1.0.3'
     // 消息传递
