@@ -139,10 +139,6 @@ public class MainActivity extends BaseActivity {
         subscribeBroadCast();
     }
 
-    /**
-     * 获取弹窗权限，否则windowManager addView报错
-     */
-    // TODO: 2021/12/24 弹窗权限需要打到系统里边去，避免需要自己去申请
     private void needOverlayPermission() {
         if (Build.VERSION.SDK_INT >= 23) {
             if (!Settings.canDrawOverlays(MainActivity.this)) {
