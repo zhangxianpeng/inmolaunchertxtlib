@@ -41,5 +41,11 @@
             android:layout_gravity="center_vertical"
             android:src="@drawable/ic_icon_statusbar_battery_charging"
             android:visibility="gone" />
+
+        <TextView
+            android:id="@+id/tv_battery_level"
+            style="@style/text_style"
+            android:layout_gravity="center_vertical"
+            android:textSize="18pt" />
     </LinearLayout>
 </RelativeLayout>

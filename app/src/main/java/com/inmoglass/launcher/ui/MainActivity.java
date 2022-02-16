@@ -74,7 +74,7 @@ import java.util.Collections;
 public class MainActivity extends BaseActivity {
 
     private static final String TAG = MainActivity.class.getSimpleName();
-
+    private TextView batteryLevelTextView;
     private PowerConsumptionRankingsBatteryView batteryView;
     private ImageView isChargingImageView;
     private ImageView weatherImageView;
@@ -192,6 +192,7 @@ public class MainActivity extends BaseActivity {
     private void initViews() {
         batteryView = findViewById(R.id.sbb_battery);
         isChargingImageView = findViewById(R.id.iv_isCharging);
+        batteryLevelTextView = findViewById(R.id.tv_battery_level);
         weatherImageView = findViewById(R.id.iv_temperature);
         weatherTextView = findViewById(R.id.tv_weather);
         temperatureTextView = findViewById(R.id.tv_temperature);
@@ -439,6 +440,7 @@ public class MainActivity extends BaseActivity {
                     break;
                 case Intent.ACTION_BATTERY_CHANGED:
                     int battery = intent.getIntExtra(BatteryManager.EXTRA_LEVEL, 0);
+                    batteryLevelTextView.setText(battery + "%");
                     LogUtils.i(TAG, "当前电量 = " + battery);
                     isChargingImageView.setVisibility(isChargingNow ? View.VISIBLE : View.GONE);
 //                    if (isChargingNow) {
