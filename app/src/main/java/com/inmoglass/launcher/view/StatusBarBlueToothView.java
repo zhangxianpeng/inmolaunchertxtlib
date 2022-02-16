@@ -47,26 +47,25 @@ public class StatusBarBlueToothView extends androidx.appcompat.widget.AppCompatI
         int state = BluetoothAdapter.getDefaultAdapter().getState();
         if (state == BluetoothAdapter.STATE_ON) {
             setVisibility(View.VISIBLE);
-            this.setImageResource(isConnected() ? R.drawable.ic_baseline_bluetooth_connected_24 : R.drawable.ic_baseline_bluetooth_24);
+            this.setImageResource(isConnected() ? R.drawable.ic_icon_statusbar_bluetooth02 : R.drawable.ic_icon_statusbar_bluetooth);
         } else if (state == BluetoothAdapter.STATE_OFF) {
             setVisibility(View.GONE);
         }
     }
 
     private void setImageState(int state) {
-
         //只管需要的状态
         if (state == BluetoothAdapter.STATE_ON) {
             setVisibility(View.VISIBLE);
-            setImageResource(R.drawable.ic_baseline_bluetooth_24);
+            setImageResource(R.drawable.ic_icon_statusbar_bluetooth);
         } else if (state == BluetoothAdapter.STATE_OFF) {
             setVisibility(View.GONE);
         } else if (state == BluetoothAdapter.STATE_CONNECTED) {
             setVisibility(View.VISIBLE);
-            setImageResource(R.drawable.ic_baseline_bluetooth_connected_24);
+            setImageResource(R.drawable.ic_icon_statusbar_bluetooth02);
         } else if (state == BluetoothAdapter.STATE_DISCONNECTED) {
             setVisibility(View.VISIBLE);
-            setImageResource(R.drawable.ic_baseline_bluetooth_24);
+            setImageResource(R.drawable.ic_icon_statusbar_bluetooth);
         } else if (state == BluetoothAdapter.STATE_CONNECTING) {
             //动画
         }
