@@ -33,5 +33,8 @@
     <string name="string_time_format_1">MM月dd日 </string>
     <string name="string_time_format_2">MM月dd日添加</string>
     <string name="string_add_memo">添加事项</string>
-
+    <string name="string_reboot_rightnow">即将重启</string>
+    <string name="string_shutdown_rightnow">即将关机</string>
+    <string name="string_reboot_cancel">取消重启</string>
+    <string name="string_shutdown_cancel">取消关机</string>
 </resources>

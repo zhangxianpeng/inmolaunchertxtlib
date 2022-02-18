@@ -64,20 +64,24 @@ public class StatusBarWifiStateView extends AppCompatImageView {
             }
             switch (msg.what) {
                 case LEVEL_1:
+                    wifiStateView.setVisibility(VISIBLE);
                     wifiStateView.setImageResource(R.drawable.ic_icon_statusbar_wifi01);
                     break;
                 case LEVEL_2:
+                    wifiStateView.setVisibility(VISIBLE);
                     wifiStateView.setImageResource(R.drawable.ic_icon_statusbar_wifi02);
                     break;
                 case LEVEL_3:
+                    wifiStateView.setVisibility(VISIBLE);
                     wifiStateView.setImageResource(R.drawable.ic_icon_statusbar_wifi03);
                     break;
                 case LEVEL_4:
+                    wifiStateView.setVisibility(VISIBLE);
                     wifiStateView.setImageResource(R.drawable.ic_icon_statusbar_wifi04);
                     break;
                 case LEVEL_NONE:
                 default:
-                    wifiStateView.setImageDrawable(null);
+                    wifiStateView.setVisibility(GONE);
                     break;
             }
         }

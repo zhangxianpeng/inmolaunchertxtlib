@@ -33,4 +33,8 @@
     <string name="string_time_format_1">MM/dd </string>
     <string name="string_time_format_2">MM/dd Add</string>
     <string name="string_add_memo">Add memo</string>
+    <string name="string_reboot_rightnow">About to restart</string>
+    <string name="string_shutdown_rightnow">About to shut down</string>
+    <string name="string_reboot_cancel">Cancel restart</string>
+    <string name="string_shutdown_cancel">Cancel shut down</string>
 </resources>

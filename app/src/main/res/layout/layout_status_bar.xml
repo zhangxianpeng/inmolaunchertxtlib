@@ -4,50 +4,55 @@
     android:layout_height="40pt"
     android:background="@color/black">
 
-    <com.inmoglass.launcher.view.StatusBarBlueToothView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerVertical="true"
-        android:layout_marginEnd="28pt"
-        android:layout_toStartOf="@+id/sbb_wifi" />
-
-    <com.inmoglass.launcher.view.StatusBarWifiStateView
-        android:id="@+id/sbb_wifi"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerVertical="true"
-        android:layout_marginEnd="25pt"
-        android:layout_toStartOf="@+id/ll_battery" />
-
     <LinearLayout
-        android:id="@+id/ll_battery"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:layout_alignParentEnd="true"
         android:layout_centerVertical="true"
         android:layout_marginEnd="21pt"
         android:orientation="horizontal">
 
-        <com.inmoglass.launcher.view.PowerConsumptionRankingsBatteryView
-            android:id="@+id/sbb_battery"
-            android:layout_width="11pt"
-            android:layout_height="17pt"
+        <com.inmoglass.launcher.view.StatusBarBlueToothView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_gravity="center_vertical" />
 
-        <ImageView
-            android:id="@+id/iv_isCharging"
-            android:layout_width="16pt"
-            android:layout_height="20pt"
+        <com.inmoglass.launcher.view.StatusBarWifiStateView
+            android:id="@+id/sbb_wifi"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
-            android:src="@drawable/ic_icon_statusbar_battery_charging"
-            android:layout_marginStart="3pt"
-            android:visibility="gone" />
+            android:layout_marginStart="28pt" />
 
-        <TextView
-            android:id="@+id/tv_battery_level"
-            style="@style/text_style"
+        <LinearLayout
+            android:id="@+id/ll_battery"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
-            android:textSize="18pt"
-            android:layout_marginStart="3pt"/>
+            android:layout_marginStart="25pt"
+            android:orientation="horizontal">
+
+            <com.inmoglass.launcher.view.PowerConsumptionRankingsBatteryView
+                android:id="@+id/sbb_battery"
+                android:layout_width="11pt"
+                android:layout_height="17pt"
+                android:layout_gravity="center_vertical" />
+
+            <ImageView
+                android:id="@+id/iv_isCharging"
+                android:layout_width="16pt"
+                android:layout_height="20pt"
+                android:layout_gravity="center_vertical"
+                android:layout_marginStart="3pt"
+                android:src="@drawable/ic_icon_statusbar_battery_charging"
+                android:visibility="gone" />
+
+            <TextView
+                android:id="@+id/tv_battery_level"
+                style="@style/text_style"
+                android:layout_gravity="center_vertical"
+                android:layout_marginStart="3pt"
+                android:textSize="18pt" />
+        </LinearLayout>
     </LinearLayout>
 </RelativeLayout>

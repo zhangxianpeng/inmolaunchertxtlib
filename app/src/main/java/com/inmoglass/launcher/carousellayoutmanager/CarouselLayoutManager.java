@@ -632,7 +632,17 @@ public class CarouselLayoutManager extends RecyclerView.LayoutManager implements
             dimenDiff = (getWidthNoPadding() - mDecoratedChildWidth) / 2;
         }
         //noinspection NumericCastThatLosesPrecision
-        return (int) Math.round(Math.signum(itemPositionDiff) * (dimenDiff - 40) * smoothPosition);
+        // fix bug:515【launcher】查看launcher与UI设计图进行对比
+        // 根据位置指定偏移量
+        int value = 0;
+        if (itemPositionDiff == -1.0) {
+            value = -128;
+        } else if (itemPositionDiff == 1.0) {
+            value = 128;
+        } else {
+            value = (int) Math.round(Math.signum(itemPositionDiff) * (dimenDiff - 20) * smoothPosition);
+        }
+        return value;
     }
 
     /**

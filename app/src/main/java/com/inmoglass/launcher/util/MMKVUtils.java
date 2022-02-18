@@ -51,4 +51,14 @@ public class MMKVUtils {
         }
         return list;
     }
+
+    public static void setBoolean(String name, boolean isPlayed) {
+        MMKV kv = MMKV.defaultMMKV();
+        kv.encode(name, isPlayed);
+    }
+
+    public static boolean getBoolean(String name) {
+        MMKV kv = MMKV.defaultMMKV();
+        return kv.decodeBool(name);
+    }
 }

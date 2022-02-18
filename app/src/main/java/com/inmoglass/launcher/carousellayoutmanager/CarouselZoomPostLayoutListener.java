@@ -4,8 +4,6 @@ import android.view.View;
 
 import androidx.annotation.NonNull;
 
-import com.blankj.utilcode.util.LogUtils;
-
 /**
  * Implementation of {@link CarouselLayoutManager.PostLayoutListener} that makes interesting scaling of items. <br />
  * We are trying to make items scaling quicker for closer items for center and slower for when they are far away.<br />

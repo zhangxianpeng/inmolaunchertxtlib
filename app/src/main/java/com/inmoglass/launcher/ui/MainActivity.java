@@ -1,5 +1,7 @@
 package com.inmoglass.launcher.ui;
 
+import static com.inmoglass.launcher.global.AppGlobals.NOVICE_TEACHING_VIDEO_PLAY_FLAG;
+import static com.inmoglass.launcher.global.AppGlobals.isFirstLaunchSystem;
 import static com.inmoglass.launcher.util.AppUtil.isInstalled;
 
 import android.bluetooth.BluetoothDevice;
@@ -53,6 +55,7 @@ import com.inmoglass.launcher.service.SocketService;
 import com.inmoglass.launcher.util.AppUtil;
 import com.inmoglass.launcher.util.CommonUtil;
 import com.inmoglass.launcher.util.LauncherManager;
+import com.inmoglass.launcher.util.MMKVUtils;
 import com.inmoglass.launcher.util.SoundPoolUtil;
 import com.inmoglass.launcher.util.ToastUtil;
 import com.inmoglass.launcher.util.WeatherResUtil;
@@ -139,21 +142,17 @@ public class MainActivity extends BaseActivity {
         subscribeBroadCast();
     }
 
-    private void needOverlayPermission() {
-        if (Build.VERSION.SDK_INT >= 23) {
-            if (!Settings.canDrawOverlays(MainActivity.this)) {
-                Intent intent = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION, Uri.parse("package:" + getPackageName()));
-                startActivityForResult(intent, 10);
-            }
-        }
-    }
-
     @Override
     protected void onResume() {
         LogUtils.i(TAG, "onResume");
         super.onResume();
+        boolean isPlayed = MMKVUtils.getBoolean(NOVICE_TEACHING_VIDEO_PLAY_FLAG);
+        LogUtils.i(TAG, "isFirstLaunchSystem = " + isFirstLaunchSystem);
+        LogUtils.i(TAG, "isPlayed = " + isPlayed);
+        if (isFirstLaunchSystem && !isPlayed) {
+            WindowUtils.showPopupWindow(getApplicationContext(), WindowUtils.UI_STATE.BEGINNER_VIDEO, "");
+        }
         startLocation();
-//        setLauncherCard();
         getMemoData();
     }
 
@@ -364,7 +363,7 @@ public class MainActivity extends BaseActivity {
             double latitude = bdLocation.getLatitude();
             double longitude = bdLocation.getLongitude();
             // 异步获取天气信息，不然可能造成anr
-            new Thread(()-> getLocationWeather(latitude, longitude)).start();
+            new Thread(() -> getLocationWeather(latitude, longitude)).start();
         }
     }
 

@@ -1,10 +1,13 @@
 package com.inmoglass.launcher.util;
 
+import static com.inmoglass.launcher.global.AppGlobals.NOVICE_TEACHING_VIDEO_PLAY_FLAG;
+
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.PixelFormat;
 import android.os.Build;
 import android.os.CountDownTimer;
+import android.os.Environment;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.PowerManager;
@@ -15,6 +18,7 @@ import android.view.View;
 import android.view.WindowManager;
 import android.view.WindowManager.LayoutParams;
 import android.widget.TextView;
+import android.widget.VideoView;
 
 import androidx.constraintlayout.utils.widget.ImageFilterView;
 
@@ -24,6 +28,8 @@ import com.inmoglass.launcher.base.BaseApplication;
 import com.inmoglass.launcher.tts.TtsManager;
 import com.inmoglass.launcher.ui.MainActivity;
 import com.inmoglass.launcher.view.MyConstraintLayout;
+
+import java.io.File;
 
 /**
  * @author Administrator
@@ -58,6 +64,14 @@ public class WindowUtils {
          * 充电中
          */
         CHARGING,
+        /**
+         * 新手教程视频
+         */
+        BEGINNER_VIDEO,
+        /**
+         * 二次确认
+         */
+        SECOND_CONFIRM,
     }
 
     public static void showPopupWindow(Context context, UI_STATE state, final String content) {
@@ -70,6 +84,9 @@ public class WindowUtils {
         mContext = context.getApplicationContext();
         mWindowManager = (WindowManager) mContext.getSystemService(Context.WINDOW_SERVICE);
         mView = setUpView(context, state, content);
+        if (mView == null) {
+            return;
+        }
         final WindowManager.LayoutParams params = new WindowManager.LayoutParams();
         params.type = WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY;
         params.flags = WindowManager.LayoutParams.FLAG_DIM_BEHIND | WindowManager.LayoutParams.FLAG_BLUR_BEHIND;
@@ -81,8 +98,12 @@ public class WindowUtils {
         if (state != UI_STATE.SHUT_DOWN_ACTION) {
             // 关机的操作交给它本身
             mView.setOnTouchListener((view, motionEvent) -> {
-                if (motionEvent.getAction() == MotionEvent.ACTION_DOWN) {
+                if (motionEvent.getAction() == MotionEvent.ACTION_DOWN && (state != UI_STATE.BEGINNER_VIDEO)) {
                     hidePopupWindow();
+                    if(mTimer!=null) {
+                        mTimer.cancel();
+                        mTimer = null;
+                    }
                 }
                 return false;
             });
@@ -133,6 +154,9 @@ public class WindowUtils {
         } else if (state == UI_STATE.BATTERY_BELOW_2) {
             view = LayoutInflater.from(context).inflate(R.layout.layout_shutdown_countdown, null);
             initTimerShutDownView(view);
+        } else if (state == UI_STATE.SECOND_CONFIRM) {
+            view = LayoutInflater.from(context).inflate(R.layout.layout_second_confirm, null);
+            initSecondConfirmView(view, content);
         } else if (state == UI_STATE.CHARGING) {
             view = LayoutInflater.from(context).inflate(R.layout.layout_charging, null);
             TextView batteryLevelTextView = view.findViewById(R.id.tvBatteryLevel);
@@ -140,6 +164,15 @@ public class WindowUtils {
         } else if (state == UI_STATE.SHUT_DOWN_ACTION) {
             view = LayoutInflater.from(context).inflate(R.layout.layout_shutdown, null);
             initShutDownWindowView(view);
+        } else if (state == UI_STATE.BEGINNER_VIDEO) {
+            view = LayoutInflater.from(context).inflate(R.layout.layout_beginner_video, null);
+            String filePath = Environment.getExternalStorageDirectory().getAbsolutePath() + "/CameraV2/xinshoujiaocheng.mp4";
+            File file = new File(filePath);
+            if (!file.exists()) {
+                view = null;
+            } else {
+                initVideoView(view, filePath);
+            }
         }
         return view;
     }
@@ -190,7 +223,6 @@ public class WindowUtils {
         // 释放
         wl.release();
     }
-
     /**==================================备忘录弹层===========================================**/
 
     /**
@@ -198,7 +230,7 @@ public class WindowUtils {
      **/
     private static void initTimerShutDownView(View view) {
         TextView countDownTextView = view.findViewById(R.id.tvCountdownTime);
-        CountDownTimer timer = new CountDownTimer(16000, 1000) {
+        mTimer = new CountDownTimer(16000, 1000) {
             @Override
             public void onTick(long millisUntilFinished) {
                 countDownTextView.setText(millisUntilFinished / 1000 + "S");
@@ -218,9 +250,40 @@ public class WindowUtils {
                 }
             }
         };
-        timer.start();
+        mTimer.start();
     }
     /** ==================================低电量倒计时关机弹层===========================================**/
+
+    /**
+     * ==================================二次确认弹层===========================================
+     **/
+    static CountDownTimer mTimer;
+    private static void initSecondConfirmView(View view, String mCurrentIndex) {
+        int index = Integer.parseInt(mCurrentIndex);
+        TextView countDownTextView = view.findViewById(R.id.tvCountdownTime);
+        TextView tvMemoContent = view.findViewById(R.id.tvMemoContent);
+        tvMemoContent.setText(index == 0 ? BaseApplication.mContext.getString(R.string.string_reboot_rightnow) : BaseApplication.mContext.getString(R.string.string_shutdown_rightnow));
+        TextView cancelText = view.findViewById(R.id.cancelText);
+        cancelText.setText(index == 0 ? BaseApplication.mContext.getString(R.string.string_reboot_cancel) : BaseApplication.mContext.getString(R.string.string_shutdown_cancel));
+        mTimer = new CountDownTimer(4000, 1000) {
+            @Override
+            public void onTick(long millisUntilFinished) {
+                countDownTextView.setText(millisUntilFinished / 1000 + "S");
+            }
+
+            @Override
+            public void onFinish() {
+                // 倒计时结束后直接关机
+                if (index == 0 && isShown) {
+                    rebootSystem();
+                } else if (index == 2 && isShown) {
+                    shutdownSystem();
+                }
+            }
+        };
+        mTimer.start();
+    }
+    /** ==================================二次确认弹层===========================================**/
 
     /**
      * ==================================关机重启弹层===========================================
@@ -301,12 +364,12 @@ public class WindowUtils {
     }
 
     private static void useCurrentFunction() {
+
         switch (mCurrentIndex) {
             case 0:
-                rebootSystem();
-                break;
             case 2:
-                shutdownSystem();
+                hidePopupWindow();
+                showSecondConfirmView(mCurrentIndex);
                 break;
             case 1:
             default:
@@ -332,6 +395,34 @@ public class WindowUtils {
         mCurrentIndex = 1;
         hidePopupWindow();
     }
+
+    private static void showSecondConfirmView(int mCurrentIndex) {
+        showPopupWindow(BaseApplication.mContext, UI_STATE.SECOND_CONFIRM, String.valueOf(mCurrentIndex));
+    }
     /**==================================关机重启弹层===========================================*/
 
+    /**
+     * ==================================新手教程弹层===========================================
+     **/
+    private static void initVideoView(View view, String filePath) {
+        VideoView mVideoView = view.findViewById(R.id.videoView);
+        forbiddenOperation(view);
+        mVideoView.setVideoPath(filePath);
+        mVideoView.setOnCompletionListener(mediaPlayer -> {
+            LogUtils.d(TAG, "新手教学播放完成，保存标志位");
+            MMKVUtils.setBoolean(NOVICE_TEACHING_VIDEO_PLAY_FLAG, true);
+            hidePopupWindow();
+        });
+        mVideoView.start();
+    }
+
+    private static void forbiddenOperation(View view) {
+        // 播放新手教程视频的时候禁用操作
+        // 1.禁用下滑返回 keyBack事件
+        // 2.禁用万能键事件
+        // 3.禁用关机弹层
+        // 4.禁用触摸板
+        view.setOnTouchListener((view1, motionEvent) -> false);
+    }
+    /**==================================新手教程弹层===========================================*/
 }
