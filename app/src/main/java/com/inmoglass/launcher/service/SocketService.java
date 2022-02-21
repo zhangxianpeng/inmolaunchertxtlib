@@ -12,6 +12,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.database.Cursor;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.BatteryManager;
 import android.os.Binder;
@@ -20,6 +21,7 @@ import android.os.IBinder;
 import android.text.TextUtils;
 
 import androidx.annotation.Nullable;
+import androidx.core.app.NotificationCompat;
 
 import com.blankj.utilcode.util.LogUtils;
 import com.google.gson.Gson;
@@ -33,6 +35,7 @@ import com.inmo.inmodata.device.FileTransferInfo;
 import com.inmo.inmodata.message.Dispatcher;
 import com.inmo.inmodata.notify.NotifyInfo;
 import com.inmo.inmodata.weather.WeatherInfo;
+import com.inmoglass.launcher.R;
 import com.inmoglass.launcher.bean.BluttohPhoneBean;
 import com.inmoglass.launcher.util.SystemUtils;
 import com.tencent.mmkv.MMKV;
@@ -73,7 +76,7 @@ public class SocketService extends Service {
     @Override
     public void onCreate() {
         super.onCreate();
-        LogUtils.i(TAG,"SocketService oncreate");
+        LogUtils.i(TAG, "SocketService oncreate");
         startForeground();
         initBt();
 
@@ -105,11 +108,7 @@ public class SocketService extends Service {
     public void onDestroy() {
         LogUtils.e(TAG, "socket service is stop!!");
         Intent intent = new Intent(this, SocketService.class);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            startForegroundService(intent);
-        } else {
-            startService(intent);
-        }
+        startService(intent);
         unregisterReceiver(receiver);
         super.onDestroy();
     }

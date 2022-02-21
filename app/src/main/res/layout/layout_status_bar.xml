@@ -15,21 +15,21 @@
         <com.inmoglass.launcher.view.StatusBarBlueToothView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical" />
+            android:layout_gravity="center_vertical"
+            android:layout_marginEnd="24pt" />
 
         <com.inmoglass.launcher.view.StatusBarWifiStateView
             android:id="@+id/sbb_wifi"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
-            android:layout_marginStart="28pt" />
+            android:layout_marginEnd="24pt" />
 
         <LinearLayout
             android:id="@+id/ll_battery"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
-            android:layout_marginStart="25pt"
             android:orientation="horizontal">
 
             <com.inmoglass.launcher.view.PowerConsumptionRankingsBatteryView
