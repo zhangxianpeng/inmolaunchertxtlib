@@ -37,4 +37,5 @@
     <string name="string_shutdown_rightnow">即将关机</string>
     <string name="string_reboot_cancel">取消重启</string>
     <string name="string_shutdown_cancel">取消关机</string>
+    <string name="string_inmo_ring_disconnected"> 已断开连接</string>
 </resources>

@@ -25,9 +25,12 @@ import androidx.constraintlayout.utils.widget.ImageFilterView;
 import com.blankj.utilcode.util.LogUtils;
 import com.inmoglass.launcher.R;
 import com.inmoglass.launcher.base.BaseApplication;
+import com.inmoglass.launcher.bean.ScreenFlagMsgBean;
 import com.inmoglass.launcher.tts.TtsManager;
 import com.inmoglass.launcher.ui.MainActivity;
 import com.inmoglass.launcher.view.MyConstraintLayout;
+
+import org.greenrobot.eventbus.EventBus;
 
 import java.io.File;
 
@@ -80,7 +83,7 @@ public class WindowUtils {
             hidePopupWindow();
         }
         isShown = true;
-        LogUtils.i(TAG, "showPopupWindow");
+        LogUtils.d(TAG, "showPopupWindow");
         mContext = context.getApplicationContext();
         mWindowManager = (WindowManager) mContext.getSystemService(Context.WINDOW_SERVICE);
         mView = setUpView(context, state, content);
@@ -144,7 +147,7 @@ public class WindowUtils {
     }
 
     private static View setUpView(final Context context, UI_STATE state, String content) {
-        LogUtils.i(TAG, "setUp view");
+        LogUtils.d(TAG, "setUp view");
         View view = null;
         if (state == UI_STATE.MEMO_STATE) {
             view = LayoutInflater.from(context).inflate(R.layout.layout_memo_show, null);
@@ -309,13 +312,13 @@ public class WindowUtils {
         layout.setListener(new MyConstraintLayout.OnGestureListener() {
             @Override
             public void onSwipeLeft() {
-                mCurrentIndex--;
+                mCurrentIndex++;
                 moveAndShow();
             }
 
             @Override
             public void onSwipeRight() {
-                mCurrentIndex++;
+                mCurrentIndex--;
                 moveAndShow();
             }
 
@@ -411,6 +414,9 @@ public class WindowUtils {
         mVideoView.setOnCompletionListener(mediaPlayer -> {
             LogUtils.d(TAG, "新手教学播放完成，保存标志位");
             MMKVUtils.setBoolean(NOVICE_TEACHING_VIDEO_PLAY_FLAG, true);
+            ScreenFlagMsgBean msg = new ScreenFlagMsgBean();
+            msg.setNeedClear(true);
+            EventBus.getDefault().post(msg);
             hidePopupWindow();
         });
         mVideoView.start();

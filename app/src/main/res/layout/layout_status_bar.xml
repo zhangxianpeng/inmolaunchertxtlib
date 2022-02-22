@@ -16,14 +16,16 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
-            android:layout_marginEnd="24pt" />
+            android:layout_marginEnd="24pt"
+            android:src="@drawable/ic_icon_statusbar_bluetooth"/>
 
         <com.inmoglass.launcher.view.StatusBarWifiStateView
             android:id="@+id/sbb_wifi"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
-            android:layout_marginEnd="24pt" />
+            android:layout_marginEnd="24pt"
+            android:visibility="gone"/>
 
         <LinearLayout
             android:id="@+id/ll_battery"

@@ -37,4 +37,5 @@
     <string name="string_shutdown_rightnow">About to shut down</string>
     <string name="string_reboot_cancel">Cancel restart</string>
     <string name="string_shutdown_cancel">Cancel shut down</string>
+    <string name="string_inmo_ring_disconnected"> Disconnected</string>
 </resources>

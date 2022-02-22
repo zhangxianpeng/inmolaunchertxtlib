@@ -3,7 +3,6 @@ package com.inmoglass.launcher.ui;
 import static com.inmoglass.launcher.global.AppGlobals.NOVICE_TEACHING_VIDEO_PLAY_FLAG;
 import static com.inmoglass.launcher.util.AppUtil.isInstalled;
 
-import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.bluetooth.BluetoothDevice;
@@ -13,7 +12,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.database.Cursor;
-import android.graphics.BitmapFactory;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
@@ -55,11 +53,13 @@ import com.inmoglass.launcher.base.BaseActivity;
 import com.inmoglass.launcher.base.BaseApplication;
 import com.inmoglass.launcher.bean.Channel;
 import com.inmoglass.launcher.bean.InmoMemoData;
+import com.inmoglass.launcher.bean.ScreenFlagMsgBean;
 import com.inmoglass.launcher.carousellayoutmanager.CarouselLayoutManager;
 import com.inmoglass.launcher.carousellayoutmanager.CarouselZoomPostLayoutListener;
 import com.inmoglass.launcher.carousellayoutmanager.CenterScrollListener;
 import com.inmoglass.launcher.service.SocketService;
 import com.inmoglass.launcher.util.AppUtil;
+import com.inmoglass.launcher.util.BtUtil;
 import com.inmoglass.launcher.util.CommonUtil;
 import com.inmoglass.launcher.util.LauncherManager;
 import com.inmoglass.launcher.util.MMKVUtils;
@@ -126,6 +126,7 @@ public class MainActivity extends BaseActivity {
         }
         initViews();
         boolean isPlayed = MMKVUtils.getBoolean(NOVICE_TEACHING_VIDEO_PLAY_FLAG);
+        LogUtils.d("isPlayed=" + isPlayed);
         // 监听开机广播不可靠，舍弃这个判断
         if (!isPlayed) {
             getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
@@ -194,14 +195,28 @@ public class MainActivity extends BaseActivity {
         if (msg == null) {
             return;
         }
+        String pkgName = msg.getPackageName();
+        String title = msg.getTitle();
+        String content = msg.getContent();
+        LogUtils.d("NotifyMsg=" + pkgName + ", title=" + title + ", content=" + content);
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this, CHANNEL_ID)
                 .setSmallIcon(R.mipmap.ic_launcher)
-                .setContentTitle("your title")
-                .setContentText("your message")
+                .setContentTitle(title)
+                .setContentText(content)
                 .setPriority(NotificationCompat.PRIORITY_DEFAULT)
-                // 在用户点按通知后自动移除通知
                 .setAutoCancel(true);
         NotificationManagerCompat.from(this).notify(NOTIFICATION_ID, builder.build());
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void clearScreenFlag(ScreenFlagMsgBean msg) {
+        if (msg == null) {
+            return;
+        }
+        boolean isNeedClear = msg.isNeedClear();
+        if (isNeedClear) {
+            getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+        }
     }
 
     @Override
@@ -418,9 +433,7 @@ public class MainActivity extends BaseActivity {
         // 蓝牙
         batteryFilter.addAction(BluetoothDevice.ACTION_ACL_DISCONNECTED);
         batteryFilter.addAction(BluetoothDevice.ACTION_ACL_CONNECTED);
-        // 熄屏、亮屏
-        batteryFilter.addAction(Intent.ACTION_SCREEN_ON);
-        batteryFilter.addAction(Intent.ACTION_SCREEN_OFF);
+        batteryFilter.addAction(BluetoothDevice.ACTION_BOND_STATE_CHANGED);
         registerReceiver(batteryReceiver, batteryFilter);
 
         // 卸载、安装
@@ -450,8 +463,6 @@ public class MainActivity extends BaseActivity {
         @Override
         public void onReceive(Context context, Intent intent) {
             isChargingNow = intent.getIntExtra(BatteryManager.EXTRA_PLUGGED, -1) != 0;
-            LogUtils.i(TAG, "是否在充电?=  " + isChargingNow);
-            LogUtils.i(TAG, "action =  " + intent.getAction());
             String action = intent.getAction();
             switch (action) {
                 case ALARM_MEMO_LOG:
@@ -470,7 +481,6 @@ public class MainActivity extends BaseActivity {
                 case Intent.ACTION_BATTERY_CHANGED:
                     int battery = intent.getIntExtra(BatteryManager.EXTRA_LEVEL, 0);
                     batteryLevelTextView.setText(battery + "%");
-                    LogUtils.i(TAG, "当前电量 = " + battery);
                     isChargingImageView.setVisibility(isChargingNow ? View.VISIBLE : View.GONE);
 //                    if (isChargingNow) {
 //                        if (!isShowCharging) {
@@ -488,7 +498,7 @@ public class MainActivity extends BaseActivity {
                         // 电量低于15时显示Toast提示电量低
                         isBatteryBelow15 = true;
                         isBatteryBelow6 = false;
-                        ToastUtil.showImageToast(getApplicationContext());
+                        ToastUtil.showImageToast(getApplicationContext(), ToastUtil.STATE.LOW_BATTERY, "");
                         // fix bug: 低电量提示后不做操作，充电非低电量后弹框不消失
                         WindowUtils.dismissLowBatteryWindow(WindowUtils.UI_STATE.BATTERY_BELOW_6);
                     }
@@ -538,26 +548,38 @@ public class MainActivity extends BaseActivity {
                     }
                     break;
                 case BluetoothDevice.ACTION_ACL_CONNECTED:
-                    BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
-                    if (device.getBondState() == BluetoothDevice.BOND_BONDED) {
-                        ToastUtil.showToast(getApplicationContext(), getString(R.string.string_bluetooth_connected));
+                    LogUtils.d("ACTION_ACL_CONNECTED");
+                    // 已经配对过的设备不会再配对，直接自动连接
+                    BluetoothDevice connectDevice = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
+                    if (connectDevice.getBondState() == BluetoothDevice.BOND_BONDED) {
                         SoundPoolUtil.getInstance(MainActivity.this).playSoundUnfinished(R.raw.connect);
+                        ToastUtil.showToast(getApplicationContext(), getString(R.string.string_bluetooth_connected));
                     }
                     break;
                 case BluetoothDevice.ACTION_ACL_DISCONNECTED:
-                    BluetoothDevice device1 = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
-                    if (device1.getBondState() == BluetoothDevice.BOND_BONDED) {
-                        ToastUtil.showToast(getApplicationContext(), getString(R.string.string_bluetooth_disconnected));
-                    } else if (device1.getBondState() == BluetoothDevice.BOND_NONE) {
-                        ToastUtil.showToast(getApplicationContext(), getString(R.string.string_bluetooth_disconnected_retry));
+                    BluetoothDevice disConnectDevice = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
+                    String disConnectDeviceName = TextUtils.isEmpty(disConnectDevice.getName()) ? "" : disConnectDevice.getName();
+                    LogUtils.d("ACTION_ACL_DISCONNECTED=" + disConnectDevice.getBondState());
+                    if (disConnectDevice.getBondState() == BluetoothDevice.BOND_BONDED) {
+                        SoundPoolUtil.getInstance(MainActivity.this).playSoundUnfinished(R.raw.disconnect);
+                        if (BtUtil.isInmoRing(disConnectDeviceName)) {
+                            ToastUtil.showImageToast(getApplicationContext(), ToastUtil.STATE.INMO_RING, disConnectDeviceName);
+                        } else {
+                            ToastUtil.showToast(getApplicationContext(), getString(R.string.string_bluetooth_disconnected));
+                        }
                     }
-                    SoundPoolUtil.getInstance(MainActivity.this).playSoundUnfinished(R.raw.disconnect);
                     break;
-                case Intent.ACTION_SCREEN_ON:
-                    LogUtils.i(TAG, "设备亮屏");
-                    break;
-                case Intent.ACTION_SCREEN_OFF:
-                    LogUtils.i(TAG, "设备灭屏");
+                case BluetoothDevice.ACTION_BOND_STATE_CHANGED:
+                    int state = intent.getIntExtra(BluetoothDevice.EXTRA_BOND_STATE, -1);
+                    if (state == BluetoothDevice.BOND_NONE) {
+                        // 配对没有成功，配对框的时候选择取消按钮的回调
+                        SoundPoolUtil.getInstance(MainActivity.this).playSoundUnfinished(R.raw.disconnect);
+                        ToastUtil.showToast(getApplicationContext(), getString(R.string.string_bluetooth_disconnected_retry));
+                    } else if (state == BluetoothDevice.BOND_BONDED) {
+                        // 配对成功
+                        ToastUtil.showToast(getApplicationContext(), getString(R.string.string_bluetooth_connected));
+                        SoundPoolUtil.getInstance(MainActivity.this).playSoundUnfinished(R.raw.connect);
+                    }
                     break;
                 default:
                     break;
@@ -707,5 +729,9 @@ public class MainActivity extends BaseActivity {
         overridePendingTransition(R.anim.anim_in, R.anim.anim_out);
 //        ActivityOptionsCompat compat = ActivityOptionsCompat.makeCustomAnimation(this, R.anim.anim_in, R.anim.anim_out);
 //        ActivityCompat.startActivity(this, intent, compat.toBundle());
+    }
+
+    public static void clearScreenFlag() {
+        ToastUtils.showShort("测试");
     }
 }
