@@ -54,10 +54,12 @@ import com.inmoglass.launcher.base.BaseApplication;
 import com.inmoglass.launcher.bean.Channel;
 import com.inmoglass.launcher.bean.InmoMemoData;
 import com.inmoglass.launcher.bean.ScreenFlagMsgBean;
+import com.inmoglass.launcher.bean.WriteFileMsgBean;
 import com.inmoglass.launcher.carousellayoutmanager.CarouselLayoutManager;
 import com.inmoglass.launcher.carousellayoutmanager.CarouselZoomPostLayoutListener;
 import com.inmoglass.launcher.carousellayoutmanager.CenterScrollListener;
 import com.inmoglass.launcher.service.SocketService;
+import com.inmoglass.launcher.service.WriteFileIntentService;
 import com.inmoglass.launcher.util.AppUtil;
 import com.inmoglass.launcher.util.BtUtil;
 import com.inmoglass.launcher.util.CommonUtil;
@@ -156,6 +158,7 @@ public class MainActivity extends BaseActivity {
                 // fix bug:camera 特殊处理,防止卡死
                 if (selectPosition == 1) {
                     openApplication("com.yulong.coolcamera", "com.yulong.arcamera.MainActivity");
+//                    startActivity(new Intent(MainActivity.this, NotificationCourseActivity.class));
                 } else {
                     openApplicationByPkgName(channelList.get(selectPosition).getPackageName());
                 }
@@ -213,6 +216,7 @@ public class MainActivity extends BaseActivity {
         if (msg == null) {
             return;
         }
+        LogUtils.d("视频播放完毕，重置flag");
         boolean isNeedClear = msg.isNeedClear();
         if (isNeedClear) {
             getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
@@ -292,7 +296,7 @@ public class MainActivity extends BaseActivity {
         updateAdapter();
     }
 
-    private String uri = "content://com.inmolens.inmomemo.data.memodb/memo_info";
+    public static final String MEMO_URI = "content://com.inmolens.inmomemo.data.memodb/memo_info";
     private InmoMemoData showData;
     private Handler memoHandler = new Handler() {
         @Override
@@ -325,7 +329,7 @@ public class MainActivity extends BaseActivity {
     private void getMemoData() {
         showData = new InmoMemoData();
         new Thread(() -> {
-            Cursor cursor = getContentResolver().query(Uri.parse(uri), null, null, null, "_id DESC");
+            Cursor cursor = getContentResolver().query(Uri.parse(MEMO_URI), null, null, null, "_id DESC");
             if (cursor == null) {
                 return;
             }
@@ -729,9 +733,5 @@ public class MainActivity extends BaseActivity {
         overridePendingTransition(R.anim.anim_in, R.anim.anim_out);
 //        ActivityOptionsCompat compat = ActivityOptionsCompat.makeCustomAnimation(this, R.anim.anim_in, R.anim.anim_out);
 //        ActivityCompat.startActivity(this, intent, compat.toBundle());
-    }
-
-    public static void clearScreenFlag() {
-        ToastUtils.showShort("测试");
     }
 }

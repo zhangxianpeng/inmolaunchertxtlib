@@ -16,8 +16,6 @@ import androidx.recyclerview.widget.LinearSmoothScroller;
 import androidx.recyclerview.widget.OrientationHelper;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.blankj.utilcode.util.LogUtils;
-
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -631,14 +629,12 @@ public class CarouselLayoutManager extends RecyclerView.LayoutManager implements
         } else {
             dimenDiff = (getWidthNoPadding() - mDecoratedChildWidth) / 2;
         }
-        //noinspection NumericCastThatLosesPrecision
+        // noinspection NumericCastThatLosesPrecision
         // fix bug:515【launcher】查看launcher与UI设计图进行对比
         // 根据位置指定偏移量
         int value = 0;
-        if (itemPositionDiff == -1.0) {
-            value = -128;
-        } else if (itemPositionDiff == 1.0) {
-            value = 128;
+        if (itemPositionDiff == -1.0 || itemPositionDiff == 1.0) {
+            value = (int) Math.round(Math.signum(itemPositionDiff) * (dimenDiff - 40) * smoothPosition);
         } else {
             value = (int) Math.round(Math.signum(itemPositionDiff) * (dimenDiff - 20) * smoothPosition);
         }

@@ -24,6 +24,7 @@ public class LauncherManager {
     /**
      * 中文版本默认应用顺序
      * 相册、相机、备忘录、QQ音乐、喜马拉雅、高德地图、文档、WPS、设置
+     * 2022/02/22 新增需求：添加一个设备连接教程入口
      */
     public static final String[] packageNames = new String[]{
             "com.inmoglass.album",
@@ -35,6 +36,7 @@ public class LauncherManager {
             "com.inmoglass.documents",
             "cn.wps.moffice_eng",
             "com.inmo.settings",
+//            "com.inmoglass.launcher/com.inmoglass.launcher.DeviceConnectActivity"
 //            "com.tencent.mm"
     };
 

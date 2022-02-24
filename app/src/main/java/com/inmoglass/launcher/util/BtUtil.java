@@ -1,7 +1,13 @@
 package com.inmoglass.launcher.util;
 
+import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothClass;
+import android.bluetooth.BluetoothDevice;
 import android.text.TextUtils;
+
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.util.Set;
 
 public class BtUtil {
 
@@ -36,6 +42,34 @@ public class BtUtil {
         }
 
         return deviceName.trim().contains("Inmo") && deviceName.trim().contains("Ring");
+    }
+
+    public static BluetoothDevice getConectedBluetoothDevice() {
+        BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+        Class<BluetoothAdapter> bluetoothAdapterClass = BluetoothAdapter.class;
+        // 得到蓝牙状态的方法
+        Method method = null;
+        try {
+            method = bluetoothAdapterClass.getDeclaredMethod("getConnectionState", (Class[]) null);
+            // 打开权限
+            method.setAccessible(true);
+//            int state = (int) method.invoke(bluetoothAdapter, (Object[]) null);
+//            if (state == BluetoothAdapter.STATE_CONNECTED) {
+            Set<BluetoothDevice> devices = bluetoothAdapter.getBondedDevices();
+            for (BluetoothDevice device : devices) {
+                Method isConnectedMethod = BluetoothDevice.class.getDeclaredMethod("isConnected", (Class[]) null);
+                method.setAccessible(true);
+                boolean isConnected = (boolean) isConnectedMethod.invoke(device, (Object[]) null);
+                if (isConnected) {
+                    return device;
+                }
+            }
+//            }
+        } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
+            e.printStackTrace();
+            return null;
+        }
+        return null;
     }
 
     public static int getDeviceType(BluetoothClass bluetoothClass) {

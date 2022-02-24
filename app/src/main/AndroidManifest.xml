@@ -36,7 +36,7 @@
     <!--蓝牙-->
     <uses-permission android:name="android.permission.BLUETOOTH" />
     <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
-    <uses-permission android:name="android.permission.WAKE_LOCK"/>
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
 
     <application
         android:name=".base.BaseApplication"
@@ -47,6 +47,9 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.NORMAL">
+        <activity
+            android:name=".ui.NotificationCourseActivity"
+            android:exported="true" />
         <activity
             android:name=".ui.AppManagerActivity"
             android:exported="true" />
@@ -72,6 +75,7 @@
         <meta-data
             android:name="com.baidu.lbsapi.API_KEY"
             android:value="bgyiEdIHDfok47j05SceB7nXWAOuKKDf" />
+        <service android:name=".service.WriteFileIntentService"/>
     </application>
 
 </manifest>

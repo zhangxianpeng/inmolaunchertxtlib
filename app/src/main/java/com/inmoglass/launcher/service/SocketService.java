@@ -1,5 +1,11 @@
 package com.inmoglass.launcher.service;
 
+import static com.inmoglass.launcher.global.AppGlobals.GLASS_CONNECTED_INMOLENS_APP;
+import static com.inmoglass.launcher.global.AppGlobals.GLASS_CONNECTING_INMOLENS_APP;
+import static com.inmoglass.launcher.util.PhoneUtils.AG_CALL_CHANGED;
+import static com.inmoglass.launcher.util.PhoneUtils.EXTRA_CALL;
+import static com.inmoglass.launcher.util.PhoneUtils.KEY_CALL_STATE;
+
 import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
@@ -12,16 +18,15 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.database.Cursor;
-import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.BatteryManager;
 import android.os.Binder;
 import android.os.Build;
 import android.os.IBinder;
 import android.text.TextUtils;
+import android.util.Log;
 
 import androidx.annotation.Nullable;
-import androidx.core.app.NotificationCompat;
 
 import com.blankj.utilcode.util.LogUtils;
 import com.google.gson.Gson;
@@ -35,8 +40,9 @@ import com.inmo.inmodata.device.FileTransferInfo;
 import com.inmo.inmodata.message.Dispatcher;
 import com.inmo.inmodata.notify.NotifyInfo;
 import com.inmo.inmodata.weather.WeatherInfo;
-import com.inmoglass.launcher.R;
 import com.inmoglass.launcher.bean.BluttohPhoneBean;
+import com.inmoglass.launcher.util.BleCallManager;
+import com.inmoglass.launcher.util.MMKVUtils;
 import com.inmoglass.launcher.util.SystemUtils;
 import com.tencent.mmkv.MMKV;
 
@@ -82,19 +88,64 @@ public class SocketService extends Service {
 
         // 监听电量变化
         IntentFilter intentFilter = new IntentFilter(Intent.ACTION_BATTERY_CHANGED);
+        intentFilter.addAction(AG_CALL_CHANGED);
         registerReceiver(receiver, intentFilter);
     }
 
     private BroadcastReceiver receiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            int level = (intent.getIntExtra(BatteryManager.EXTRA_LEVEL, -1) * 100) / intent.getIntExtra(BatteryManager.EXTRA_SCALE, -1);
-            if (level != lastLevel) {
-                lastLevel = level;
-                sendBatteryLevel(level);
+            String action = intent.getAction();
+            switch (action) {
+                case AG_CALL_CHANGED:
+                    // 蓝牙电话监听
+                    Object obj = intent.getParcelableExtra(EXTRA_CALL);
+                    LogUtils.d(TAG, "EXTRA_CALL: " + obj.toString() + ",phoneNumber==" + BleCallManager.getInstance().getNumber(obj));
+                    if (obj != null) {
+                        String callState = parseCallStates(obj.toString()).trim();
+                        if (!TextUtils.isEmpty(callState)) {
+                            LogUtils.d(TAG, "callState: " + callState);
+                        }
+                    }
+                    break;
+                case Intent.ACTION_BATTERY_CHANGED:
+                    int level = (intent.getIntExtra(BatteryManager.EXTRA_LEVEL, -1) * 100) / intent.getIntExtra(BatteryManager.EXTRA_SCALE, -1);
+                    if (level != lastLevel) {
+                        lastLevel = level;
+                        sendBatteryLevel(level);
+                    }
+                    break;
+                default:
+                    break;
             }
         }
     };
+
+    /**
+     * 获取蓝牙电话状态
+     *
+     * @param callInfo
+     * @return
+     */
+    private String parseCallStates(String callInfo) {
+        String kvs[] = callInfo.split(",");
+        String callState = "";
+        String state = "";
+        if (kvs.length != 0) {
+            for (int i = 0; i < kvs.length; i++) {
+                if (kvs[i].contains(KEY_CALL_STATE)) {
+                    callState = kvs[i];
+                    break;
+                }
+            }
+            if (!TextUtils.isEmpty(":")) {
+                int index = callState.indexOf(":");
+                state = callState.substring(index + 1, callState.length());
+                Log.i(TAG, "call state: " + state);
+            }
+        }
+        return state;
+    }
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
@@ -152,11 +203,13 @@ public class SocketService extends Service {
                     //获取到手机的设备信息
                     phoneName = name;
                     phoneMac = address;
+                    MMKVUtils.setBoolean(GLASS_CONNECTING_INMOLENS_APP, true);
                 }
 
                 @Override
                 public void onDeviceDisconnected() {
                     LogUtils.i(TAG, "Device Disconnected!!");
+                    MMKVUtils.setBoolean(GLASS_CONNECTING_INMOLENS_APP, false);
                     if (naviStarted) {
                         naviStarted = false;
                     }
@@ -165,6 +218,7 @@ public class SocketService extends Service {
                 @Override
                 public void onDeviceConnectionFailed() {
                     LogUtils.i(TAG, "Unable to Connected!!");
+                    MMKVUtils.setBoolean(GLASS_CONNECTING_INMOLENS_APP, false);
                 }
             });
         }
@@ -179,6 +233,12 @@ public class SocketService extends Service {
     }
 
     private void dispatchMessage(String msg) {
+        // 保存眼镜跟手机端APP连接过的标志
+        if (msg.contains(GLASS_CONNECTED_INMOLENS_APP)) {
+            String[] connectedFlag = msg.split("=");
+            boolean isConnectedPhone = Boolean.parseBoolean(connectedFlag[1]);
+            MMKVUtils.setBoolean(GLASS_CONNECTED_INMOLENS_APP, isConnectedPhone);
+        }
         AbstractInfo info = Dispatcher.get(msg);
         if (info != null) {
             if (info instanceof BondedInfo) {
@@ -212,16 +272,24 @@ public class SocketService extends Service {
                 LogUtils.i(TAG, "NotifyInfo: " + notifyInfo.toString());
                 EventBus.getDefault().post(notifyInfo);
             } else if (info instanceof WeatherInfo) {
+                // 天气
                 WeatherInfo weatherInfo = (WeatherInfo) info;
                 LogUtils.i(TAG, "WeatherInfo: " + weatherInfo.toString());
                 EventBus.getDefault().post(weatherInfo);
             } else if (info instanceof DateTimeInfo) {
+                // 时间
                 DateTimeInfo dateTimeInfo = (DateTimeInfo) info;
                 EventBus.getDefault().post(dateTimeInfo);
             } else if (info instanceof FileTransferInfo) {
+                // 文件传输相关
                 FileTransferInfo fileTransferInfo = (FileTransferInfo) info;
                 String instruction = fileTransferInfo.getInstruction();
                 openGallery(instruction, fileTransferInfo);
+            } else if (info instanceof DateTimeInfo) {
+                // TODO: 2022/2/23 手机日历信息同步到眼镜
+                new Thread(() -> {
+                    // 往眼镜端的备忘录APP存数据
+                }).start();
             }
         }
     }

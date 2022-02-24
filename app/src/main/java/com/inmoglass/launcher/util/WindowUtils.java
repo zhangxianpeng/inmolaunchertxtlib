@@ -5,9 +5,9 @@ import static com.inmoglass.launcher.global.AppGlobals.NOVICE_TEACHING_VIDEO_PLA
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.PixelFormat;
+import android.net.Uri;
 import android.os.Build;
 import android.os.CountDownTimer;
-import android.os.Environment;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.PowerManager;
@@ -26,13 +26,13 @@ import com.blankj.utilcode.util.LogUtils;
 import com.inmoglass.launcher.R;
 import com.inmoglass.launcher.base.BaseApplication;
 import com.inmoglass.launcher.bean.ScreenFlagMsgBean;
+import com.inmoglass.launcher.bean.WriteFileMsgBean;
+import com.inmoglass.launcher.service.WriteFileIntentService;
 import com.inmoglass.launcher.tts.TtsManager;
 import com.inmoglass.launcher.ui.MainActivity;
 import com.inmoglass.launcher.view.MyConstraintLayout;
 
 import org.greenrobot.eventbus.EventBus;
-
-import java.io.File;
 
 /**
  * @author Administrator
@@ -103,7 +103,7 @@ public class WindowUtils {
             mView.setOnTouchListener((view, motionEvent) -> {
                 if (motionEvent.getAction() == MotionEvent.ACTION_DOWN && (state != UI_STATE.BEGINNER_VIDEO)) {
                     hidePopupWindow();
-                    if(mTimer!=null) {
+                    if (mTimer != null) {
                         mTimer.cancel();
                         mTimer = null;
                     }
@@ -169,13 +169,8 @@ public class WindowUtils {
             initShutDownWindowView(view);
         } else if (state == UI_STATE.BEGINNER_VIDEO) {
             view = LayoutInflater.from(context).inflate(R.layout.layout_beginner_video, null);
-            String filePath = Environment.getExternalStorageDirectory().getAbsolutePath() + "/CameraV2/xinshoujiaocheng.mp4";
-            File file = new File(filePath);
-            if (!file.exists()) {
-                view = null;
-            } else {
-                initVideoView(view, filePath);
-            }
+            String uri = "android.resource://" + mContext.getPackageName() + "/" + R.raw.guide;
+            initVideoView(view, uri);
         }
         return view;
     }
@@ -261,6 +256,7 @@ public class WindowUtils {
      * ==================================二次确认弹层===========================================
      **/
     static CountDownTimer mTimer;
+
     private static void initSecondConfirmView(View view, String mCurrentIndex) {
         int index = Integer.parseInt(mCurrentIndex);
         TextView countDownTextView = view.findViewById(R.id.tvCountdownTime);
@@ -407,10 +403,10 @@ public class WindowUtils {
     /**
      * ==================================新手教程弹层===========================================
      **/
-    private static void initVideoView(View view, String filePath) {
+    private static void initVideoView(View view, String uri) {
         VideoView mVideoView = view.findViewById(R.id.videoView);
         forbiddenOperation(view);
-        mVideoView.setVideoPath(filePath);
+        mVideoView.setVideoURI(Uri.parse(uri));
         mVideoView.setOnCompletionListener(mediaPlayer -> {
             LogUtils.d(TAG, "新手教学播放完成，保存标志位");
             MMKVUtils.setBoolean(NOVICE_TEACHING_VIDEO_PLAY_FLAG, true);
@@ -420,6 +416,13 @@ public class WindowUtils {
             hidePopupWindow();
         });
         mVideoView.start();
+        sendWriteFileCommandMsg();
+    }
+
+    private static void sendWriteFileCommandMsg() {
+        LogUtils.d("视频开始播放,写文件到sd卡");
+        Intent intent = new Intent(mContext, WriteFileIntentService.class);
+        mContext.startService(intent);
     }
 
     private static void forbiddenOperation(View view) {
