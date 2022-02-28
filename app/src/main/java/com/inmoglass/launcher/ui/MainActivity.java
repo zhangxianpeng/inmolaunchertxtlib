@@ -3,8 +3,6 @@ package com.inmoglass.launcher.ui;
 import static com.inmoglass.launcher.global.AppGlobals.NOVICE_TEACHING_VIDEO_PLAY_FLAG;
 import static com.inmoglass.launcher.util.AppUtil.isInstalled;
 
-import android.app.NotificationChannel;
-import android.app.NotificationManager;
 import android.bluetooth.BluetoothDevice;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
@@ -16,7 +14,6 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.BatteryManager;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -31,8 +28,6 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.core.app.NotificationCompat;
-import androidx.core.app.NotificationManagerCompat;
 import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -43,7 +38,6 @@ import com.baidu.location.LocationClientOption;
 import com.blankj.utilcode.util.LogUtils;
 import com.blankj.utilcode.util.TimeUtils;
 import com.blankj.utilcode.util.ToastUtils;
-import com.inmo.inmodata.notify.NotifyInfo;
 import com.inmo.network.AndroidNetworking;
 import com.inmo.network.error.ANError;
 import com.inmo.network.interfaces.JSONObjectRequestListener;
@@ -54,7 +48,6 @@ import com.inmoglass.launcher.base.BaseApplication;
 import com.inmoglass.launcher.bean.Channel;
 import com.inmoglass.launcher.bean.InmoMemoData;
 import com.inmoglass.launcher.bean.ScreenFlagMsgBean;
-import com.inmoglass.launcher.bean.WriteFileMsgBean;
 import com.inmoglass.launcher.carousellayoutmanager.CarouselLayoutManager;
 import com.inmoglass.launcher.carousellayoutmanager.CarouselZoomPostLayoutListener;
 import com.inmoglass.launcher.carousellayoutmanager.CenterScrollListener;
@@ -112,20 +105,11 @@ public class MainActivity extends BaseActivity {
     private static final String SHUT_DOWN_ACTION = "com.android.systemui.ready.poweraction";
     private static final String ALARM_MEMO_LOG = "com.inmolens.intent.action.ALARM_MEMO";
 
-    public static final int NOTIFICATION_ID = 1;
-    NotificationManager notificationManager;
-    String CHANNEL_ID = "channel_id";
-
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         channelList = new ArrayList<>();
-        notificationManager = (NotificationManager) this.getSystemService(Context.NOTIFICATION_SERVICE);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            NotificationChannel channel = new NotificationChannel(CHANNEL_ID, "name", NotificationManager.IMPORTANCE_DEFAULT);
-            notificationManager.createNotificationChannel(channel);
-        }
         initViews();
         boolean isPlayed = MMKVUtils.getBoolean(NOVICE_TEACHING_VIDEO_PLAY_FLAG);
         LogUtils.d("isPlayed=" + isPlayed);
@@ -194,24 +178,6 @@ public class MainActivity extends BaseActivity {
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
-    public void getNotifyMsg(NotifyInfo msg) {
-        if (msg == null) {
-            return;
-        }
-        String pkgName = msg.getPackageName();
-        String title = msg.getTitle();
-        String content = msg.getContent();
-        LogUtils.d("NotifyMsg=" + pkgName + ", title=" + title + ", content=" + content);
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(this, CHANNEL_ID)
-                .setSmallIcon(R.mipmap.ic_launcher)
-                .setContentTitle(title)
-                .setContentText(content)
-                .setPriority(NotificationCompat.PRIORITY_DEFAULT)
-                .setAutoCancel(true);
-        NotificationManagerCompat.from(this).notify(NOTIFICATION_ID, builder.build());
-    }
-
-    @Subscribe(threadMode = ThreadMode.MAIN)
     public void clearScreenFlag(ScreenFlagMsgBean msg) {
         if (msg == null) {
             return;
@@ -220,7 +186,13 @@ public class MainActivity extends BaseActivity {
         boolean isNeedClear = msg.isNeedClear();
         if (isNeedClear) {
             getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+            startIntentService();
         }
+    }
+
+    private void startIntentService() {
+        Intent intent = new Intent(MainActivity.this, WriteFileIntentService.class);
+        startService(intent);
     }
 
     @Override
@@ -288,12 +260,6 @@ public class MainActivity extends BaseActivity {
     private void startSocketService() {
         Intent intent = new Intent(this, SocketService.class);
         startService(intent);
-    }
-
-    private void setLauncherCard() {
-        ArrayList<Channel> local = CommonUtil.isEn() ? LauncherManager.getInstance().getLauncherCardList_EN() : LauncherManager.getInstance().getLauncherCardList();
-        channelList.addAll(local);
-        updateAdapter();
     }
 
     public static final String MEMO_URI = "content://com.inmolens.inmomemo.data.memodb/memo_info";

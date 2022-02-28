@@ -14,7 +14,6 @@ import com.blankj.utilcode.util.LogUtils;
 import com.inmoglass.launcher.R;
 import com.inmoglass.launcher.base.BaseApplication;
 import com.inmoglass.launcher.bean.Channel;
-import com.inmoglass.launcher.ui.MainActivity;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -181,7 +180,7 @@ public class AppUtil {
             String appPackageName = applicationInfo.packageName;
             if (appPackageName.equals(packageName)) {
                 String appName = applicationInfo.loadLabel(pm).toString();
-                channel = new Channel(R.drawable.img_home_default, appName, 0, packageName,getAppIcon(packageName));
+                channel = new Channel(R.drawable.img_home_default, appName, 0, packageName, getAppIcon(packageName));
                 break;
             }
         }
@@ -212,11 +211,12 @@ public class AppUtil {
 
     /**
      * 通过包名获取app应用图标
+     *
      * @param appPackage
      * @return
      */
     public Drawable getAppIcon(String appPackage) {
-        Drawable  realName = null;
+        Drawable realName = null;
         List<PackageInfo> packageInfos = getPackageInfos(mContext, 2);
         PackageManager pm = mContext.getPackageManager();
         for (PackageInfo packageInfo : packageInfos) {
@@ -242,5 +242,27 @@ public class AppUtil {
         names.addAll(Arrays.asList(factory));
         names.add("com.inmoglass.launcher");
         return names.contains(appPackage);
+    }
+
+    public static int getAppIconFromPkgName(String pkgName) {
+        int result = -1;
+        if (TextUtils.isEmpty(pkgName)) {
+            result = R.mipmap.ic_launcher;
+        } else {
+            if (pkgName.equals("com.tentent.mm")) {
+                result = R.drawable.icon_notice_weixin;
+            } else if (pkgName.equals("com.tencent.mobileqq")) {
+                result = R.drawable.icon_notice_qq;
+            } else if (pkgName.equals("com.alibaba.android.rimet")) {
+                result = R.drawable.icon_notice_dingding;
+            } else if (pkgName.equals("com.tencent.wework")) {
+                result = R.drawable.icon_notice_qiyewx;
+            } else if (pkgName.equals("com.android.phone")) {
+                result = R.drawable.icon_notice_phone;
+            } else {
+                result = R.mipmap.ic_launcher;
+            }
+        }
+        return result;
     }
 }

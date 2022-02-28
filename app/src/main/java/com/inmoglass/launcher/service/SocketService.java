@@ -27,6 +27,8 @@ import android.text.TextUtils;
 import android.util.Log;
 
 import androidx.annotation.Nullable;
+import androidx.core.app.NotificationCompat;
+import androidx.core.app.NotificationManagerCompat;
 
 import com.blankj.utilcode.util.LogUtils;
 import com.google.gson.Gson;
@@ -40,9 +42,14 @@ import com.inmo.inmodata.device.FileTransferInfo;
 import com.inmo.inmodata.message.Dispatcher;
 import com.inmo.inmodata.notify.NotifyInfo;
 import com.inmo.inmodata.weather.WeatherInfo;
+import com.inmoglass.launcher.R;
+import com.inmoglass.launcher.base.BaseApplication;
 import com.inmoglass.launcher.bean.BluttohPhoneBean;
+import com.inmoglass.launcher.util.AppUtil;
 import com.inmoglass.launcher.util.BleCallManager;
+import com.inmoglass.launcher.util.ContentProviderUtils;
 import com.inmoglass.launcher.util.MMKVUtils;
+import com.inmoglass.launcher.util.MobileNumberUtils;
 import com.inmoglass.launcher.util.SystemUtils;
 import com.tencent.mmkv.MMKV;
 
@@ -61,7 +68,7 @@ public class SocketService extends Service {
     private static final String TAG = SocketService.class.getSimpleName();
     public static final String CHANNEL_ID_STRING = "socket_server";
     public static final String CHANNEL_ID_NAME = "socket_server";
-    public static final int NOTIFICATION_ID = 1;
+
     private BluetoothSPP bt;
     private String phoneMac;
     private String phoneName;
@@ -79,6 +86,10 @@ public class SocketService extends Service {
     private static final String OPEN_GALLRY_APP = "open_media";
     private static final String GET_WIFIP2P_INFO = "get_wifip2p_info";
 
+    private static final int NOTIFICATION_ID = 1;
+    NotificationManager notificationManager;
+    String CHANNEL_ID = "channel_id";
+
     @Override
     public void onCreate() {
         super.onCreate();
@@ -90,6 +101,12 @@ public class SocketService extends Service {
         IntentFilter intentFilter = new IntentFilter(Intent.ACTION_BATTERY_CHANGED);
         intentFilter.addAction(AG_CALL_CHANGED);
         registerReceiver(receiver, intentFilter);
+
+        notificationManager = (NotificationManager) this.getSystemService(Context.NOTIFICATION_SERVICE);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            NotificationChannel channel = new NotificationChannel(CHANNEL_ID, "name", NotificationManager.IMPORTANCE_HIGH);
+            notificationManager.createNotificationChannel(channel);
+        }
     }
 
     private BroadcastReceiver receiver = new BroadcastReceiver() {
@@ -100,11 +117,19 @@ public class SocketService extends Service {
                 case AG_CALL_CHANGED:
                     // 蓝牙电话监听
                     Object obj = intent.getParcelableExtra(EXTRA_CALL);
-                    LogUtils.d(TAG, "EXTRA_CALL: " + obj.toString() + ",phoneNumber==" + BleCallManager.getInstance().getNumber(obj));
+                    String phoneNumber = BleCallManager.getInstance().getNumber(obj);
+                    String numberGeo = TextUtils.isEmpty(phoneNumber) ? "" : MobileNumberUtils.getGeo(phoneNumber);
+                    LogUtils.d(TAG, "EXTRA_CALL: " + obj.toString());
+                    LogUtils.d(TAG, "phoneNumber=" + BleCallManager.getInstance().getNumber(obj) + ",geo=" + numberGeo);
                     if (obj != null) {
                         String callState = parseCallStates(obj.toString()).trim();
                         if (!TextUtils.isEmpty(callState)) {
                             LogUtils.d(TAG, "callState: " + callState);
+                            NotifyInfo blePhoneNotify = new NotifyInfo();
+                            blePhoneNotify.setPackageName("com.android.phone");
+                            blePhoneNotify.setTitle(phoneNumber + " " + numberGeo);
+                            blePhoneNotify.setContent(BaseApplication.mContext.getString(R.string.string_new_call_msg));
+                            showNotification(blePhoneNotify);
                         }
                     }
                     break;
@@ -200,7 +225,7 @@ public class SocketService extends Service {
                 @Override
                 public void onDeviceConnected(String name, String address) {
                     LogUtils.i(TAG, "Device Connected!!");
-                    //获取到手机的设备信息
+                    // 获取到手机的设备信息
                     phoneName = name;
                     phoneMac = address;
                     MMKVUtils.setBoolean(GLASS_CONNECTING_INMOLENS_APP, true);
@@ -270,7 +295,7 @@ public class SocketService extends Service {
                 // 手机的通知
                 NotifyInfo notifyInfo = (NotifyInfo) info;
                 LogUtils.i(TAG, "NotifyInfo: " + notifyInfo.toString());
-                EventBus.getDefault().post(notifyInfo);
+                showNotification(notifyInfo);
             } else if (info instanceof WeatherInfo) {
                 // 天气
                 WeatherInfo weatherInfo = (WeatherInfo) info;
@@ -292,6 +317,26 @@ public class SocketService extends Service {
                 }).start();
             }
         }
+    }
+
+    /**
+     * @param info
+     */
+    private void showNotification(NotifyInfo info) {
+        if (info == null) {
+            return;
+        }
+        String pkgName = info.getPackageName();
+        String title = info.getTitle();
+        String content = info.getContent();
+        LogUtils.d("NotifyMsg=" + pkgName + ", title=" + title + ", content=" + content);
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(this, CHANNEL_ID)
+                .setSmallIcon(AppUtil.getAppIconFromPkgName(pkgName))
+                .setContentTitle(title)
+                .setContentText(content)
+                .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+                .setAutoCancel(true);
+        NotificationManagerCompat.from(this).notify(NOTIFICATION_ID, builder.build());
     }
 
     /**

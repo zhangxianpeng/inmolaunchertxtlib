@@ -8,7 +8,6 @@ import com.blankj.utilcode.util.LogUtils;
 import com.inmoglass.launcher.R;
 import com.inmoglass.launcher.base.BaseApplication;
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -19,53 +18,65 @@ import java.io.InputStream;
  * 播放视频的时候起独立线程写文件
  */
 public class WriteFileIntentService extends IntentService {
-
     private static final String TAG = WriteFileIntentService.class.getSimpleName();
+    /**
+     * 路径分隔符
+     */
+    private static final String SEPARATOR = File.separator;
 
     public WriteFileIntentService() {
-        super("WriteFileIntentService"); // 调用父类的有参构造函数
+        super("WriteFileIntentService");
     }
 
     @Override
     protected void onHandleIntent(Intent intent) {
-        // 打印当前线程的id
-        LogUtils.d(TAG, "Thread id is " + Thread.currentThread().getId());
+        LogUtils.d(TAG, "新建线程写教程文件到相册，线程ID=" + Thread.currentThread().getId());
         saveGuideFileToSDCard();
     }
 
     /**
-     * 把新手教程视频文件写到SD卡
+     * 把新手教程视频文件从raw目录下拷贝到SD卡
      */
     private void saveGuideFileToSDCard() {
+        InputStream inputStream = BaseApplication.mContext.getResources().openRawResource(R.raw.guide);
         String picturePath = Environment.getExternalStorageDirectory().getAbsolutePath() + "/CameraV2/";
+        String fileName = "guide.mp4";
         File file = new File(picturePath);
         if (!file.exists()) {
             file.mkdirs();
         }
-        String filePath = picturePath + "guide.mp4";
-        File guideFile = new File(filePath);
+        String guideFilePath = picturePath + fileName;
+        File guideFile = new File(guideFilePath);
         if (guideFile.exists()) {
             return;
         } else {
-            InputStream inStream = BaseApplication.mContext.getResources().openRawResource(R.raw.guide);
-            File realFile = new File(picturePath, "guide.mp4");
-            try {
-                FileOutputStream fileOutputStream = new FileOutputStream(realFile);
-                byte[] buffer = new byte[10];
-                ByteArrayOutputStream outStream = new ByteArrayOutputStream();
-                int len = 0;
-                while ((len = inStream.read(buffer)) != -1) {
-                    outStream.write(buffer, 0, len);
+            readInputStream(picturePath + SEPARATOR + fileName, inputStream);
+        }
+    }
+
+    public static void readInputStream(String storagePath, InputStream inputStream) {
+        File file = new File(storagePath);
+        try {
+            if (!file.exists()) {
+                // 1.建立通道对象
+                FileOutputStream fos = new FileOutputStream(file);
+                // 2.定义存储空间
+                byte[] buffer = new byte[inputStream.available()];
+                // 3.开始读文件
+                int lenght = 0;
+                while ((lenght = inputStream.read(buffer)) != -1) {
+                    // 循环从输入流读取buffer字节
+                    // 将Buffer中的数据写到outputStream对象中
+                    fos.write(buffer, 0, lenght);
                 }
-                byte[] bs = outStream.toByteArray();
-                fileOutputStream.write(bs);
-                outStream.close();
-                inStream.close();
-                fileOutputStream.flush();
-                fileOutputStream.close();
-            } catch (IOException e) {
-                e.printStackTrace();
+                fos.flush();
+                // 刷新缓冲区
+                // 4.关闭流
+                fos.close();
+                inputStream.close();
             }
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 

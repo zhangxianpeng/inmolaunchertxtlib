@@ -17,5 +17,5 @@ public class PhoneUtils {
     public static final String STATE_ALERTING = "ALERTING";//响铃
     public static final String STATE_ACTIVE = "ACTIVE";//通话中
     public static final String STATE_TERMINATED = "TERMINATED";//通话结束
-    public static final String STATE_INCOMING = "INCOMING";//通话结束
+    public static final String STATE_INCOMING = "INCOMING";//来电中，未接听
 }

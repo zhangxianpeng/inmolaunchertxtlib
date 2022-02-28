@@ -11,7 +11,7 @@ android {
         minSdkVersion 24
         targetSdkVersion 30
         versionCode 1
-        versionName "1.0.08"
+        versionName "1.0.10"
 
         ndk {
             // 设置支持的SO库架构（开发者可以根据需要，选择一个或多个平台的so）
@@ -88,4 +88,9 @@ dependencies {
     implementation 'com.baidu.lbsyun:BaiduMapSDK_Location:9.1.8'
     // 权限申请
     implementation 'com.guolindev.permissionx:permissionx:1.6.1'
+    //谷歌电话号码归属地库
+    implementation 'com.googlecode.libphonenumber:libphonenumber:8.10.3'
+    implementation 'com.googlecode.libphonenumber:carrier:1.99'
+    implementation 'com.googlecode.libphonenumber:geocoder:2.99'
+    implementation 'com.googlecode.libphonenumber:prefixmapper:2.109'
 }

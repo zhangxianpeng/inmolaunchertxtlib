@@ -26,7 +26,6 @@ import com.blankj.utilcode.util.LogUtils;
 import com.inmoglass.launcher.R;
 import com.inmoglass.launcher.base.BaseApplication;
 import com.inmoglass.launcher.bean.ScreenFlagMsgBean;
-import com.inmoglass.launcher.bean.WriteFileMsgBean;
 import com.inmoglass.launcher.service.WriteFileIntentService;
 import com.inmoglass.launcher.tts.TtsManager;
 import com.inmoglass.launcher.ui.MainActivity;
@@ -308,13 +307,13 @@ public class WindowUtils {
         layout.setListener(new MyConstraintLayout.OnGestureListener() {
             @Override
             public void onSwipeLeft() {
-                mCurrentIndex++;
+                mCurrentIndex--;
                 moveAndShow();
             }
 
             @Override
             public void onSwipeRight() {
-                mCurrentIndex--;
+                mCurrentIndex++;
                 moveAndShow();
             }
 
@@ -416,13 +415,6 @@ public class WindowUtils {
             hidePopupWindow();
         });
         mVideoView.start();
-        sendWriteFileCommandMsg();
-    }
-
-    private static void sendWriteFileCommandMsg() {
-        LogUtils.d("视频开始播放,写文件到sd卡");
-        Intent intent = new Intent(mContext, WriteFileIntentService.class);
-        mContext.startService(intent);
     }
 
     private static void forbiddenOperation(View view) {
