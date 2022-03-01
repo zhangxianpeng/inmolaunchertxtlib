@@ -6,6 +6,8 @@ import static com.inmoglass.launcher.util.PhoneUtils.AG_CALL_CHANGED;
 import static com.inmoglass.launcher.util.PhoneUtils.EXTRA_CALL;
 import static com.inmoglass.launcher.util.PhoneUtils.KEY_CALL_STATE;
 
+import static java.security.AccessController.getContext;
+
 import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
@@ -18,6 +20,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.database.Cursor;
+import android.media.AudioManager;
 import android.net.Uri;
 import android.os.BatteryManager;
 import android.os.Binder;
@@ -31,14 +34,19 @@ import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
 
 import com.blankj.utilcode.util.LogUtils;
+import com.blankj.utilcode.util.ThreadUtils;
 import com.google.gson.Gson;
 import com.inmo.inmodata.AbstractInfo;
 import com.inmo.inmodata.contacts.Contacts;
 import com.inmo.inmodata.contacts.ContactsInfo;
 import com.inmo.inmodata.device.BatteryInfo;
 import com.inmo.inmodata.device.BondedInfo;
+import com.inmo.inmodata.device.BrightnessInfo;
+import com.inmo.inmodata.device.CalenderEventInfo;
+import com.inmo.inmodata.device.CalenderEvents;
 import com.inmo.inmodata.device.DateTimeInfo;
 import com.inmo.inmodata.device.FileTransferInfo;
+import com.inmo.inmodata.device.VolumeInfo;
 import com.inmo.inmodata.message.Dispatcher;
 import com.inmo.inmodata.notify.NotifyInfo;
 import com.inmo.inmodata.weather.WeatherInfo;
@@ -50,7 +58,9 @@ import com.inmoglass.launcher.util.BleCallManager;
 import com.inmoglass.launcher.util.ContentProviderUtils;
 import com.inmoglass.launcher.util.MMKVUtils;
 import com.inmoglass.launcher.util.MobileNumberUtils;
+import com.inmoglass.launcher.util.SystemBrightnessUtil;
 import com.inmoglass.launcher.util.SystemUtils;
+import com.inmoglass.launcher.util.SystemVolumeUtil;
 import com.tencent.mmkv.MMKV;
 
 import org.greenrobot.eventbus.EventBus;
@@ -77,6 +87,13 @@ public class SocketService extends Service {
     private boolean naviStarted = false;
     private int lastLevel;
 
+    /**
+     * 监听眼镜端音量亮度变化
+     */
+    private static final String VOLUME_CHANGE = "android.media.VOLUME_CHANGED_ACTION";
+    private static final String BRIGHTNESS_CHANGE = "android.screen.DISPLAY_CHANGED_ACTION";
+    private AudioManager audioManager;
+
     private static final String PACKAGE_NAME = "com.yulong.coolgallery";
     private static final String ACTIVITY_NAME = "com.yulong.coolgallery.PreviewActivity2";
     /**
@@ -100,9 +117,13 @@ public class SocketService extends Service {
         // 监听电量变化
         IntentFilter intentFilter = new IntentFilter(Intent.ACTION_BATTERY_CHANGED);
         intentFilter.addAction(AG_CALL_CHANGED);
+        intentFilter.addAction(VOLUME_CHANGE);
+        intentFilter.addAction(BRIGHTNESS_CHANGE);
         registerReceiver(receiver, intentFilter);
 
         notificationManager = (NotificationManager) this.getSystemService(Context.NOTIFICATION_SERVICE);
+        audioManager = (AudioManager) this.getSystemService(Context.AUDIO_SERVICE);
+
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             NotificationChannel channel = new NotificationChannel(CHANNEL_ID, "name", NotificationManager.IMPORTANCE_HIGH);
             notificationManager.createNotificationChannel(channel);
@@ -139,6 +160,16 @@ public class SocketService extends Service {
                         lastLevel = level;
                         sendBatteryLevel(level);
                     }
+                    break;
+                case VOLUME_CHANGE:
+                    int volumeLevel = audioManager.getStreamVolume(AudioManager.STREAM_MUSIC);
+                    LogUtils.d("zxp,volume = " + volumeLevel);
+                    sendVolumeLevel(volumeLevel);
+                    break;
+                case BRIGHTNESS_CHANGE:
+                    int brightnessLevel = SystemBrightnessUtil.getBrightness(context);
+                    LogUtils.d("zxp,test brightness = " + brightnessLevel);
+                    sendBrightnessLevel(brightnessLevel);
                     break;
                 default:
                     break;
@@ -229,6 +260,12 @@ public class SocketService extends Service {
                     phoneName = name;
                     phoneMac = address;
                     MMKVUtils.setBoolean(GLASS_CONNECTING_INMOLENS_APP, true);
+
+                    // 设备连接成功时传输数据
+                    int volumeLevel = SystemVolumeUtil.getVolume(BaseApplication.mContext);
+                    sendVolumeLevel(volumeLevel);
+                    int brightnessLevel = SystemBrightnessUtil.getBrightness(BaseApplication.mContext);
+                    sendBrightnessLevel(brightnessLevel);
                 }
 
                 @Override
@@ -254,6 +291,24 @@ public class SocketService extends Service {
             BatteryInfo batteryInfo = new BatteryInfo();
             batteryInfo.setBattery(level + "");
             bt.send(getGson().toJson(batteryInfo), true);
+        }
+    }
+
+    public void sendVolumeLevel(int level) {
+        if (bt != null && bt.getServiceState() == BluetoothState.STATE_CONNECTED) {
+            VolumeInfo volumeInfo = new VolumeInfo();
+            volumeInfo.setType(Dispatcher.VOLUME_INFO);
+            volumeInfo.setLevel(level);
+            bt.send(getGson().toJson(volumeInfo), true);
+        }
+    }
+
+    public void sendBrightnessLevel(int level) {
+        if (bt != null && bt.getServiceState() == BluetoothState.STATE_CONNECTED) {
+            BrightnessInfo brightnessInfo = new BrightnessInfo();
+            brightnessInfo.setType(Dispatcher.BRIGHTNESS_INFO);
+            brightnessInfo.setLevel(level);
+            bt.send(getGson().toJson(brightnessInfo), true);
         }
     }
 
@@ -310,11 +365,20 @@ public class SocketService extends Service {
                 FileTransferInfo fileTransferInfo = (FileTransferInfo) info;
                 String instruction = fileTransferInfo.getInstruction();
                 openGallery(instruction, fileTransferInfo);
-            } else if (info instanceof DateTimeInfo) {
-                // TODO: 2022/2/23 手机日历信息同步到眼镜
-                new Thread(() -> {
-                    // 往眼镜端的备忘录APP存数据
-                }).start();
+            } else if (info instanceof CalenderEventInfo) {
+                // 手机日历数据
+                CalenderEventInfo calenderEventInfo = (CalenderEventInfo) info;
+                if (calenderEventInfo == null) {
+                    return;
+                }
+                ThreadUtils.getCachedPool().execute(() -> {
+                    List<CalenderEvents> result = calenderEventInfo.getCalenderEvents();
+                    if (result != null && !result.isEmpty()) {
+                        for (int i = 0; i < result.size(); i++) {
+                            ContentProviderUtils.insertMemoRecords(result.get(i));
+                        }
+                    }
+                });
             }
         }
     }

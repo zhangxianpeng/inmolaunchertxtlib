@@ -39,4 +39,14 @@
     <string name="string_shutdown_cancel">取消关机</string>
     <string name="string_inmo_ring_disconnected"> 已断开连接</string>
     <string name="string_new_call_msg">您有一个新的来电信息</string>
+    <string name="string_phone_notification">手机通知</string>
+    <string name="string_phone_notification_guide1">眼镜提醒手机通知?</string>
+    <string name="string_scan">扫一扫</string>
+    <string name="string_phone_notification_guide2">使用手机扫描说明书上的二维码\n下载并安装inmolens应用</string>
+    <string name="string_bluetooth">蓝牙</string>
+    <string name="string_phone_notification_guide3">开启手机蓝牙，打开Inmolens\n连接您的眼镜</string>
+    <string name="string_phone_notification_guide4">点击【手机通知】\n开启需要通知的手机应用即可</string>
+    <string name="string_phone_notification_guide5">请保持蓝牙连接及Inmolens后台运行</string>
+    <string name="string_phone_notification_guide6">打开Inmolens,连接你的眼镜</string>
+    <string name="string_connect_phone">手机已连接</string>
 </resources>

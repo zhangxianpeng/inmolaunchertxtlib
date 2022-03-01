@@ -39,4 +39,14 @@
     <string name="string_shutdown_cancel">Cancel shut down</string>
     <string name="string_inmo_ring_disconnected"> Disconnected</string>
     <string name="string_new_call_msg">You have a new incoming message</string>
+    <string name="string_phone_notification">Mobile notification</string>
+    <string name="string_phone_notification_guide1">How to remind the notification of mobile application at the glasses end?</string>
+    <string name="string_scan">Scan</string>
+    <string name="string_phone_notification_guide2">Take out your mobile phone, scan the Inmolens two-dimensional code on the instructions or official account\nDownload and install apps</string>
+    <string name="string_bluetooth">Bluetooth</string>
+    <string name="string_phone_notification_guide3">Turn on Bluetooth and inmolens\nConnect your glasses</string>
+    <string name="string_phone_notification_guide4">Click【Mobile notification】\nOpen the mobile app that needs to be notified</string>
+    <string name="string_phone_notification_guide5">Please keep Bluetooth connected and inmolens running in the background</string>
+    <string name="string_phone_notification_guide6">Open Inmolens and Connect your glass</string>
+    <string name="string_connect_phone">Phone Connected</string>
 </resources>

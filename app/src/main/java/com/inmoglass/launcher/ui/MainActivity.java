@@ -36,6 +36,7 @@ import com.baidu.location.BDLocation;
 import com.baidu.location.LocationClient;
 import com.baidu.location.LocationClientOption;
 import com.blankj.utilcode.util.LogUtils;
+import com.blankj.utilcode.util.ThreadUtils;
 import com.blankj.utilcode.util.TimeUtils;
 import com.blankj.utilcode.util.ToastUtils;
 import com.inmo.network.AndroidNetworking;
@@ -142,7 +143,8 @@ public class MainActivity extends BaseActivity {
                 // fix bug:camera 特殊处理,防止卡死
                 if (selectPosition == 1) {
                     openApplication("com.yulong.coolcamera", "com.yulong.arcamera.MainActivity");
-//                    startActivity(new Intent(MainActivity.this, NotificationCourseActivity.class));
+                } else if (channelList.get(selectPosition).getPackageName().equals("com.inmoglass.launcher.NotificationCourseActivity")) {
+                    startActivity(new Intent(MainActivity.this, NotificationCourseActivity.class));
                 } else {
                     openApplicationByPkgName(channelList.get(selectPosition).getPackageName());
                 }
@@ -294,7 +296,7 @@ public class MainActivity extends BaseActivity {
 
     private void getMemoData() {
         showData = new InmoMemoData();
-        new Thread(() -> {
+        ThreadUtils.getCachedPool().execute(() -> {
             Cursor cursor = getContentResolver().query(Uri.parse(MEMO_URI), null, null, null, "_id DESC");
             if (cursor == null) {
                 return;
@@ -321,9 +323,7 @@ public class MainActivity extends BaseActivity {
                 // 没有备忘录数据的时候直接展示空界面
                 memoHandler.sendEmptyMessage(0);
             }
-
-        }).start();
-
+        });
     }
 
     private LocationClient mLocationClient;
@@ -378,7 +378,9 @@ public class MainActivity extends BaseActivity {
             double latitude = bdLocation.getLatitude();
             double longitude = bdLocation.getLongitude();
             // 异步获取天气信息，不然可能造成anr
-            new Thread(() -> getLocationWeather(latitude, longitude)).start();
+            ThreadUtils.getCachedPool().execute(() -> {
+                getLocationWeather(latitude, longitude);
+            });
         }
     }
 

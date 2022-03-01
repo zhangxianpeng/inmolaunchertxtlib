@@ -4,17 +4,15 @@ import android.content.Context;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 
-import androidx.annotation.NonNull;
-import androidx.viewpager.widget.PagerAdapter;
 import androidx.viewpager.widget.ViewPager;
 
 import com.inmoglass.launcher.R;
+import com.inmoglass.launcher.adapter.ViewPagerAdapter;
 
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -26,7 +24,11 @@ public class BannerLayout extends RelativeLayout {
 
     private ViewPager mViewpager;
     private LinearLayout indicatorLinearLayout;
-    private List<Integer> imageList;
+
+    private ViewPagerAdapter adapter;
+    private List<View> viewList = new ArrayList<>();
+    ;
+
     private int mCurrentItem = 0;
 
     public BannerLayout(Context context) {
@@ -38,38 +40,82 @@ public class BannerLayout extends RelativeLayout {
         View view = LayoutInflater.from(context).inflate(R.layout.layout_banner, this, true);
         mViewpager = view.findViewById(R.id.viewpager);
         indicatorLinearLayout = view.findViewById(R.id.ll_indicator);
-        imageList = new ArrayList<>();
-
-        initData();
-        initViewPager();
     }
 
-    private void initData() {
-        imageList.add(R.drawable.device_connect_01);
-        imageList.add(R.drawable.device_connect_02);
-        imageList.add(R.drawable.device_connect_03);
-        imageList.add(R.drawable.device_connect_04);
-    }
+    /**
+     * 区分显示的view
+     *
+     * @param type 类型区分
+     */
+    public void setData(Context context, int type) {
+        viewList.clear();
+        switch (type) {
+            case 0: // 从未连接过Inmolens
+                View guideView1 = LayoutInflater.from(context).inflate(R.layout.layout_banner_item1, null);
+                View guideView2 = LayoutInflater.from(context).inflate(R.layout.layout_banner_item2, null);
+                View guideView3 = LayoutInflater.from(context).inflate(R.layout.layout_banner_item3, null);
+                View guideView4 = LayoutInflater.from(context).inflate(R.layout.layout_banner_item4, null);
+                View guideView5 = LayoutInflater.from(context).inflate(R.layout.layout_banner_item5, null);
+                viewList.add(guideView1);
+                viewList.add(guideView2);
+                viewList.add(guideView3);
+                viewList.add(guideView4);
+                viewList.add(guideView5);
+                break;
+            case 1: // 蓝牙未连接手机
+                View bleView = LayoutInflater.from(context).inflate(R.layout.layout_banner_item3, null);
+                viewList.add(bleView);
+                break;
+            case 2:
+                View connectView = LayoutInflater.from(context).inflate(R.layout.layout_banner_item6, null);
+                viewList.add(connectView);
+                break;
+            default:
+                break;
+        }
 
-    private void initViewPager() {
-        MyPagerAdapter adapter = new MyPagerAdapter();
+        adapter = new ViewPagerAdapter(viewList);
+        setViewPagerScrollSpeed(context);
         mViewpager.setAdapter(adapter);
         setIndicator();
+
+        if (adapter != null) {
+            adapter.notifyDataSetChanged();
+        }
+    }
+
+    /**
+     * 设置ViewPager的滑动速度
+     */
+    private void setViewPagerScrollSpeed(Context context) {
+        try {
+            Field mScroller = null;
+            mScroller = ViewPager.class.getDeclaredField("mScroller");
+            mScroller.setAccessible(true);
+            FixedSpeedScroller scroller = new FixedSpeedScroller(context);
+            mScroller.set(mViewpager, scroller);
+        } catch (NoSuchFieldException e) {
+
+        } catch (IllegalArgumentException e) {
+
+        } catch (IllegalAccessException e) {
+
+        }
     }
 
     private void setIndicator() {
         View viewIndicator;
-        for (int i = 0; i < imageList.size(); i++) {
+        for (int i = 0; i < viewList.size(); i++) {
             // 创建imageview作为小圆点
             viewIndicator = new View(getContext());
             // 设置默认背景
             viewIndicator.setBackgroundResource(R.drawable.indicator_bg);
             viewIndicator.setEnabled(false);
             // 设置指示器宽高
-            LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(20, 20);
+            LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(8, 8);
             // 除了第一个小圆点，其他小圆点都设置边距
             if (i != 0) {
-                layoutParams.leftMargin = 20;
+                layoutParams.leftMargin = 10;
             }
             // 设置布局参数
             viewIndicator.setLayoutParams(layoutParams);
@@ -98,32 +144,5 @@ public class BannerLayout extends RelativeLayout {
 
             }
         });
-    }
-
-    private class MyPagerAdapter extends PagerAdapter {
-
-        @Override
-        public int getCount() {
-            return imageList.size();
-        }
-
-        @Override
-        public boolean isViewFromObject(@NonNull View view, @NonNull Object o) {
-            return view == o;
-        }
-
-        @NonNull
-        @Override
-        public Object instantiateItem(@NonNull ViewGroup container, int position) {
-            ImageView iv = new ImageView(getContext());
-            iv.setImageResource(imageList.get(position));
-            container.addView(iv);
-            return iv;
-        }
-
-        @Override
-        public void destroyItem(@NonNull ViewGroup container, int position, @NonNull Object object) {
-            container.removeView((View) object);
-        }
     }
 }

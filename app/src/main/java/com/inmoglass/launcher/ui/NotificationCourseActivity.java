@@ -16,6 +16,7 @@ import com.inmoglass.launcher.R;
 import com.inmoglass.launcher.base.BaseActivity;
 import com.inmoglass.launcher.util.BtUtil;
 import com.inmoglass.launcher.util.MMKVUtils;
+import com.inmoglass.launcher.util.ToastUtil;
 import com.inmoglass.launcher.viewpager.BannerLayout;
 
 /**
@@ -27,11 +28,8 @@ public class NotificationCourseActivity extends BaseActivity {
     private static final String TAG = NotificationCourseActivity.class.getSimpleName();
     private LoadingView loading;
     private BannerLayout mBannerLayout;
-    private LinearLayout mConnectingLinearLayout;
-    private LinearLayout mConnectedLinearLayout;
-
     boolean isConnectingPhone = false;
-    // 开启通知的应用数，这个问了剑文应该是静态图
+
     int notificationAppCount = 0;
 
     @Override
@@ -39,52 +37,60 @@ public class NotificationCourseActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_notification_course);
         initViews();
-        checkConnectStatus();
     }
 
     private void initViews() {
         loading = findViewById(R.id.loadingView);
         mBannerLayout = findViewById(R.id.bannerLayout);
-        mConnectingLinearLayout = findViewById(R.id.ll_connecting_view);
-        mConnectedLinearLayout = findViewById(R.id.ll_connected_view);
-
         loading.showLoadingView();
     }
 
-    // 5.开启通知的应用数，需要展示到眼镜端
+    @Override
+    protected void onResume() {
+        super.onResume();
+        checkConnectStatus();
+    }
+
     private void checkConnectStatus() {
         // 1.判断蓝牙开关状态
         boolean isBleAvailable = BluetoothAdapter.getDefaultAdapter().isEnabled();
         if (!isBleAvailable) {
-            LogUtils.d("蓝牙未打开，调用enable()");
+            LogUtils.d(TAG, "蓝牙未打开，调用enable()");
             BluetoothAdapter.getDefaultAdapter().enable();
         } else {
-            LogUtils.d("蓝牙已经打开");
+            LogUtils.d(TAG, "蓝牙已经打开");
         }
+
+        loading.setVisibility(View.GONE);
+        mBannerLayout.setVisibility(VISIBLE);
 
         // 2.判断是否连接过Inmolens
         boolean isConnectedInmolensApp = MMKVUtils.getBoolean(GLASS_CONNECTED_INMOLENS_APP);
-        if (!isConnectedInmolensApp) {
-            // 展示ViewPager
-            LogUtils.d("重来没有连接过inmolens");
-            loading.setVisibility(View.GONE);
-            mBannerLayout.setVisibility(VISIBLE);
-        }
-
         // 3.判断是否连接手机
         BluetoothDevice connectDevice = BtUtil.getConectedBluetoothDevice();
+        // 4.判断是否连接Inmolens
+        boolean isConnectingInmolensApp = MMKVUtils.getBoolean(GLASS_CONNECTING_INMOLENS_APP);
         if (connectDevice != null) {
             isConnectingPhone = BtUtil.getDeviceType(connectDevice.getBluetoothClass()) == BtUtil.PROFILE_PHONE;
         }
-
-        if(!isConnectingPhone){
-            // 未连接手机，展示教程连接到手机
+        // 5.开启通知的应用数，需要展示到眼镜端
+        if (!isConnectedInmolensApp) {
+            // 展示ViewPager
+            LogUtils.d(TAG, "重来没有连接过inmolens");
+            mBannerLayout.setData(this, 0);
         } else {
-
+            if (!isConnectingPhone) {
+                // 未连接手机，展示教程连接到手机
+                LogUtils.d(TAG, "未连接手机，展示教程连接到手机");
+                mBannerLayout.setData(this, 1);
+            } else {
+                ToastUtil.showToast(this, getString(R.string.string_connect_phone));
+                if (isConnectingInmolensApp) {
+                    // TODO: 2022/3/1 check通知开启APP数量
+                } else {
+                    mBannerLayout.setData(this, 2);
+                }
+            }
         }
-
-        // 4.判断是否连接Inmolens
-        boolean isConnectingInmolensApp = MMKVUtils.getBoolean(GLASS_CONNECTING_INMOLENS_APP);
-
     }
 }
