@@ -91,11 +91,14 @@ public class StatusBarWifiStateView extends AppCompatImageView {
         @Override
         public void onReceive(Context context, Intent intent) {
             if (intent.getAction() != null) {
-
                 switch (intent.getAction()) {
                     case WifiManager.WIFI_STATE_CHANGED_ACTION:
                         if (wifiManager.getWifiState() == WifiManager.WIFI_STATE_DISABLING) {
                             wifiHandler.sendEmptyMessage(LEVEL_NONE);
+                        } else {
+                            WifiInfo wifiInfo = wifiManager.getConnectionInfo();
+                            int level = WifiManager.calculateSignalLevel(wifiInfo.getRssi(), 5);
+                            wifiHandler.sendEmptyMessage(level);
                         }
                         break;
                     case WifiManager.RSSI_CHANGED_ACTION:

@@ -46,7 +46,8 @@
         android:requestLegacyExternalStorage="true"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/Theme.NORMAL">
+        android:theme="@style/Theme.NORMAL"
+        android:usesCleartextTraffic="true">
         <activity
             android:name=".ui.NotificationCourseActivity"
             android:exported="true" />
@@ -66,7 +67,6 @@
             </intent-filter>
         </activity>
 
-        <service android:name=".service.SocketService" />
         <!-- 百度地图解决室内定位问题 -->
         <service
             android:name="com.baidu.location.f"
@@ -75,7 +75,9 @@
         <meta-data
             android:name="com.baidu.lbsapi.API_KEY"
             android:value="bgyiEdIHDfok47j05SceB7nXWAOuKKDf" />
-        <service android:name=".service.WriteFileIntentService"/>
+        <!--写文件-->
+        <service android:name=".service.WriteFileIntentService"
+            android:exported="true"/>
     </application>
 
 </manifest>

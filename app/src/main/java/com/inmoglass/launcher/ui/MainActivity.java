@@ -52,9 +52,9 @@ import com.inmoglass.launcher.bean.ScreenFlagMsgBean;
 import com.inmoglass.launcher.carousellayoutmanager.CarouselLayoutManager;
 import com.inmoglass.launcher.carousellayoutmanager.CarouselZoomPostLayoutListener;
 import com.inmoglass.launcher.carousellayoutmanager.CenterScrollListener;
-import com.inmoglass.launcher.service.SocketService;
 import com.inmoglass.launcher.service.WriteFileIntentService;
 import com.inmoglass.launcher.util.AppUtil;
+import com.inmoglass.launcher.util.BluetoothController;
 import com.inmoglass.launcher.util.BtUtil;
 import com.inmoglass.launcher.util.CommonUtil;
 import com.inmoglass.launcher.util.LauncherManager;
@@ -134,7 +134,6 @@ public class MainActivity extends BaseActivity {
 //                });
         startLocation();
         writeCardList2File();
-        startSocketService();
 
         mGestureDetector = new GestureDetector(this, new GestureDetector.SimpleOnGestureListener() {
             @Override
@@ -144,7 +143,20 @@ public class MainActivity extends BaseActivity {
                 if (selectPosition == 1) {
                     openApplication("com.yulong.coolcamera", "com.yulong.arcamera.MainActivity");
                 } else if (channelList.get(selectPosition).getPackageName().equals("com.inmoglass.launcher.NotificationCourseActivity")) {
-                    startActivity(new Intent(MainActivity.this, NotificationCourseActivity.class));
+                    Intent notificationIntent = new Intent(MainActivity.this, NotificationCourseActivity.class);
+                    notificationIntent.putExtra("type", 0);
+                    startActivity(notificationIntent);
+                    overridePendingTransition(R.anim.anim_in, R.anim.anim_out);
+                } else if (channelList.get(selectPosition).getPackageName().equals("com.inmoglass.launcher.VideoMirrorActivity")) {
+                    Intent notificationIntent = new Intent(MainActivity.this, NotificationCourseActivity.class);
+                    notificationIntent.putExtra("type", 2);
+                    startActivity(notificationIntent);
+                    overridePendingTransition(R.anim.anim_in, R.anim.anim_out);
+                } else if (channelList.get(selectPosition).getPackageName().equals("com.inmoglass.launcher.PhoneMirrorActivity")) {
+                    Intent notificationIntent = new Intent(MainActivity.this, NotificationCourseActivity.class);
+                    notificationIntent.putExtra("type", 1);
+                    startActivity(notificationIntent);
+                    overridePendingTransition(R.anim.anim_in, R.anim.anim_out);
                 } else {
                     openApplicationByPkgName(channelList.get(selectPosition).getPackageName());
                 }
@@ -154,6 +166,7 @@ public class MainActivity extends BaseActivity {
 
         subscribeBroadCast();
         EventBus.getDefault().register(this);
+        BluetoothController.getInstance().init(this);
     }
 
     @Override
@@ -259,11 +272,6 @@ public class MainActivity extends BaseActivity {
         }
     }
 
-    private void startSocketService() {
-        Intent intent = new Intent(this, SocketService.class);
-        startService(intent);
-    }
-
     public static final String MEMO_URI = "content://com.inmolens.inmomemo.data.memodb/memo_info";
     private InmoMemoData showData;
     private Handler memoHandler = new Handler() {
@@ -282,7 +290,7 @@ public class MainActivity extends BaseActivity {
                 } else {
                     local = LauncherManager.getInstance().getLauncherCardList();
                     channelList.addAll(local);
-                    Channel oldChannel = channelList.get(2);
+                    Channel oldChannel = channelList.get(4);
                     Collections.replaceAll(channelList, oldChannel, memoDataChannel);
                 }
                 LogUtils.i(TAG, "local = " + local.size());
@@ -448,7 +456,9 @@ public class MainActivity extends BaseActivity {
                     WindowUtils.showPopupWindow(getApplicationContext(), WindowUtils.UI_STATE.MEMO_STATE, completeMemoContent);
                     break;
                 case SHUT_DOWN_ACTION:
-                    WindowUtils.showPopupWindow(getApplicationContext(), WindowUtils.UI_STATE.SHUT_DOWN_ACTION, "");
+                    if (!WindowUtils.isPlayingVideo) {
+                        WindowUtils.showPopupWindow(getApplicationContext(), WindowUtils.UI_STATE.SHUT_DOWN_ACTION, "");
+                    }
                     break;
                 case Intent.ACTION_BATTERY_CHANGED:
                     int battery = intent.getIntExtra(BatteryManager.EXTRA_LEVEL, 0);
@@ -512,10 +522,11 @@ public class MainActivity extends BaseActivity {
                     ConnectivityManager manager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
                     NetworkInfo info = manager.getActiveNetworkInfo();
                     if (info != null && info.isAvailable()) {
-                        ToastUtil.showToast(getApplicationContext(), getString(R.string.string_wlan_connected));
+                        // 20220303 新需求——蓝牙wifi连接断开有音效无toast
+//                        ToastUtil.showToast(getApplicationContext(), getString(R.string.string_wlan_connected));
                         SoundPoolUtil.getInstance(MainActivity.this).playSoundUnfinished(R.raw.connect);
                     } else {
-                        ToastUtil.showToast(getApplicationContext(), getString(R.string.string_wlan_disconnected));
+//                        ToastUtil.showToast(getApplicationContext(), getString(R.string.string_wlan_disconnected));
                         SoundPoolUtil.getInstance(MainActivity.this).playSoundUnfinished(R.raw.disconnect);
                     }
                     break;
@@ -523,9 +534,12 @@ public class MainActivity extends BaseActivity {
                     LogUtils.d("ACTION_ACL_CONNECTED");
                     // 已经配对过的设备不会再配对，直接自动连接
                     BluetoothDevice connectDevice = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
+                    String connectDeviceName = TextUtils.isEmpty(connectDevice.getName()) ? "" : connectDevice.getName();
                     if (connectDevice.getBondState() == BluetoothDevice.BOND_BONDED) {
                         SoundPoolUtil.getInstance(MainActivity.this).playSoundUnfinished(R.raw.connect);
-                        ToastUtil.showToast(getApplicationContext(), getString(R.string.string_bluetooth_connected));
+                        if (BtUtil.isInmoRing(connectDeviceName)) {
+                            ToastUtil.showToast(getApplicationContext(), getString(R.string.string_inmo_ring_connected));
+                        }
                     }
                     break;
                 case BluetoothDevice.ACTION_ACL_DISCONNECTED:
@@ -535,9 +549,7 @@ public class MainActivity extends BaseActivity {
                     if (disConnectDevice.getBondState() == BluetoothDevice.BOND_BONDED) {
                         SoundPoolUtil.getInstance(MainActivity.this).playSoundUnfinished(R.raw.disconnect);
                         if (BtUtil.isInmoRing(disConnectDeviceName)) {
-                            ToastUtil.showImageToast(getApplicationContext(), ToastUtil.STATE.INMO_RING, disConnectDeviceName);
-                        } else {
-                            ToastUtil.showToast(getApplicationContext(), getString(R.string.string_bluetooth_disconnected));
+                            ToastUtil.showToast(getApplicationContext(), getString(R.string.string_inmo_ring_disconnected));
                         }
                     }
                     break;
@@ -546,10 +558,10 @@ public class MainActivity extends BaseActivity {
                     if (state == BluetoothDevice.BOND_NONE) {
                         // 配对没有成功，配对框的时候选择取消按钮的回调
                         SoundPoolUtil.getInstance(MainActivity.this).playSoundUnfinished(R.raw.disconnect);
-                        ToastUtil.showToast(getApplicationContext(), getString(R.string.string_bluetooth_disconnected_retry));
+//                        ToastUtil.showToast(getApplicationContext(), getString(R.string.string_bluetooth_disconnected_retry));
                     } else if (state == BluetoothDevice.BOND_BONDED) {
                         // 配对成功
-                        ToastUtil.showToast(getApplicationContext(), getString(R.string.string_bluetooth_connected));
+//                        ToastUtil.showToast(getApplicationContext(), getString(R.string.string_bluetooth_connected));
                         SoundPoolUtil.getInstance(MainActivity.this).playSoundUnfinished(R.raw.connect);
                     }
                     break;

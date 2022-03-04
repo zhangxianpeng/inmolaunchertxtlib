@@ -12,6 +12,7 @@ import java.io.RandomAccessFile;
  * 写关机日志，监听关机广播，是否存在无故关机问题
  */
 public class WriteLogFileUtil {
+
     private static final String TAG = WriteLogFileUtil.class.getSimpleName();
     public final static String FILE_PATH = Environment.getExternalStorageDirectory() + "/shutdownLog/";
 

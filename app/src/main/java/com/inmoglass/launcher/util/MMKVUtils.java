@@ -52,13 +52,25 @@ public class MMKVUtils {
         return list;
     }
 
-    public static void setBoolean(String name, boolean isPlayed) {
+    public static void setBoolean(String name, boolean value) {
         MMKV kv = MMKV.defaultMMKV();
-        kv.encode(name, isPlayed);
+        kv.encode(name, value);
     }
 
     public static boolean getBoolean(String name) {
         MMKV kv = MMKV.defaultMMKV();
         return kv.decodeBool(name);
     }
+
+    public static void setString(String name, String value) {
+        MMKV kv = MMKV.defaultMMKV();
+        kv.remove(name);
+        kv.encode(name, value);
+    }
+
+    public static String getString(String name) {
+        MMKV kv = MMKV.defaultMMKV();
+        return kv.decodeString(name);
+    }
+
 }

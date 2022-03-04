@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <TextView
+        style="@style/text_style"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="127pt"
+        android:text="@string/string_phone_mirror"
+        android:textSize="28pt" />
+
+    <TextView
+        style="@style/text_style"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="16pt"
+        android:text="@string/string_keep_connection"
+        android:textSize="22pt" />
+
+    <TextView
+        android:id="@+id/tvBackMirror"
+        android:layout_width="160pt"
+        android:layout_height="48pt"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="32pt"
+        android:background="@drawable/shape_sys_update_bg"
+        android:gravity="center"
+        android:text="@string/string_back_mirror"
+        android:textColor="@color/white"
+        android:textSize="22pt" />
+</LinearLayout>

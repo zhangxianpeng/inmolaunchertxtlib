@@ -12,4 +12,9 @@
 1.MainActivity添加手机消息通知教程入口。
 2.添加手机消息通知教程Activity。
 3.接收到眼镜端发来的日历数据，插入到眼镜端备忘录数据库中。
-4.socketServer监听眼镜端音量亮度变化，同步发送到手机端。
+4.SocketService监听眼镜端音量亮度变化，同步发送到手机端。
+
+2022.03.04
+1.重构SocketService,统一用BluetoothController做和手机端的数据收发工作。
+2.添加乐播接收端SDK,眼镜端成为接收终端。
+3.添加手机镜像/视频/手机通知三个入口,入口统一跳转到NotificationCourseActivity。

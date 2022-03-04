@@ -3,6 +3,8 @@ package com.inmoglass.launcher.util;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothClass;
 import android.bluetooth.BluetoothDevice;
+import android.content.Context;
+import android.content.Intent;
 import android.text.TextUtils;
 
 import java.lang.reflect.InvocationTargetException;
@@ -87,9 +89,9 @@ public class BtUtil {
             case BluetoothClass.Device.Major.IMAGING:
                 return PROFILE_IMAGING;
             default:
-                if (BtUtil.doesClassMatch(bluetoothClass, PROFILE_HEADSET))
+                if (BtUtil.doesClassMatch(bluetoothClass, PROFILE_HEADSET)) {
                     return PROFILE_HEADSET;
-                else if (BtUtil.doesClassMatch(bluetoothClass, PROFILE_A2DP)) {
+                } else if (BtUtil.doesClassMatch(bluetoothClass, PROFILE_A2DP)) {
                     return PROFILE_A2DP;
                 } else {
                     return PROFILE_DEFAULT;
@@ -178,5 +180,19 @@ public class BtUtil {
         } else {
             return false;
         }
+    }
+
+
+    /**
+     * 可发现模式
+     * 默认情况下，设备的可发现模式会持续120秒。
+     * 通过给Intent对象添加EXTRA_DISCOVERABLE_DURATION附加字段，可以定义不同持续时间。
+     * 应用程序能够设置的最大持续时间是3600秒
+     */
+    public void discoverableDuration(Context context) {
+        Intent discoverableIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_DISCOVERABLE);
+        // 定义持续时间
+        discoverableIntent.putExtra(BluetoothAdapter.EXTRA_DISCOVERABLE_DURATION, 120);
+        context.startActivity(discoverableIntent);
     }
 }

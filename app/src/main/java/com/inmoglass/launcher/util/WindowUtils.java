@@ -26,7 +26,6 @@ import com.blankj.utilcode.util.LogUtils;
 import com.inmoglass.launcher.R;
 import com.inmoglass.launcher.base.BaseApplication;
 import com.inmoglass.launcher.bean.ScreenFlagMsgBean;
-import com.inmoglass.launcher.service.WriteFileIntentService;
 import com.inmoglass.launcher.tts.TtsManager;
 import com.inmoglass.launcher.ui.MainActivity;
 import com.inmoglass.launcher.view.MyConstraintLayout;
@@ -43,6 +42,8 @@ public class WindowUtils {
     private static Context mContext = null;
     public static boolean isShown = false;
     private static Handler myHandler = new Handler(Looper.getMainLooper());
+
+    public static boolean isPlayingVideo = false;
 
     public enum UI_STATE {
         /**
@@ -408,6 +409,7 @@ public class WindowUtils {
         mVideoView.setVideoURI(Uri.parse(uri));
         mVideoView.setOnCompletionListener(mediaPlayer -> {
             LogUtils.d(TAG, "新手教学播放完成，保存标志位");
+            isPlayingVideo = false;
             MMKVUtils.setBoolean(NOVICE_TEACHING_VIDEO_PLAY_FLAG, true);
             ScreenFlagMsgBean msg = new ScreenFlagMsgBean();
             msg.setNeedClear(true);
@@ -415,6 +417,7 @@ public class WindowUtils {
             hidePopupWindow();
         });
         mVideoView.start();
+        isPlayingVideo = true;
     }
 
     private static void forbiddenOperation(View view) {

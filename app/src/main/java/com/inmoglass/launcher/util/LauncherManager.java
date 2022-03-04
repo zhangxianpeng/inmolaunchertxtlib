@@ -29,6 +29,8 @@ public class LauncherManager {
     public static final String[] packageNames = new String[]{
             "com.inmoglass.album",
             "com.yulong.coolcamera",
+            "com.inmoglass.launcher.VideoMirrorActivity",
+            "com.inmoglass.launcher.PhoneMirrorActivity",
             "com.inmolens.inmomemo",
             "com.tencent.qqmusiccar",
             "com.ximalaya.ting.android.car",
@@ -48,12 +50,15 @@ public class LauncherManager {
     public static final String[] packageNames_pro = new String[]{
             "com.inmoglass.album",
             "com.yulong.coolcamera",
+            "com.inmoglass.launcher.VideoMirrorActivity",
+            "com.inmoglass.launcher.PhoneMirrorActivity",
             "com.inmolens.inmomemo",
             "com.tencent.qqmusiccar",
             "com.ximalaya.ting.android.car",
             "com.autonavi.amapauto",
             "com.inmoglass.documents",
             "cn.wps.moffice_eng",
+            "com.inmoglass.launcher.NotificationCourseActivity",
             "com.inmo.settings",
             "com.inmoglass.validationTools"
     };
@@ -98,27 +103,31 @@ public class LauncherManager {
         ArrayList<Channel> beanList = new ArrayList<>();
         for (String appPackage : packagesList) {
             Channel bean = null;
-            if (appPackage.equals(packageNames[0])) {
+            if (appPackage.equals(packageNames[0])) { // 相册
                 bean = new Channel(R.drawable.img_home_meitiwenjian, BaseApplication.mContext.getString(R.string.string_home_media), R.drawable.icon_home_meiti, packageNames[0], null);
-            } else if (appPackage.equals(packageNames[1])) {
+            } else if (appPackage.equals(packageNames[1])) { // 相机
                 bean = new Channel(R.drawable.img_home_camera, BaseApplication.mContext.getString(R.string.string_home_camera), R.drawable.icon_home_camera, packageNames[1], null);
-            } else if (appPackage.equals(packageNames[2])) {
-                bean = new Channel(R.drawable.img_home_beiwanglu, BaseApplication.mContext.getString(R.string.string_home_beiwanglu), R.drawable.icon_home_beiwanglu, packageNames[2], null);
-            } else if (appPackage.equals(packageNames[3])) {
-                bean = new Channel(R.drawable.img_home_qqmusic, BaseApplication.mContext.getString(R.string.string_home_qq_music), R.drawable.icon_home_qqmusic, packageNames[3], null);
-            } else if (appPackage.equals(packageNames[4])) {
-                bean = new Channel(R.drawable.img_home_ximalaya, BaseApplication.mContext.getString(R.string.string_home_ximalaya), R.drawable.icon_home_ximalaya, packageNames[4], null);
-            } else if (appPackage.equals(packageNames[5])) {
-                bean = new Channel(R.drawable.img_home_gaode, BaseApplication.mContext.getString(R.string.string_home_gaode), R.drawable.icon_home_gaode, packageNames[5], null);
-            } else if (appPackage.equals(packageNames[6])) {
-                bean = new Channel(R.drawable.img_home_wendang, BaseApplication.mContext.getString(R.string.string_home_wendang), R.drawable.icon_file_word, packageNames[6], null);
-            } else if (appPackage.equals(packageNames[7])) {
-                bean = new Channel(R.drawable.img_home_wps, BaseApplication.mContext.getString(R.string.string_home_wps), R.drawable.icon_home_wps, packageNames[7], null);
-            } else if (appPackage.equals(packageNames[8])) { // 手机通知
-                bean = new Channel(R.drawable.img_home_default, BaseApplication.mContext.getString(R.string.string_phone_notification), R.drawable.icon_home_setting, packageNames[8], null);
-            } else if (appPackage.equals(packageNames[9])) { // 设置
-                bean = new Channel(R.drawable.img_home_setting, BaseApplication.mContext.getString(R.string.string_home_setting), R.drawable.icon_home_setting, packageNames[9], null);
-            } else if (appPackage.equals(packageNames_pro[9])) {
+            } else if (appPackage.equals(packageNames[2])) { // 视频
+                bean = new Channel(R.drawable.img_home_video, BaseApplication.mContext.getString(R.string.string_phone_video), R.drawable.icon_home_video, packageNames[2], null);
+            } else if (appPackage.equals(packageNames[3])) { // 手机镜像
+                bean = new Channel(R.drawable.img_home_mirror, BaseApplication.mContext.getString(R.string.string_phone_mirror), R.drawable.icon_home_mirror, packageNames[3], null);
+            } else if (appPackage.equals(packageNames[4])) { // 备忘录
+                bean = new Channel(R.drawable.img_home_beiwanglu, BaseApplication.mContext.getString(R.string.string_home_beiwanglu), R.drawable.icon_home_beiwanglu, packageNames[4], null);
+            } else if (appPackage.equals(packageNames[5])) { // QQ音乐
+                bean = new Channel(R.drawable.img_home_qqmusic, BaseApplication.mContext.getString(R.string.string_home_qq_music), R.drawable.icon_home_qqmusic, packageNames[5], null);
+            } else if (appPackage.equals(packageNames[6])) { //喜马拉雅
+                bean = new Channel(R.drawable.img_home_ximalaya, BaseApplication.mContext.getString(R.string.string_home_ximalaya), R.drawable.icon_home_ximalaya, packageNames[6], null);
+            } else if (appPackage.equals(packageNames[7])) { // 高德地图
+                bean = new Channel(R.drawable.img_home_gaode, BaseApplication.mContext.getString(R.string.string_home_gaode), R.drawable.icon_home_gaode, packageNames[7], null);
+            } else if (appPackage.equals(packageNames[8])) { // 文档
+                bean = new Channel(R.drawable.img_home_wendang, BaseApplication.mContext.getString(R.string.string_home_wendang), R.drawable.icon_file_word, packageNames[8], null);
+            } else if (appPackage.equals(packageNames[9])) { // WPS
+                bean = new Channel(R.drawable.img_home_wps, BaseApplication.mContext.getString(R.string.string_home_wps), R.drawable.icon_home_wps, packageNames[9], null);
+            } else if (appPackage.equals(packageNames[10])) { // 手机通知
+                bean = new Channel(R.drawable.img_home_notice, BaseApplication.mContext.getString(R.string.string_phone_notification), R.drawable.icon_home_notice, packageNames[10], null);
+            } else if (appPackage.equals(packageNames[11])) { // 设置
+                bean = new Channel(R.drawable.img_home_setting, BaseApplication.mContext.getString(R.string.string_home_setting), R.drawable.icon_home_setting, packageNames[11], null);
+            } else if (appPackage.equals(packageNames_pro[12])) {
                 bean = new Channel(R.drawable.img_home_default, BaseApplication.mContext.getString(R.string.string_home_mmi), 0, appPackage, BaseApplication.mContext.getDrawable(R.mipmap.ic_launcher));
             } else {
                 bean = new Channel(R.drawable.img_home_default, AppUtil.getInstance().getAppName(appPackage), 0, appPackage, AppUtil.getInstance().getAppIcon(appPackage));

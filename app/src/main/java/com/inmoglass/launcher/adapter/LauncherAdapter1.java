@@ -110,7 +110,7 @@ public class LauncherAdapter1 extends RecyclerView.Adapter<RecyclerView.ViewHold
 
     @Override
     public int getItemViewType(int position) {
-        return !CommonUtil.isEn() && position == 2 ? ITEM_TYPE.ITEM_MEMO.ordinal() : ITEM_TYPE.ITEM_NORMAL.ordinal();
+        return !CommonUtil.isEn() && position == 4 ? ITEM_TYPE.ITEM_MEMO.ordinal() : ITEM_TYPE.ITEM_NORMAL.ordinal();
     }
 
     @Override

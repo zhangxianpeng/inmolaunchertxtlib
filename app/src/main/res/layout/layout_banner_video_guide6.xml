@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <ImageView
+        android:layout_width="500pt"
+        android:layout_height="190pt"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="72pt"
+        android:src="@drawable/img_video_mirror_guide03" />
+
+    <TextView
+        style="@style/text_style"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="44pt"
+        android:gravity="center"
+        android:text="@string/string_video_mirror_guide_msg6"
+        android:textSize="22pt" />
+
+</LinearLayout>

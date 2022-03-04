@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <ImageView
+        android:layout_width="500pt"
+        android:layout_height="224pt"
+        android:src="@drawable/img_video_mirror_guide02"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="24pt"/>
+
+    <TextView
+        style="@style/text_style"
+        android:layout_gravity="center_horizontal"
+        android:text="@string/string_video_mirror_guide_msg2"
+        android:textSize="22pt"
+        android:layout_marginTop="10pt"
+        android:gravity="center"/>
+
+    <TextView
+        android:id="@+id/tvConnect"
+        android:layout_width="160pt"
+        android:layout_height="48pt"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="24pt"
+        android:background="@drawable/shape_sys_update_bg"
+        android:gravity="center"
+        android:text="@string/string_connect"
+        android:textColor="@color/white"
+        android:textSize="22pt" />
+
+</LinearLayout>

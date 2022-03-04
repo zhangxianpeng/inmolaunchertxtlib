@@ -24,6 +24,8 @@ public class BaseApplication extends Application {
         mContext = this;
         // Log统一配置
         LogUtils.getConfig().setLogSwitch(true);
+        // 是否写入文件的配置
+//        LogUtils.getConfig().setLog2FileSwitch(true);
         AndroidNetworking.enableLogging();
     }
 
