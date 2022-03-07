@@ -1,5 +1,9 @@
 package com.inmoglass.launcher.global;
 
+/**
+ * @author Administrator
+ * 全局变量
+ */
 public class AppGlobals {
     /**
      * 是否已经播放过新手视频教程
@@ -58,4 +62,10 @@ public class AppGlobals {
      * 是否接收过第三方APP推送的视频镜像
      */
     public static final String GLASS_CONNECTED_THIRD_APP_VIDEO = "isConnectedPhoneVideo";
+
+    /**
+     * 记录手机端局域网信息，包含是否开启热点，连接的热点的名称
+     */
+    public static final String IS_PHONE_AP_OPEN = "isPhoneApOpen";
+    public static final String PHONE_WIFI_NAME = "phoneConnectionWifiName";
 }

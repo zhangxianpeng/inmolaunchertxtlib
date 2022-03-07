@@ -228,7 +228,8 @@ public class WindowUtils {
      **/
     private static void initTimerShutDownView(View view) {
         TextView countDownTextView = view.findViewById(R.id.tvCountdownTime);
-        mTimer = new CountDownTimer(16000, 1000) {
+        // fix bug:560 【低电量】1%低电量弹层，单击【我知道了】隐藏弹层后，15s后无法自动关机
+        CountDownTimer lowBatteryTimer = new CountDownTimer(16000, 1000) {
             @Override
             public void onTick(long millisUntilFinished) {
                 countDownTextView.setText(millisUntilFinished / 1000 + "S");
@@ -248,7 +249,7 @@ public class WindowUtils {
                 }
             }
         };
-        mTimer.start();
+        lowBatteryTimer.start();
     }
     /** ==================================低电量倒计时关机弹层===========================================**/
 

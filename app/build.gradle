@@ -11,7 +11,7 @@ android {
         minSdkVersion 24
         targetSdkVersion 30
         versionCode 1
-        versionName "1.0.10"
+        versionName "1.0.11"
 
         ndk {
             // 设置支持的SO库架构（开发者可以根据需要，选择一个或多个平台的so）
@@ -76,7 +76,7 @@ dependencies {
     // air系列common
     implementation 'com.github.zhangxianpeng:InmoAirComponent:1.0.4'
     // data包
-    implementation 'com.github.zhangxianpeng:InmoData:1.0.8'
+    implementation 'com.github.zhangxianpeng:InmoData:1.0.9'
     // 消息传递
     implementation 'org.greenrobot:eventbus:3.2.0'
     // 数据持久化

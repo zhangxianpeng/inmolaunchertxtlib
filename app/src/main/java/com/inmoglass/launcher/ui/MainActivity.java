@@ -480,7 +480,9 @@ public class MainActivity extends BaseActivity {
                         // 电量低于15时显示Toast提示电量低
                         isBatteryBelow15 = true;
                         isBatteryBelow6 = false;
-                        ToastUtil.showImageToast(getApplicationContext(), ToastUtil.STATE.LOW_BATTERY, "");
+                        if (!isChargingNow) {
+                            ToastUtil.showImageToast(getApplicationContext(), ToastUtil.STATE.LOW_BATTERY, "");
+                        }
                         // fix bug: 低电量提示后不做操作，充电非低电量后弹框不消失
                         WindowUtils.dismissLowBatteryWindow(WindowUtils.UI_STATE.BATTERY_BELOW_6);
                     }
@@ -488,14 +490,19 @@ public class MainActivity extends BaseActivity {
                         // 电量低于6时显示低电量提示
                         isBatteryBelow6 = true;
                         isBatteryBelow2 = false;
-                        WindowUtils.showPopupWindow(getApplicationContext(), WindowUtils.UI_STATE.BATTERY_BELOW_6, "");
-                        SoundPoolUtil.getInstance(MainActivity.this).playSoundUnfinished(R.raw.low_battery);
+                        if (!isChargingNow) {
+                            WindowUtils.showPopupWindow(getApplicationContext(), WindowUtils.UI_STATE.BATTERY_BELOW_6, "");
+                            SoundPoolUtil.getInstance(MainActivity.this).playSoundUnfinished(R.raw.low_battery);
+                        }
                     }
                     if (battery < 2 && !isBatteryBelow2) {
                         // 电量低于2时倒计时15S关机
                         isBatteryBelow2 = true;
-                        WindowUtils.showPopupWindow(getApplicationContext(), WindowUtils.UI_STATE.BATTERY_BELOW_2, "");
-                        SoundPoolUtil.getInstance(MainActivity.this).playSoundUnfinished(R.raw.will_shut_down);
+                        isBatteryBelow6 = false;
+                        if (!isChargingNow) {
+                            WindowUtils.showPopupWindow(getApplicationContext(), WindowUtils.UI_STATE.BATTERY_BELOW_2, "");
+                            SoundPoolUtil.getInstance(MainActivity.this).playSoundUnfinished(R.raw.will_shut_down);
+                        }
                     }
                     if (battery >= 0 && battery <= 5) {
                         // 假数据，不然不到一个等级不明显

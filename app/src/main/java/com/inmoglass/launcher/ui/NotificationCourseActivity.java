@@ -191,6 +191,6 @@ public class NotificationCourseActivity extends BaseActivity {
     }
 
     private void startCastServerAsync() {
-        ThreadUtils.getCachedPool().execute(LeCastController::startCastServer);
+        ThreadUtils.getCachedPool().execute(() -> LeCastController.startCastServer(this));
     }
 }

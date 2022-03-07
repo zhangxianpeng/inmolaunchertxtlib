@@ -18,3 +18,8 @@
 1.重构SocketService,统一用BluetoothController做和手机端的数据收发工作。
 2.添加乐播接收端SDK,眼镜端成为接收终端。
 3.添加手机镜像/视频/手机通知三个入口,入口统一跳转到NotificationCourseActivity。
+
+2022.03.07
+1.眼镜端添加接收到手机端传过来的声音、亮度的值，然后set。
+2.替换状态栏的wifi图标。
+3.修改：低电的一些相关问题。

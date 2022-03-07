@@ -37,7 +37,9 @@
     <uses-permission android:name="android.permission.BLUETOOTH" />
     <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
-
+    <!-- 不能移除该权限，如果移除无法获取正确的wifi SSID -->
+    <uses-permission android:name="android.permission.LOCAL_MAC_ADDRESS"
+        tools:ignore="ProtectedPermissions" />
     <application
         android:name=".base.BaseApplication"
         android:hardwareAccelerated="true"

@@ -72,4 +72,5 @@
     <string name="string_video_mirror_guide_msg9">You can also turn off the phone screen and slide the glasses touchpad to adjust the progress</string>
     <string name="string_video_mirror_guide_msg10">Back to video</string>
     <string name="string_phone_mirror_guide_msg1">Glasses display phone mirroring</string>
+    <string name="string_same_network">Please ensure that the device and mobile phone are connected to the same local area network or hotspot</string>
 </resources>

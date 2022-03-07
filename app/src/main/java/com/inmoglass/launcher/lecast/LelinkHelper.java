@@ -284,11 +284,6 @@ public class LelinkHelper {
 
     });
 
-    /**
-     * 定时器检测连接状态
-     */
-
-
     private IAuthCodeCallback mAuthCallback = new IAuthCodeCallback() {
 
         @Override
@@ -428,7 +423,7 @@ public class LelinkHelper {
             if (disConnectHandler != null) {
                 disConnectHandler.sendEmptyMessageDelayed(0, 5000);
             }
-            if (System.currentTimeMillis() - disconnectLecastServiceTimestamp > 30000 && !isConnected) {
+            if (System.currentTimeMillis() - disconnectLecastServiceTimestamp > 60000 && !isConnected) {
                 LogUtils.d(TAG, "断开连接后30S未被重新连接，停止服务");
                 stopServer();
             }
@@ -444,7 +439,7 @@ public class LelinkHelper {
             if (startServiceHandler != null) {
                 startServiceHandler.sendEmptyMessageDelayed(0, 5000);
             }
-            if (System.currentTimeMillis() - startLecastServiceTimestamp > 30000 && !isConnected) {
+            if (System.currentTimeMillis() - startLecastServiceTimestamp > 60000 && !isConnected) {
                 LogUtils.d(TAG, "开始服务后30S未连接，停止服务");
                 stopServer();
             }

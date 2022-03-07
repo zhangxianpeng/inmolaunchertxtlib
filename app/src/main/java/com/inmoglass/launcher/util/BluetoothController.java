@@ -338,6 +338,16 @@ public class BluetoothController {
                 FileTransferInfo fileTransferInfo = (FileTransferInfo) info;
                 String instruction = fileTransferInfo.getInstruction();
                 openGallery(instruction, fileTransferInfo);
+            } else if (info instanceof BrightnessInfo) {
+                // 亮度
+                BrightnessInfo brightnessInfo = (BrightnessInfo) info;
+                int brightness = brightnessInfo.getLevel();
+                SystemBrightnessUtil.setBrightness(BaseApplication.mContext, brightness);
+            } else if (info instanceof VolumeInfo) {
+                // 亮度
+                VolumeInfo volumeInfo = (VolumeInfo) info;
+                int volume = volumeInfo.getLevel();
+                SystemVolumeUtil.setVolume(BaseApplication.mContext, volume);
             } else if (info instanceof CalenderEventInfo) {
                 // 手机日历数据
                 CalenderEventInfo calenderEventInfo = (CalenderEventInfo) info;
@@ -354,31 +364,24 @@ public class BluetoothController {
                 });
             } else if (info instanceof WifiSSIDInfo) {
                 WifiSSIDInfo wifiInfo = (WifiSSIDInfo) info;
-                String phoneConnectWifiName = wifiInfo.getSsid();
-                AppGlobals.phoneConnectWifiName = phoneConnectWifiName;
-                LogUtils.d(TAG, "手机端连接的WiFi名称是 " + phoneConnectWifiName);
+                boolean isApopen = wifiInfo.isApOpen();
+                String phoneConnectionWifiName = wifiInfo.getSsid();
+
+                MMKVUtils.setBoolean(AppGlobals.IS_PHONE_AP_OPEN, isApopen);
+                MMKVUtils.setString(AppGlobals.PHONE_WIFI_NAME, phoneConnectionWifiName);
+
+                LogUtils.d(TAG, "手机端是否打开热点=" + isApopen + ",手机端连接的wifi=" + phoneConnectionWifiName);
+
             } else if (info instanceof LeBoCommandInfo) {
                 LeBoCommandInfo leboCommandInfo = (LeBoCommandInfo) info;
                 String command = leboCommandInfo.getCommand();
                 LogUtils.d(TAG, "手机端发送的指令是 " + command);
                 if (command.equals("startMirror")) {
-                    if (WifiUtils.isSameWlanWithPhone(context)) {
-                        LeCastController.startCastServer();
-                    }
+                    LeCastController.startCastServer(context);
                 } else if (command.equals("stopMirror")) {
                     // 收到断开指令之后,30S之后断开
                     LogUtils.d(TAG, "断开连接");
                     LeCastController.stopCastServer();
-//                    ThreadUtils.getCachedPool().execute(() -> {
-//                        try {
-//                            Thread.sleep(30000);
-//                        } catch (InterruptedException e) {
-//                            e.printStackTrace();
-//                        }
-//
-//                        LogUtils.d(TAG, "收到断开指令之后,30S之后停止接收service");
-//                        LeCastController.stopCastServer(this);
-//                    });
                 }
             }
         }

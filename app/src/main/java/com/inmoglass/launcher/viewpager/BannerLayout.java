@@ -195,7 +195,7 @@ public class BannerLayout extends RelativeLayout {
                 viewList.add(connectView);
                 break;
             case PHONE_MIRROR_IS_CONNECTING_SAME_WLAN_WITH_PHONE:
-                isNeedToGoSetting = false;
+                isNeedToGoSetting = true;
                 View sameWlanView = LayoutInflater.from(context).inflate(R.layout.layout_banner_notice_mirror, null);
                 viewList.add(sameWlanView);
                 break;

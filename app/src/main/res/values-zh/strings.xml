@@ -72,4 +72,5 @@
     <string name="string_video_mirror_guide_msg9">还可以将手机熄屏，滑动眼镜触控板调节进度</string>
     <string name="string_video_mirror_guide_msg10">回到视频</string>
     <string name="string_phone_mirror_guide_msg1">眼镜展示手机镜像</string>
+    <string name="string_same_network">请保证设备和手机连接至同一局域网或热点</string>
 </resources>
