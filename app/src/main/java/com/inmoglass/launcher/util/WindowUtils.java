@@ -6,7 +6,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.PixelFormat;
 import android.net.Uri;
-import android.os.Build;
 import android.os.CountDownTimer;
 import android.os.Handler;
 import android.os.Looper;
@@ -20,15 +19,12 @@ import android.view.WindowManager.LayoutParams;
 import android.widget.TextView;
 import android.widget.VideoView;
 
-import androidx.constraintlayout.utils.widget.ImageFilterView;
-
 import com.blankj.utilcode.util.LogUtils;
 import com.inmoglass.launcher.R;
 import com.inmoglass.launcher.base.BaseApplication;
 import com.inmoglass.launcher.bean.ScreenFlagMsgBean;
 import com.inmoglass.launcher.tts.TtsManager;
 import com.inmoglass.launcher.ui.MainActivity;
-import com.inmoglass.launcher.view.MyConstraintLayout;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -71,10 +67,6 @@ public class WindowUtils {
          * 新手教程视频
          */
         BEGINNER_VIDEO,
-        /**
-         * 二次确认
-         */
-        SECOND_CONFIRM,
     }
 
     public static void showPopupWindow(Context context, UI_STATE state, final String content) {
@@ -98,19 +90,18 @@ public class WindowUtils {
         params.height = LayoutParams.MATCH_PARENT;
         params.gravity = Gravity.CENTER;
         params.setTitle("InmoShutDown");
-        if (state != UI_STATE.SHUT_DOWN_ACTION) {
-            // 关机的操作交给它本身
-            mView.setOnTouchListener((view, motionEvent) -> {
-                if (motionEvent.getAction() == MotionEvent.ACTION_DOWN && (state != UI_STATE.BEGINNER_VIDEO)) {
-                    hidePopupWindow();
-                    if (mTimer != null) {
-                        mTimer.cancel();
-                        mTimer = null;
-                    }
+
+        mView.setOnTouchListener((view, motionEvent) -> {
+            if (motionEvent.getAction() == MotionEvent.ACTION_DOWN && (state != UI_STATE.BEGINNER_VIDEO)) {
+                hidePopupWindow();
+                if (mTimer != null) {
+                    mTimer.cancel();
+                    mTimer = null;
                 }
-                return false;
-            });
-        }
+            }
+            return false;
+        });
+
         mWindowManager.addView(mView, params);
         // 充电界面2S自动关闭
         if (state == UI_STATE.CHARGING) {
@@ -157,15 +148,12 @@ public class WindowUtils {
         } else if (state == UI_STATE.BATTERY_BELOW_2) {
             view = LayoutInflater.from(context).inflate(R.layout.layout_shutdown_countdown, null);
             initTimerShutDownView(view);
-        } else if (state == UI_STATE.SECOND_CONFIRM) {
-            view = LayoutInflater.from(context).inflate(R.layout.layout_second_confirm, null);
-            initSecondConfirmView(view, content);
         } else if (state == UI_STATE.CHARGING) {
             view = LayoutInflater.from(context).inflate(R.layout.layout_charging, null);
             TextView batteryLevelTextView = view.findViewById(R.id.tvBatteryLevel);
             batteryLevelTextView.setText(content + "%");
         } else if (state == UI_STATE.SHUT_DOWN_ACTION) {
-            view = LayoutInflater.from(context).inflate(R.layout.layout_shutdown, null);
+            view = LayoutInflater.from(context).inflate(R.layout.layout_second_confirm, null);
             initShutDownWindowView(view);
         } else if (state == UI_STATE.BEGINNER_VIDEO) {
             view = LayoutInflater.from(context).inflate(R.layout.layout_beginner_video, null);
@@ -254,17 +242,17 @@ public class WindowUtils {
     /** ==================================低电量倒计时关机弹层===========================================**/
 
     /**
-     * ==================================二次确认弹层===========================================
+     * ==================================关机倒计时弹层===========================================
      **/
     static CountDownTimer mTimer;
 
-    private static void initSecondConfirmView(View view, String mCurrentIndex) {
-        int index = Integer.parseInt(mCurrentIndex);
+    private static void initShutDownWindowView(View view) {
+        // 2022.03.09 关机弹层优化 --- 直接展示二次确认弹窗，重启逻辑交由系统处理（监测power键按下时间）
         TextView countDownTextView = view.findViewById(R.id.tvCountdownTime);
         TextView tvMemoContent = view.findViewById(R.id.tvMemoContent);
-        tvMemoContent.setText(index == 0 ? BaseApplication.mContext.getString(R.string.string_reboot_rightnow) : BaseApplication.mContext.getString(R.string.string_shutdown_rightnow));
+        tvMemoContent.setText(BaseApplication.mContext.getString(R.string.string_shutdown_rightnow));
         TextView cancelText = view.findViewById(R.id.cancelText);
-        cancelText.setText(index == 0 ? BaseApplication.mContext.getString(R.string.string_reboot_cancel) : BaseApplication.mContext.getString(R.string.string_shutdown_cancel));
+        cancelText.setText(BaseApplication.mContext.getString(R.string.string_shutdown_cancel));
         mTimer = new CountDownTimer(4000, 1000) {
             @Override
             public void onTick(long millisUntilFinished) {
@@ -274,108 +262,12 @@ public class WindowUtils {
             @Override
             public void onFinish() {
                 // 倒计时结束后直接关机
-                if (index == 0 && isShown) {
-                    rebootSystem();
-                } else if (index == 2 && isShown) {
+                if (isShown) {
                     shutdownSystem();
                 }
             }
         };
         mTimer.start();
-    }
-    /** ==================================二次确认弹层===========================================**/
-
-    /**
-     * ==================================关机重启弹层===========================================
-     **/
-    static int mCurrentIndex = 1;
-    static ImageFilterView ifvShutDownSelectedBg;
-    static ImageFilterView ifvCancelSelectedBg;
-    static ImageFilterView ifvRebootSelectedBg;
-
-    private static void initShutDownWindowView(View view) {
-        ifvShutDownSelectedBg = view.findViewById(R.id.ifvShutDownSelectedBg);
-        ifvCancelSelectedBg = view.findViewById(R.id.ifvCancelSelectedBg);
-        ifvRebootSelectedBg = view.findViewById(R.id.ifvRebootSelectedBg);
-
-        MyConstraintLayout layout = view.findViewById(R.id.container);
-        // fix bug:343 【launcher】语音弹层唤醒，需要关闭关机弹层, View里面监听按键事件
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-            layout.addOnUnhandledKeyEventListener((view1, keyEvent) -> {
-                hidePopupWindow();
-                return false;
-            });
-        }
-        layout.setListener(new MyConstraintLayout.OnGestureListener() {
-            @Override
-            public void onSwipeLeft() {
-                mCurrentIndex--;
-                moveAndShow();
-            }
-
-            @Override
-            public void onSwipeRight() {
-                mCurrentIndex++;
-                moveAndShow();
-            }
-
-            @Override
-            public void onCancel() {
-                cancel();
-            }
-
-            @Override
-            public void onEnsure() {
-                useCurrentFunction();
-            }
-        });
-    }
-
-    private static void moveAndShow() {
-        // 防止越界
-        if (mCurrentIndex > 2) {
-            mCurrentIndex = 2;
-        } else if (mCurrentIndex < 1) {
-            mCurrentIndex = 0;
-        }
-        LogUtils.i("mCurrentIndex=" + mCurrentIndex);
-        switch (mCurrentIndex) {
-            case 0:
-                ifvShutDownSelectedBg.setVisibility(View.VISIBLE);
-                ifvCancelSelectedBg.setVisibility(View.GONE);
-                ifvRebootSelectedBg.setVisibility(View.GONE);
-                SoundPoolUtil.getInstance(mContext).play(R.raw.reboot);
-                break;
-            case 1:
-                ifvShutDownSelectedBg.setVisibility(View.GONE);
-                ifvCancelSelectedBg.setVisibility(View.VISIBLE);
-                ifvRebootSelectedBg.setVisibility(View.GONE);
-                SoundPoolUtil.getInstance(mContext).play(R.raw.cancel);
-                break;
-            case 2:
-                ifvShutDownSelectedBg.setVisibility(View.GONE);
-                ifvCancelSelectedBg.setVisibility(View.GONE);
-                ifvRebootSelectedBg.setVisibility(View.VISIBLE);
-                SoundPoolUtil.getInstance(mContext).play(R.raw.shut_down);
-                break;
-            default:
-                break;
-        }
-    }
-
-    private static void useCurrentFunction() {
-
-        switch (mCurrentIndex) {
-            case 0:
-            case 2:
-                hidePopupWindow();
-                showSecondConfirmView(mCurrentIndex);
-                break;
-            case 1:
-            default:
-                cancel();
-                break;
-        }
     }
 
     private static void shutdownSystem() {
@@ -384,22 +276,6 @@ public class WindowUtils {
         Intent shutdownIntent = new Intent("com.android.systemui.keyguard.shutdown");
         BaseApplication.mContext.sendBroadcast(shutdownIntent);
     }
-
-    private static void rebootSystem() {
-        Intent rebootIntent = new Intent("com.android.systemui.keyguard.shutdown");
-        rebootIntent.putExtra("reboot", true);
-        BaseApplication.mContext.sendBroadcast(rebootIntent);
-    }
-
-    private static void cancel() {
-        mCurrentIndex = 1;
-        hidePopupWindow();
-    }
-
-    private static void showSecondConfirmView(int mCurrentIndex) {
-        showPopupWindow(BaseApplication.mContext, UI_STATE.SECOND_CONFIRM, String.valueOf(mCurrentIndex));
-    }
-    /**==================================关机重启弹层===========================================*/
 
     /**
      * ==================================新手教程弹层===========================================

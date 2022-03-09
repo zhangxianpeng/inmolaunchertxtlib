@@ -290,7 +290,7 @@ public class MainActivity extends BaseActivity {
                 } else {
                     local = LauncherManager.getInstance().getLauncherCardList();
                     channelList.addAll(local);
-                    Channel oldChannel = channelList.get(4);
+                    Channel oldChannel = getMemoChannel(channelList);
                     Collections.replaceAll(channelList, oldChannel, memoDataChannel);
                 }
                 LogUtils.i(TAG, "local = " + local.size());
@@ -301,6 +301,17 @@ public class MainActivity extends BaseActivity {
             updateAdapter();
         }
     };
+
+    private Channel getMemoChannel(ArrayList<Channel> channelList) {
+        Channel memoDataChannel = null;
+        for (int i = 0; i < channelList.size(); i++) {
+            Channel item = channelList.get(i);
+            if (item.getPackageName().equals("com.inmolens.inmomemo")) {
+                memoDataChannel = item;
+            }
+        }
+        return memoDataChannel;
+    }
 
     private void getMemoData() {
         showData = new InmoMemoData();
@@ -395,7 +406,7 @@ public class MainActivity extends BaseActivity {
     private void writeCardList2File() {
         ArrayList<Channel> local = CommonUtil.isEn() ? LauncherManager.getInstance().getLauncherCardList_EN() : LauncherManager.getInstance().getLauncherCardList();
         if (local == null || local.isEmpty()) {
-            LauncherManager.getInstance().setLauncherCardList();
+            LauncherManager.getInstance().setLauncherCardList2Db();
         }
     }
 
@@ -446,7 +457,7 @@ public class MainActivity extends BaseActivity {
             String action = intent.getAction();
             switch (action) {
                 case ALARM_MEMO_LOG:
-                    // 接收到备忘录传过来的内容
+                    // 备忘录
                     String content = intent.getStringExtra("MemoContent");
                     long memoTime = intent.getLongExtra("MemoShowTime", 0);
                     String date = TimeUtils.millis2String(memoTime, getString(R.string.string_time_format_1));
@@ -456,26 +467,16 @@ public class MainActivity extends BaseActivity {
                     WindowUtils.showPopupWindow(getApplicationContext(), WindowUtils.UI_STATE.MEMO_STATE, completeMemoContent);
                     break;
                 case SHUT_DOWN_ACTION:
+                    // 关机广播
                     if (!WindowUtils.isPlayingVideo) {
                         WindowUtils.showPopupWindow(getApplicationContext(), WindowUtils.UI_STATE.SHUT_DOWN_ACTION, "");
                     }
                     break;
                 case Intent.ACTION_BATTERY_CHANGED:
+                    // 电量变化
                     int battery = intent.getIntExtra(BatteryManager.EXTRA_LEVEL, 0);
                     batteryLevelTextView.setText(battery + "%");
                     isChargingImageView.setVisibility(isChargingNow ? View.VISIBLE : View.GONE);
-//                    if (isChargingNow) {
-//                        if (!isShowCharging) {
-//                            // 保证一次插入移除充电器显示一次
-//                            WindowUtils.showPopupWindow(getApplicationContext(), WindowUtils.UI_STATE.CHARGING, battery + "");
-//                            isShowCharging = true;
-//                        }
-//                    } else {
-//                        isShowCharging = false;
-//                        if (WindowUtils.isShown) {
-//                            WindowUtils.hidePopupWindow();
-//                        }
-//                    }
                     if (battery > 5 && battery < 15 && !isBatteryBelow15) {
                         // 电量低于15时显示Toast提示电量低
                         isBatteryBelow15 = true;
@@ -526,6 +527,7 @@ public class MainActivity extends BaseActivity {
                     }
                     break;
                 case ConnectivityManager.CONNECTIVITY_ACTION:
+                    // WIFI
                     ConnectivityManager manager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
                     NetworkInfo info = manager.getActiveNetworkInfo();
                     if (info != null && info.isAvailable()) {

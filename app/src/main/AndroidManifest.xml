@@ -38,7 +38,8 @@
     <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
     <!-- 不能移除该权限，如果移除无法获取正确的wifi SSID -->
-    <uses-permission android:name="android.permission.LOCAL_MAC_ADDRESS"
+    <uses-permission
+        android:name="android.permission.LOCAL_MAC_ADDRESS"
         tools:ignore="ProtectedPermissions" />
     <application
         android:name=".base.BaseApplication"
@@ -63,6 +64,7 @@
             android:screenOrientation="landscape">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.HOME" />
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.LAUNCHER" />
@@ -78,8 +80,14 @@
             android:name="com.baidu.lbsapi.API_KEY"
             android:value="bgyiEdIHDfok47j05SceB7nXWAOuKKDf" />
         <!--写文件-->
-        <service android:name=".service.WriteFileIntentService"
-            android:exported="true"/>
+        <service
+            android:name=".service.WriteFileIntentService"
+            android:exported="true" />
+
+        <provider
+            android:name=".data.LauncherContentProvider"
+            android:authorities="com.inmoglass.launcher.data.launcherdb"
+            android:exported="true" />
     </application>
 
 </manifest>

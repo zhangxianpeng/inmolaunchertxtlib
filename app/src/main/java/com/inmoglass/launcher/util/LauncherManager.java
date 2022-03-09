@@ -5,6 +5,7 @@ import android.content.Context;
 import com.inmoglass.launcher.R;
 import com.inmoglass.launcher.base.BaseApplication;
 import com.inmoglass.launcher.bean.Channel;
+import com.inmoglass.launcher.data.LauncherCardDataDbHelper;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -73,8 +74,6 @@ public class LauncherManager {
             "com.inmo.settings"
     };
 
-    private static final String APP_PACKAGES_LIST = "AppList";
-
     public static synchronized LauncherManager getInstance() {
         if (mLauncherManager == null) {
             mLauncherManager = new LauncherManager();
@@ -86,10 +85,13 @@ public class LauncherManager {
         this.mContext = BaseApplication.mContext;
     }
 
-    public void setLauncherCardList() {
+    /**
+     * 将数据源保存到db文件
+     */
+    public void setLauncherCardList2Db() {
         appPackagesList = new ArrayList<>();
         appPackagesList.addAll(Arrays.asList(CommonUtil.isEn() ? packageNames_EN : (CommonUtil.isProductVersion() ? packageNames_pro : packageNames)));
-        MMKVUtils.setArray(mContext, appPackagesList, APP_PACKAGES_LIST);
+        LauncherCardDataDbHelper.getInstance().insertAllData(appPackagesList);
     }
 
     /**
@@ -98,8 +100,7 @@ public class LauncherManager {
      * @return
      */
     public ArrayList<Channel> getLauncherCardList() {
-        String packageName = "";
-        ArrayList<String> packagesList = MMKVUtils.getArray(mContext, APP_PACKAGES_LIST, packageName);
+        List<String> packagesList = LauncherCardDataDbHelper.getInstance().queryAllData();
         ArrayList<Channel> beanList = new ArrayList<>();
         for (String appPackage : packagesList) {
             Channel bean = null;
@@ -143,8 +144,7 @@ public class LauncherManager {
      * @return
      */
     public ArrayList<Channel> getLauncherCardList_EN() {
-        String packageName = "";
-        ArrayList<String> packagesList = MMKVUtils.getArray(mContext, APP_PACKAGES_LIST, packageName);
+        List<String> packagesList = LauncherCardDataDbHelper.getInstance().queryAllData();
         ArrayList<String> packagesEnList = filterPackagesCnList(packagesList);
         ArrayList<Channel> beanList = new ArrayList<>();
         for (String appPackage : packagesEnList) {
@@ -169,7 +169,7 @@ public class LauncherManager {
      * @param packagesList
      * @return
      */
-    private ArrayList<String> filterPackagesCnList(ArrayList<String> packagesList) {
+    private ArrayList<String> filterPackagesCnList(List<String> packagesList) {
         ArrayList<String> result = new ArrayList<>();
         for (int i = 0; i < packagesList.size(); i++) {
             String name = packagesList.get(i);
@@ -193,6 +193,6 @@ public class LauncherManager {
         for (Channel channel : channelList) {
             realList.add(channel.getPackageName());
         }
-        MMKVUtils.setArray(mContext, realList, APP_PACKAGES_LIST);
+        LauncherCardDataDbHelper.getInstance().insertAllData(realList);
     }
 }

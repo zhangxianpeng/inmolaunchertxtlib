@@ -68,4 +68,14 @@ public class AppGlobals {
      */
     public static final String IS_PHONE_AP_OPEN = "isPhoneApOpen";
     public static final String PHONE_WIFI_NAME = "phoneConnectionWifiName";
+
+    /**
+     * 与眼镜配对绑定的手机的信息
+     */
+    public static final String BOND_DEVICE_INFO = "bindDevicesInfo";
+
+    /**
+     * 手机与眼镜解除绑定的指令
+     */
+    public static final String UNBIND_DEVICE_COMMAND = "deviceUnbind";
 }

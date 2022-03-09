@@ -110,7 +110,20 @@ public class LauncherAdapter1 extends RecyclerView.Adapter<RecyclerView.ViewHold
 
     @Override
     public int getItemViewType(int position) {
-        return !CommonUtil.isEn() && position == 4 ? ITEM_TYPE.ITEM_MEMO.ordinal() : ITEM_TYPE.ITEM_NORMAL.ordinal();
+        return !CommonUtil.isEn() && isMemoType(position) ? ITEM_TYPE.ITEM_MEMO.ordinal() : ITEM_TYPE.ITEM_NORMAL.ordinal();
+    }
+
+    /**
+     * 如果是备忘录类型的话为另一种type
+     *
+     * @param position
+     * @return
+     */
+    private boolean isMemoType(int position) {
+        boolean isMemoType;
+        Channel item = channelList.get(position);
+        isMemoType = item.getPackageName().equals("com.inmolens.inmomemo");
+        return isMemoType;
     }
 
     @Override

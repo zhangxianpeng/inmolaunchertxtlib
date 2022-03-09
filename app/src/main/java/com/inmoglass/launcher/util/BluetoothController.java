@@ -299,7 +299,6 @@ public class BluetoothController {
                     LogUtils.d(TAG, "deviceMac=" + mac);
                     MMKVUtils.setString(AppGlobals.BLUETOOTH_MAC_ADDRESS, mac);
 
-                    // TODO: 2022/3/4 查询是否有绑定过设备。仅支持单对单设备连接
                     BondedInfo.DeviceInfo remoteMac = new BondedInfo.DeviceInfo();
                     if (!TextUtils.isEmpty(phoneMac)) {
                         remoteMac.setAddress(phoneMac);
@@ -314,6 +313,18 @@ public class BluetoothController {
                     // 同步电池信息
                     lastLevel = SystemUtils.getBatteryLevel(BaseApplication.mContext);
                     sendMessage2Phone(lastLevel + "", Dispatcher.BIND_BATTERY_INFO);
+
+//                    checkBondedDeviceInfo(phoneMac);
+//                    if (checkBondedDeviceInfo(phoneMac)) {
+//                        LogUtils.d(TAG, "此眼镜已经被绑定");
+//                    } else {
+
+//                    }
+                } else if (Dispatcher.BIND_DEVICE_STATE_BONDED.equals(state)) {
+                    // 保存绑定的设备信息
+                    String bondedDeviceInfo = new Gson().toJson(bondedInfo);
+                    LogUtils.d(TAG, "bond device msg = " + bondedDeviceInfo);
+                    MMKVUtils.setString(AppGlobals.BOND_DEVICE_INFO, bondedDeviceInfo);
                 }
             } else if (info instanceof ContactsInfo) {
                 // 同步通讯录
@@ -342,12 +353,14 @@ public class BluetoothController {
                 // 亮度
                 BrightnessInfo brightnessInfo = (BrightnessInfo) info;
                 int brightness = brightnessInfo.getLevel();
-                SystemBrightnessUtil.setBrightness(BaseApplication.mContext, brightness);
+                int realBrightness = (255 * brightness) / 100;
+                SystemBrightnessUtil.setBrightness(BaseApplication.mContext, realBrightness);
             } else if (info instanceof VolumeInfo) {
-                // 亮度
+                // 声音
                 VolumeInfo volumeInfo = (VolumeInfo) info;
                 int volume = volumeInfo.getLevel();
-                SystemVolumeUtil.setVolume(BaseApplication.mContext, volume);
+                int realVolume = (volume * 15) / 100;
+                SystemVolumeUtil.setVolume(BaseApplication.mContext, realVolume);
             } else if (info instanceof CalenderEventInfo) {
                 // 手机日历数据
                 CalenderEventInfo calenderEventInfo = (CalenderEventInfo) info;
@@ -364,14 +377,11 @@ public class BluetoothController {
                 });
             } else if (info instanceof WifiSSIDInfo) {
                 WifiSSIDInfo wifiInfo = (WifiSSIDInfo) info;
-                boolean isApopen = wifiInfo.isApOpen();
+                boolean isApOpen = wifiInfo.isApOpen();
                 String phoneConnectionWifiName = wifiInfo.getSsid();
-
-                MMKVUtils.setBoolean(AppGlobals.IS_PHONE_AP_OPEN, isApopen);
+                MMKVUtils.setBoolean(AppGlobals.IS_PHONE_AP_OPEN, isApOpen);
                 MMKVUtils.setString(AppGlobals.PHONE_WIFI_NAME, phoneConnectionWifiName);
-
-                LogUtils.d(TAG, "手机端是否打开热点=" + isApopen + ",手机端连接的wifi=" + phoneConnectionWifiName);
-
+                LogUtils.d(TAG, "手机端是否打开热点=" + isApOpen + ",手机端连接的wifi=" + phoneConnectionWifiName);
             } else if (info instanceof LeBoCommandInfo) {
                 LeBoCommandInfo leboCommandInfo = (LeBoCommandInfo) info;
                 String command = leboCommandInfo.getCommand();
@@ -382,9 +392,35 @@ public class BluetoothController {
                     // 收到断开指令之后,30S之后断开
                     LogUtils.d(TAG, "断开连接");
                     LeCastController.stopCastServer();
+                } else if (AppGlobals.UNBIND_DEVICE_COMMAND.equals(command)) {
+                    // 设备解绑
+                    LogUtils.d(TAG, "设备解绑");
+                    MMKVUtils.removeKey(AppGlobals.BOND_DEVICE_INFO);
                 }
             }
         }
+    }
+
+    /**
+     * 查询想要绑定的手机设备的mac是否是之前的设备，如果是，允许连接，如果不是，不允许连接
+     *
+     * @param phoneMac 想要绑定的手机的mac
+     * @return
+     */
+    private boolean checkBondedDeviceInfo(String phoneMac) {
+        LogUtils.d(TAG, "想要绑定的手机的mac=" + phoneMac);
+        boolean isSameDevice = false;
+        String localBindDeviceInfo = MMKVUtils.getString(AppGlobals.BOND_DEVICE_INFO);
+        LogUtils.d(TAG, "localBindDeviceInfo=" + localBindDeviceInfo);
+        AbstractInfo info = Dispatcher.get(localBindDeviceInfo);
+        if (info instanceof BondedInfo) {
+            BondedInfo bondedInfo = (BondedInfo) info;
+            String localMac = bondedInfo.getLocal().getAddress();
+            LogUtils.d(TAG, "local device mac = " + localMac);
+            isSameDevice = localMac.equals(phoneMac);
+        }
+        LogUtils.d(TAG, "checkBondedDeviceInfo= " + isSameDevice);
+        return isSameDevice;
     }
 
     /**
