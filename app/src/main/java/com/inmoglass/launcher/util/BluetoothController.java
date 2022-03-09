@@ -7,6 +7,7 @@ import static com.inmoglass.launcher.util.PhoneUtils.AG_CALL_CHANGED;
 import static com.inmoglass.launcher.util.PhoneUtils.EXTRA_CALL;
 import static com.inmoglass.launcher.util.PhoneUtils.KEY_CALL_STATE;
 
+import android.app.Activity;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.content.BroadcastReceiver;
@@ -28,6 +29,7 @@ import androidx.core.app.NotificationManagerCompat;
 
 import com.blankj.utilcode.util.LogUtils;
 import com.blankj.utilcode.util.ThreadUtils;
+import com.blankj.utilcode.util.ToastUtils;
 import com.google.gson.Gson;
 import com.inmo.inmodata.AbstractInfo;
 import com.inmo.inmodata.contacts.Contacts;
@@ -306,20 +308,19 @@ public class BluetoothController {
                     if (!TextUtils.isEmpty(phoneName)) {
                         remoteMac.setName(phoneName);
                     }
-                    BondedInfo sendInfo = new BondedInfo(remoteMac, localMac);
-                    sendInfo.setState(Dispatcher.BIND_DEVICE_STATE_BONDED);
-                    bt.send(getGson().toJson(sendInfo), true);
 
-                    // 同步电池信息
-                    lastLevel = SystemUtils.getBatteryLevel(BaseApplication.mContext);
-                    sendMessage2Phone(lastLevel + "", Dispatcher.BIND_BATTERY_INFO);
+                    if (checkBondedDeviceInfo(phoneMac)) {
+                        BondedInfo sendInfo = new BondedInfo(remoteMac, localMac);
+                        sendInfo.setState(Dispatcher.BIND_DEVICE_STATE_BONDED);
+                        bt.send(getGson().toJson(sendInfo), true);
 
-//                    checkBondedDeviceInfo(phoneMac);
-//                    if (checkBondedDeviceInfo(phoneMac)) {
-//                        LogUtils.d(TAG, "此眼镜已经被绑定");
-//                    } else {
-
-//                    }
+                        // 同步电池信息
+                        lastLevel = SystemUtils.getBatteryLevel(BaseApplication.mContext);
+                        sendMessage2Phone(lastLevel + "", Dispatcher.BIND_BATTERY_INFO);
+                    } else {
+                        LogUtils.d(TAG, "此眼镜已经被绑定");
+                        ((Activity) context).runOnUiThread(() -> ToastUtil.showToast(context, context.getString(R.string.string_glass_connected)));
+                    }
                 } else if (Dispatcher.BIND_DEVICE_STATE_BONDED.equals(state)) {
                     // 保存绑定的设备信息
                     String bondedDeviceInfo = new Gson().toJson(bondedInfo);
@@ -392,10 +393,6 @@ public class BluetoothController {
                     // 收到断开指令之后,30S之后断开
                     LogUtils.d(TAG, "断开连接");
                     LeCastController.stopCastServer();
-                } else if (AppGlobals.UNBIND_DEVICE_COMMAND.equals(command)) {
-                    // 设备解绑
-                    LogUtils.d(TAG, "设备解绑");
-                    MMKVUtils.removeKey(AppGlobals.BOND_DEVICE_INFO);
                 }
             }
         }
@@ -411,7 +408,6 @@ public class BluetoothController {
         LogUtils.d(TAG, "想要绑定的手机的mac=" + phoneMac);
         boolean isSameDevice = false;
         String localBindDeviceInfo = MMKVUtils.getString(AppGlobals.BOND_DEVICE_INFO);
-        LogUtils.d(TAG, "localBindDeviceInfo=" + localBindDeviceInfo);
         AbstractInfo info = Dispatcher.get(localBindDeviceInfo);
         if (info instanceof BondedInfo) {
             BondedInfo bondedInfo = (BondedInfo) info;

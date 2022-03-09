@@ -50,6 +50,7 @@ import com.inmoglass.launcher.bean.ScreenFlagMsgBean;
 import com.inmoglass.launcher.carousellayoutmanager.CarouselLayoutManager;
 import com.inmoglass.launcher.carousellayoutmanager.CarouselZoomPostLayoutListener;
 import com.inmoglass.launcher.carousellayoutmanager.CenterScrollListener;
+import com.inmoglass.launcher.global.AppGlobals;
 import com.inmoglass.launcher.service.WriteFileIntentService;
 import com.inmoglass.launcher.util.AppUtil;
 import com.inmoglass.launcher.util.BluetoothController;
