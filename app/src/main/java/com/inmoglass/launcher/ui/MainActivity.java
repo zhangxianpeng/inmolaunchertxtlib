@@ -1,11 +1,9 @@
 package com.inmoglass.launcher.ui;
 
 import static com.inmoglass.launcher.global.AppGlobals.NOVICE_TEACHING_VIDEO_PLAY_FLAG;
-import static com.inmoglass.launcher.util.AppUtil.isInstalled;
 
 import android.bluetooth.BluetoothDevice;
 import android.content.BroadcastReceiver;
-import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
@@ -16,6 +14,7 @@ import android.net.Uri;
 import android.os.BatteryManager;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Looper;
 import android.os.Message;
 import android.text.TextUtils;
 import android.view.GestureDetector;
@@ -38,7 +37,6 @@ import com.baidu.location.LocationClientOption;
 import com.blankj.utilcode.util.LogUtils;
 import com.blankj.utilcode.util.ThreadUtils;
 import com.blankj.utilcode.util.TimeUtils;
-import com.blankj.utilcode.util.ToastUtils;
 import com.inmo.network.AndroidNetworking;
 import com.inmo.network.error.ANError;
 import com.inmo.network.interfaces.JSONObjectRequestListener;
@@ -141,24 +139,21 @@ public class MainActivity extends BaseActivity {
                 LogUtils.i(TAG, "selectPosition = " + selectPosition);
                 // fix bug:camera 特殊处理,防止卡死
                 if (selectPosition == 1) {
-                    openApplication("com.yulong.coolcamera", "com.yulong.arcamera.MainActivity");
+                    AppUtil.getInstance().openApplication("com.yulong.coolcamera", "com.yulong.arcamera.MainActivity");
                 } else if (channelList.get(selectPosition).getPackageName().equals("com.inmoglass.launcher.NotificationCourseActivity")) {
                     Intent notificationIntent = new Intent(MainActivity.this, NotificationCourseActivity.class);
                     notificationIntent.putExtra("type", 0);
                     startActivity(notificationIntent);
-                    overridePendingTransition(R.anim.anim_in, R.anim.anim_out);
                 } else if (channelList.get(selectPosition).getPackageName().equals("com.inmoglass.launcher.VideoMirrorActivity")) {
                     Intent notificationIntent = new Intent(MainActivity.this, NotificationCourseActivity.class);
                     notificationIntent.putExtra("type", 2);
                     startActivity(notificationIntent);
-                    overridePendingTransition(R.anim.anim_in, R.anim.anim_out);
                 } else if (channelList.get(selectPosition).getPackageName().equals("com.inmoglass.launcher.PhoneMirrorActivity")) {
                     Intent notificationIntent = new Intent(MainActivity.this, NotificationCourseActivity.class);
                     notificationIntent.putExtra("type", 1);
                     startActivity(notificationIntent);
-                    overridePendingTransition(R.anim.anim_in, R.anim.anim_out);
                 } else {
-                    openApplicationByPkgName(channelList.get(selectPosition).getPackageName());
+                    AppUtil.getInstance().openApplicationByPkgName(channelList.get(selectPosition).getPackageName());
                 }
                 return true;
             }
@@ -651,10 +646,9 @@ public class MainActivity extends BaseActivity {
         }
     }
 
-    private Handler myHandler = new Handler() {
+    private Handler myHandler = new Handler(Looper.getMainLooper(), new Handler.Callback() {
         @Override
-        public void handleMessage(@NonNull Message msg) {
-            super.handleMessage(msg);
+        public boolean handleMessage(@NonNull Message msg) {
             int action = msg.what;
             if (action == 0) {
                 JSONObject response = (JSONObject) msg.obj;
@@ -677,50 +671,7 @@ public class MainActivity extends BaseActivity {
                     LogUtils.e(TAG, "JSONException,e=" + e.getMessage());
                 }
             }
+            return false;
         }
-    };
-
-    private void openApplicationByPkgName(String pkgName) {
-        if (TextUtils.isEmpty(pkgName)) {
-            return;
-        }
-
-        if (!isInstalled(MainActivity.this, pkgName)) {
-            ToastUtils.showShort(getString(R.string.string_app_not_installed));
-            return;
-        }
-
-        LogUtils.i(TAG, "The package will be open : " + pkgName);
-        Intent intent = getPackageManager().getLaunchIntentForPackage(pkgName);
-        if (intent == null) {
-            return;
-        }
-        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        startActivity(intent);
-        overridePendingTransition(R.anim.anim_in, R.anim.anim_out);
-//        ActivityOptionsCompat compat = ActivityOptionsCompat.makeCustomAnimation(this, R.anim.anim_in, R.anim.anim_out);
-//        ActivityCompat.startActivity(this, intent, compat.toBundle());
-    }
-
-    private void openApplication(String pkgName, String activityName) {
-        if (TextUtils.isEmpty(pkgName)) {
-            return;
-        }
-        if (!isInstalled(MainActivity.this, pkgName)) {
-            ToastUtils.showShort(getString(R.string.string_app_not_installed));
-            return;
-        }
-        Intent intent1 = getPackageManager().getLaunchIntentForPackage(pkgName);
-        if (intent1 == null) {
-            return;
-        }
-        Intent intent = new Intent();
-        ComponentName componentName = new ComponentName(pkgName, activityName);
-        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        intent.setComponent(componentName);
-        startActivity(intent);
-        overridePendingTransition(R.anim.anim_in, R.anim.anim_out);
-//        ActivityOptionsCompat compat = ActivityOptionsCompat.makeCustomAnimation(this, R.anim.anim_in, R.anim.anim_out);
-//        ActivityCompat.startActivity(this, intent, compat.toBundle());
-    }
+    });
 }
