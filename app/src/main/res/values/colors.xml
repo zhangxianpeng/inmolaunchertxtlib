@@ -6,17 +6,8 @@
     <color name="teal_200">#FF03DAC5</color>
     <color name="teal_700">#FF018786</color>
     <color name="black">#FF000000</color>
-    <color name="color_memo_color">#99000000</color>
     <color name="white">#FFFFFFFF</color>
 
-    <color name="color_item_bg">#1A1A1A</color>
-    <color name="color_battery_red">#FF2828</color>
-    <color name="color_battery_orange">#FF9712</color>
-    <color name="color_battery_white">#FFFFFF</color>
     <color name="color_battery_green">#00D823</color>
-
-    <color name="color_memo_title_yellow">#FFB529</color>
-    <color name="color_memo_title_gray">#848484</color>
-    <color name="color_memo_diver">#FFE8E8E8</color>
 
 </resources>

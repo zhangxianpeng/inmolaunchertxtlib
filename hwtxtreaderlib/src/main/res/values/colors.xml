@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+
+    <color name="color_withe">#ffffff</color>
+    <color name="color_black">#000000</color>
+    <color name="color_7e7e7e">#7e7e7e</color>
+
+    <!--电量颜色-->
+    <color name="color_battery_green">#00D823</color>
+</resources>

@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+<!--    <dimen name="hwTxtReader_menu_textSize_min">13sp</dimen>-->
+<!--    <dimen name="hwTxtReader_menu_textSize_normal">14sp</dimen>-->
+<!--    <dimen name="hwTxtReader_menu_textSize_max">16sp</dimen>-->
+<!--    <dimen name="hwTxtReader_menu_textSetting_padding_topBottom">10dp</dimen>-->
+<!--    <dimen name="hwTxtReader_menu_textSetting_padding_leftRight">5dp</dimen>-->
+<!--    <dimen name="hwTxtReader_ic_selector">20dp</dimen>-->
+<!--    <dimen name="hwTxtReader_menu_text_tips">13sp</dimen>-->
+
+    <!-- Your custom size defind by references, can be writted in anywhere, any module, any values/*.xml, for example: -->
+
+    <!-- dp and sp values, must be defind in this file! -->
+    <!-- view size,you can add if there is no one -->
+    <dimen name="dp_1">1dp</dimen>
+    <dimen name="dp_2">2dp</dimen>
+    <dimen name="dp_6">6dp</dimen>
+    <dimen name="dp_10">10dp</dimen>
+    <dimen name="dp_14">14dp</dimen>
+    <dimen name="dp_15">15dp</dimen>
+    <dimen name="dp_16">16dp</dimen>
+    <dimen name="dp_18">18dp</dimen>
+    <dimen name="dp_20">20dp</dimen>
+    <dimen name="dp_25">25dp</dimen>
+    <dimen name="dp_54">54dp</dimen>
+
+    <!-- font size,you can add if there is no one -->
+</resources>

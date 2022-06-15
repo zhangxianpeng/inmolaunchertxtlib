@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">Prompter</string>
+    <string name="zero_percent">0%</string>
+    <string name="first_chapter">first chapter</string>
+    <string name="select_char_num">selected %d characters</string>
+
+    <string name="first_page">Head page</string>
+    <string name="last_page">End page</string>
+</resources>
