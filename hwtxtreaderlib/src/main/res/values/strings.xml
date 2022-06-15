@@ -1,5 +1,4 @@
 <resources>
-    <string name="app_name">Txt提词器</string>
     <string name="zero_percent">0%</string>
     <string name="first_chapter">第一章</string>
     <string name="select_char_num">选中%d个文字</string>

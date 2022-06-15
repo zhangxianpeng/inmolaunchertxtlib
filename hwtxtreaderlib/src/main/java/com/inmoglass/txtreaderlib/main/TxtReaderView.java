@@ -154,12 +154,12 @@ public class TxtReaderView extends TxtReaderBaseView {
 
         if (getMoveDistance() > 0 && isFirstPage()) {
             ELogger.log(tag, "是第一页了");
-            ToastUtils.showShort(R.string.first_page);
+//            ToastUtils.showShort(R.string.first_page);
             return;
         }
 
         if (getMoveDistance() < 0 && isLastPage()) {
-            ToastUtils.showShort(R.string.last_page);
+//            ToastUtils.showShort(R.string.last_page);
             ELogger.log(tag, "是最后一页了");
             return;
         }
